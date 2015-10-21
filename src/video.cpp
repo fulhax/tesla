@@ -1,6 +1,8 @@
 #include "video.hpp"
 #include "errorhandler.hpp"
 
+#include "engine.hpp"
+
 int Video::init(int width, int height)
 {
     SDL_RendererInfo ri;
@@ -33,16 +35,15 @@ int Video::init(int width, int height)
     }
 
     glShadeModel(GL_SMOOTH);
-    glClearColor(0, 0, 0, 0);
+    glClearColor(0, 0.3f, 0.3f, 0);
     glClearDepth(1);
 
+    glEnable(GL_TEXTURE_2D);
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
 
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
     glHint(GL_POINT_SMOOTH_HINT, GL_FASTEST);
-
-    glPointSize(5.0f);
 
     glViewport(0, 0, width, height);
 
@@ -65,12 +66,31 @@ void Video::update()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
-    gluLookAt(0.0, 6.0, 0.1, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+    glTranslatef(0,0,-10);
 
-    glBegin(GL_POINTS);
-    glColor3f(1, 1, 0);
-    glVertex3f(0, 0, 0);
-    glEnd();
+    TextureResource* t = engine.resources.getTexture("./data/tux.png");
+    if(t) {
+        glBindTexture(GL_TEXTURE_2D, t->id);
+
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+        glBegin(GL_POLYGON);
+        glTexCoord2f(0, 1); 
+        glVertex3f(-1, 1, 0);
+
+        glTexCoord2f(1, 1); 
+        glVertex3f(1, 1, 0);
+
+        glTexCoord2f(1, 0); 
+        glVertex3f(1, -1, 0);
+
+        glTexCoord2f(0, 0); 
+        glVertex3f(-1, -1, 0);
+        glEnd();
+
+        glDisable(GL_BLEND);
+    }
 
     SDL_GL_SwapWindow(window);
 }

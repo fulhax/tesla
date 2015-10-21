@@ -20,10 +20,10 @@ public:
     bool running;
     float time;
     int fps;
-private:
+
     Video video;
     ResourceHandler resources;
-
+private:
     uint64_t oldtime;
 };
 

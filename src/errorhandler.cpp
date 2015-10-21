@@ -39,6 +39,7 @@ void cfprintf(FILE *f, const char *fo, ...)
         if(*at == '^') {
             at++;
 
+            #ifdef __linux__
             switch(*at) {
                 case '0':
                     ao += ccolor(&out[ao]);
@@ -76,6 +77,7 @@ void cfprintf(FILE *f, const char *fo, ...)
                     ao += scolor(&out[ao], DIM, WHITE);
                     break;
             }
+            #endif
         } else {
             out[ao++] = *at;
         }
@@ -88,26 +90,23 @@ void cfprintf(FILE *f, const char *fo, ...)
 
 void lprintf(logType t, const char *f, ...)
 {
+    char output[MAX_STRLEN] = {0};
     va_list args;
     va_start(args, f);
 
+    vsprintf(output, f, args);
+
     switch(t) {
         case LOG_INFO:
-            cfprintf(stdout, "[^gINFO^0]: ");
-            vfprintf(stdout, f, args);
-            fprintf(stdout, "\n");
+            cfprintf(stdout, "^0[^gINFO^0]    %s\n", output);
             break;
 
         case LOG_WARNING:
-            cfprintf(stdout, "[^yWARNING^0]: ");
-            vfprintf(stdout, f, args);
-            fprintf(stdout, "\n");
+            cfprintf(stdout, "^0[^yWARNING^0] %s\n", output);
             break;
 
         case LOG_ERROR:
-            cfprintf(stderr, "[^rERROR^0]: ");
-            vfprintf(stderr, f, args);
-            fprintf(stderr, "\n");
+            cfprintf(stderr, "^0[^rERROR^0]   %s\n", output);
             break;
     }
 

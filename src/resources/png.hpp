@@ -1,6 +1,8 @@
 #ifndef PNG_HPP_
 #define PNG_HPP_
 
+#include <png.h>
+
 #include "../resource.hpp"
 
 class PNG_Resource : public TextureResource

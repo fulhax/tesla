@@ -55,10 +55,12 @@ public:
     ResourceHandler();
     ~ResourceHandler();
 
-    Resource *get(const char *filename);
-    void unload(const char *filename);
+    TextureResource *getTexture(const char *filename);
 private:
+    Resource *getResource(const char *filename);
     Resource *getByType(const char *ext);
+
+    void unload(const char *filename);
 
     resContainer resources;
 };

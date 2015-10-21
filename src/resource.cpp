@@ -17,7 +17,7 @@ struct findResource {
 
     bool operator()(Resource *r)
     {
-        return !(strcmp(r->filename, s) == 0);
+        return (strcmp(r->filename, s) == 0);
     }
 
     const char *s;
@@ -69,7 +69,12 @@ void ResourceHandler::unload(const char *filename)
     resources.erase(find_res);
 }
 
-Resource *ResourceHandler::get(const char *filename)
+TextureResource *ResourceHandler::getTexture(const char *filename)
+{
+    return reinterpret_cast<TextureResource*>(getResource(filename));
+}
+
+Resource *ResourceHandler::getResource(const char *filename)
 {
     auto find_res = std::find_if(
                         resources.begin(),
