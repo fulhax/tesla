@@ -1,10 +1,12 @@
 .PHONY: all clean
 .SILENT:
 
-all:
+build/Makefile: src/CMakeLists.txt
 	@if [ ! -d build ]; then mkdir build; fi;
+	@cd build; cmake ../src -DCMAKE_EXPORT_COMPILE_COMMANDS=1
+
+all: build/Makefile
 	@if [ ! -d bin ]; then mkdir bin; fi;
-	@cd build; cmake ../src -DCMAKE_EXPORT_COMPILE_COMMANDS=1; make
 	@if [ -a build/game ]; then mv build/game bin/game; fi;
 
 clean:
