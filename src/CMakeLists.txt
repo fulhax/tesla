@@ -4,8 +4,11 @@ project(game)
 
 include("../cmake/makelistabs.cmake")
 
-file(GLOB SOURCE_FILES
-    "./*.cpp"
+list(APPEND SOURCE_FILES
+    "./engine.cpp"
+    "./errorhandler.cpp"
+    "./main.cpp"
+    "./video.cpp"
     )
 
 list(APPEND INCLUDE_DIRS
