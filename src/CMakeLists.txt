@@ -9,6 +9,9 @@ list(APPEND SOURCE_FILES
     "./errorhandler.cpp"
     "./main.cpp"
     "./video.cpp"
+    "./resource.cpp"
+    "./resources/tga.cpp"
+    "./resources/png.cpp"
     )
 
 list(APPEND INCLUDE_DIRS
@@ -18,8 +21,8 @@ list(APPEND INCLUDE_DIRS
 list(APPEND LIBRARY_DIRS
     )
 
-set(CMAKE_C_FLAGS "-O0 -Wall -g")
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11")
+set(CMAKE_CXX_FLAGS "-O0 -Wall -g")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 makelistabs("${INCLUDE_DIRS}" INCLUDE_DIRS)
 makelistabs("${LIBRARY_DIRS}" LIBRARY_DIRS)

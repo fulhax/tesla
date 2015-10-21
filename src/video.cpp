@@ -49,7 +49,12 @@ int Video::init(int width, int height)
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
 
-    gluPerspective(45, static_cast<float>(width / height), 0.1f, 100.0f);
+    gluPerspective(
+        45,
+        static_cast<float>(width) / static_cast<float>(height),
+        0.1f,
+        100.0f);
+
     glMatrixMode(GL_MODELVIEW);
 
     lprintf(LOG_INFO, "Video started successfully");

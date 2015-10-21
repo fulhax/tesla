@@ -5,6 +5,7 @@
 
 #include "video.hpp"
 #include "errorhandler.hpp"
+#include "resource.hpp"
 
 class Engine
 {
@@ -21,6 +22,7 @@ public:
     int fps;
 private:
     Video video;
+    ResourceHandler resources;
 
     uint64_t oldtime;
 };
