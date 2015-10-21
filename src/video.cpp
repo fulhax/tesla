@@ -5,6 +5,12 @@
 
 int Video::init(int width, int height)
 {
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
+
+    SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+
     SDL_RendererInfo ri;
     int ret = SDL_CreateWindowAndRenderer(
                   width,
@@ -59,6 +65,23 @@ int Video::init(int width, int height)
     glMatrixMode(GL_MODELVIEW);
 
     lprintf(LOG_INFO, "Video started successfully");
+    lprintf(
+        LOG_INFO,
+        "^cOpenGL:^0\t%s",
+        glGetString(GL_VERSION));
+    lprintf(
+        LOG_INFO,
+        "^cShaderModel:^0\t%s",
+        glGetString(GL_SHADING_LANGUAGE_VERSION));
+    lprintf(
+        LOG_INFO,
+        "^cVendor:^0\t%s",
+        glGetString(GL_VENDOR));
+    lprintf(
+        LOG_INFO,
+        "^cRenderer:^0\t%s",
+        glGetString(GL_RENDERER));
+
     return 0;
 }
 
