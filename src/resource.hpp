@@ -44,12 +44,10 @@ public:
         type   = 0;
 
         glGenTextures(1, &id);
-        printf("init!\n");
     }
     ~TextureResource()
     {
         glDeleteTextures(1, &id);
-        printf("uninit!\n");
     }
 };
 
