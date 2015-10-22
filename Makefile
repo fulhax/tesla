@@ -49,7 +49,8 @@ ${BUILD_DIR}/$(UNAME)/$(BUILD_TYPE)/Makefile: src/CMakeLists.txt
 	@cd "$(BUILD_DIR)/$(UNAME)/$(BUILD_TYPE)" && \
 		cmake -G $(BUILD_TARGET) \
 		-DCMAKE_BUILD_TYPE=$(BUILD_INFO) \
-		"$(BASE_DIR)/src"
+		"$(BASE_DIR)/src" \
+		 -DCMAKE_EXPORT_COMPILE_COMMANDS=1
 
 clean:
 	@make -C "$(BUILD_DIR)/$(UNAME)/$(BUILD_TYPE)" clean
