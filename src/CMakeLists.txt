@@ -12,6 +12,8 @@ list(APPEND SOURCE_FILES
     "./resource.cpp"
     "./resources/tga.cpp"
     "./resources/png.cpp"
+    "./resources/obj.cpp"
+    "./fast_obj_loader/fast_obj_loader.cpp"
     )
 
 list(APPEND INCLUDE_DIRS
@@ -22,6 +24,7 @@ list(APPEND LIBRARY_DIRS
     )
 
 set(CMAKE_CXX_FLAGS "-Wall -std=c++11")
+add_definitions("-DGL_GLEXT_PROTOTYPES")
 
 makelistabs("${INCLUDE_DIRS}" INCLUDE_DIRS)
 makelistabs("${LIBRARY_DIRS}" LIBRARY_DIRS)

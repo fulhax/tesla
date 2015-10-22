@@ -10,6 +10,9 @@
 #include "resources/tga.hpp"
 #include "resources/png.hpp"
 
+// ModelResource
+#include "resources/obj.hpp"
+
 struct findResource {
     explicit findResource(const char *s)
     {
@@ -51,6 +54,8 @@ Resource *ResourceHandler::getByType(const char *ext)
         res = new TGA_Resource;
     } else if(!strcmp("png", ext)) {
         res = new PNG_Resource;
+    } else if(!strcmp("obj", ext)) {
+        res = new OBJ_Resource;
     }
 
     return res;
@@ -102,6 +107,11 @@ void ResourceHandler::update()
 
         i += EVENT_SIZE + event.len;
     } while(i < length);
+}
+
+ModelResource *ResourceHandler::getModel(const char *filename)
+{
+    return reinterpret_cast<ModelResource *>(getResource(filename));
 }
 
 TextureResource *ResourceHandler::getTexture(const char *filename)

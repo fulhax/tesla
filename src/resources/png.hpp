@@ -12,7 +12,6 @@ public:
     ~PNG_Resource();
 
     int load(const char *filename);
-    void unload();
 };
 
 #endif // PNG_HPP_

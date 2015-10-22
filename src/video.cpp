@@ -85,35 +85,25 @@ int Video::init(int width, int height)
     return 0;
 }
 
+void Video::checkOpenGLErrors()
+{
+    GLenum err = glGetError();
+
+    while(err != GL_NO_ERROR) {
+        lprintf(LOG_ERROR, "%i, %s", err, gluErrorString(err));
+        err = glGetError();
+    }
+}
+
 void Video::update()
 {
+    checkOpenGLErrors();
+
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
-    glTranslatef(0,0,-10);
 
-    TextureResource* t = engine.resources.getTexture("tux.png");
-    if(t) {
-        glBindTexture(GL_TEXTURE_2D, t->id);
-
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-        glBegin(GL_POLYGON);
-        glTexCoord2f(0, 1); 
-        glVertex3f(-1, 1, 0);
-
-        glTexCoord2f(1, 1); 
-        glVertex3f(1, 1, 0);
-
-        glTexCoord2f(1, 0); 
-        glVertex3f(1, -1, 0);
-
-        glTexCoord2f(0, 0); 
-        glVertex3f(-1, -1, 0);
-        glEnd();
-
-        glDisable(GL_BLEND);
-    }
+    TextureResource* t = engine.resources.getTexture("WoodResource.png");
+    ModelResource* m = engine.resources.getModel("WoodResource.obj");
 
     SDL_GL_SwapWindow(window);
 }

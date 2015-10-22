@@ -6,6 +6,11 @@
 
 #include <GL/glu.h>
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/euler_angles.hpp>
+
 class Video
 {
 public:
@@ -19,6 +24,8 @@ public:
     SDL_Renderer *renderer;
     SDL_Window *window;
     SDL_GLContext context;
+private:
+    void checkOpenGLErrors();
 };
 
 #endif // VIDEO_HPP_

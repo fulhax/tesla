@@ -51,6 +51,44 @@ public:
     }
 };
 
+class ShaderResource : public Resource
+{
+public:
+    ShaderResource()
+    {
+    }
+    ~ShaderResource()
+    {
+    }
+};
+
+class ModelResource : public Resource
+{
+public:
+    int num_tris;
+
+    uint32_t vertex_buffer;
+    uint32_t indices_buffer;
+    uint32_t uv_buffer;
+    uint32_t normals_buffer;
+
+    ModelResource()
+    {
+        num_tris = 0;
+        glGenBuffers(1, &vertex_buffer);
+        glGenBuffers(1, &indices_buffer);
+        glGenBuffers(1, &uv_buffer);
+        glGenBuffers(1, &normals_buffer);
+    }
+    ~ModelResource()
+    {
+        glDeleteBuffers(1, &vertex_buffer);
+        glDeleteBuffers(1, &indices_buffer);
+        glDeleteBuffers(1, &uv_buffer);
+        glDeleteBuffers(1, &normals_buffer);
+    }
+};
+
 typedef std::vector<Resource *> resContainer;
 
 class ResourceHandler
@@ -63,6 +101,7 @@ public:
     void update();
 
     TextureResource *getTexture(const char *filename);
+    ModelResource *getModel(const char *filename);
 private:
     Resource *getResource(const char *filename);
     Resource *getByType(const char *ext);

@@ -10,7 +10,6 @@ public:
     ~TGA_Resource();
 
     int load(const char *filename);
-    void unload();
 };
 
 #endif // TGA_HPP_
