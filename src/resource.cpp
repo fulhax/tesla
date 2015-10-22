@@ -38,6 +38,7 @@ ResourceHandler::~ResourceHandler()
         delete resources[i];
     }
 
+    resources.clear();
     inotify_rm_watch(inotify, watcher);
     close(inotify);
 }
@@ -95,8 +96,7 @@ void ResourceHandler::update()
             if(find_res != resources.end()) {
                 lprintf(LOG_INFO, "Unloading ^g\"%s\"^0.", event.name);
                 resources.erase(find_res);
-            } else {
-                printf("nonono %s!\n", event.name);
+                delete *find_res;
             }
         }
 
