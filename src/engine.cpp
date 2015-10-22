@@ -1,5 +1,7 @@
 #include "engine.hpp"
 
+Engine engine;
+
 Engine::Engine()
 {
     running = true;
@@ -22,6 +24,7 @@ int Engine::init()
         return 1;
     }
 
+    resources.init();
     if(video.init()) {
         running = false;
         return 1;
@@ -66,4 +69,5 @@ void Engine::update()
     }
 
     video.update();
+    resources.update();
 }

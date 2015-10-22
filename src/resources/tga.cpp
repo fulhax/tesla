@@ -1,7 +1,7 @@
 #include "tga.hpp"
 
-#include <stdio.h>
 #include <memory.h>
+#include <stdio.h>
 
 TGA_Resource::TGA_Resource()
 {

@@ -3,11 +3,15 @@
 
 #include <SDL2/SDL_opengl.h>
 #include <unistd.h>
+#include <stdio.h>
 #include <GL/glu.h>
 
 #include <vector>
 
 #include "errorhandler.hpp"
+
+#define EVENT_SIZE (sizeof(inotify_event))
+#define BUF_LEN (1024 * (EVENT_SIZE + 16))
 
 class Resource
 {
@@ -55,14 +59,19 @@ public:
     ResourceHandler();
     ~ResourceHandler();
 
+    int init();
+    void update();
+
     TextureResource *getTexture(const char *filename);
 private:
     Resource *getResource(const char *filename);
     Resource *getByType(const char *ext);
 
-    void unload(const char *filename);
-
     resContainer resources;
+
+    char datapath[FILENAME_MAX];
+    int watcher;
+    int inotify;
 };
 
 #endif // RESOURCE_HPP_

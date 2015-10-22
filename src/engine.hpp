@@ -27,6 +27,6 @@ private:
     uint64_t oldtime;
 };
 
-static Engine engine;
+extern Engine engine;
 
 #endif // ENGINE_HPP_

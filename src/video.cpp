@@ -91,7 +91,7 @@ void Video::update()
     glLoadIdentity();
     glTranslatef(0,0,-10);
 
-    TextureResource* t = engine.resources.getTexture("./data/tux.png");
+    TextureResource* t = engine.resources.getTexture("tux.png");
     if(t) {
         glBindTexture(GL_TEXTURE_2D, t->id);
 

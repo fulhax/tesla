@@ -1,7 +1,8 @@
 #include "resource.hpp"
 
-#include <stdio.h>
 #include <string.h>
+#include <sys/inotify.h>
+#include <poll.h>
 
 #include <algorithm>
 
@@ -25,6 +26,9 @@ struct findResource {
 
 ResourceHandler::ResourceHandler()
 {
+    watcher = 0;
+    inotify = 0;
+    snprintf(datapath, FILENAME_MAX, "./data");
 }
 
 ResourceHandler::~ResourceHandler()
@@ -33,6 +37,9 @@ ResourceHandler::~ResourceHandler()
         lprintf(LOG_INFO, "Unloading ^g\"%s\"^0.", resources[i]->filename);
         delete resources[i];
     }
+
+    inotify_rm_watch(inotify, watcher);
+    close(inotify);
 }
 
 Resource *ResourceHandler::getByType(const char *ext)
@@ -48,34 +55,65 @@ Resource *ResourceHandler::getByType(const char *ext)
     return res;
 }
 
-void ResourceHandler::unload(const char *filename)
+int ResourceHandler::init()
 {
-    auto find_res = std::find_if(
-                        resources.begin(),
-                        resources.end(),
-                        findResource(filename));
+    inotify = inotify_init1(IN_NONBLOCK);
 
-    if(find_res == resources.end()) {
-        lprintf(
-            LOG_WARNING,
-            "Unable to unload ^g\"%s\"^0, resource not loaded!",
-            filename);
-
-        return;
+    if(inotify < 0) {
+        lprintf(LOG_WARNING, "Failed to start inotify!");
+        return 1;
     }
 
-    lprintf(LOG_INFO, "Unloading ^g\"%s\"^0.", filename);
+    watcher = inotify_add_watch(inotify, datapath, IN_CLOSE_WRITE);
+    lprintf(LOG_INFO, "Watching %s for filechanges", datapath);
 
-    resources.erase(find_res);
+    return 0;
+}
+
+void ResourceHandler::update()
+{
+    int length = 0;
+    int i = 0;
+    char buffer[BUF_LEN] = {0};
+
+    do {
+        length = read(inotify, buffer, BUF_LEN);
+
+        if(length < 0) {
+            return;
+        }
+
+        const inotify_event &event =
+            reinterpret_cast<const inotify_event &>(buffer[i]);
+
+        if(event.mask & IN_CLOSE_WRITE) {
+            auto find_res = std::find_if(
+                                resources.begin(),
+                                resources.end(),
+                                findResource(event.name));
+
+            if(find_res != resources.end()) {
+                lprintf(LOG_INFO, "Unloading ^g\"%s\"^0.", event.name);
+                resources.erase(find_res);
+            } else {
+                printf("nonono %s!\n", event.name);
+            }
+        }
+
+        i += EVENT_SIZE + event.len;
+    } while(i < length);
 }
 
 TextureResource *ResourceHandler::getTexture(const char *filename)
 {
-    return reinterpret_cast<TextureResource*>(getResource(filename));
+    return reinterpret_cast<TextureResource *>(getResource(filename));
 }
 
 Resource *ResourceHandler::getResource(const char *filename)
 {
+    char datafile[FILENAME_MAX];
+    snprintf(datafile, FILENAME_MAX, "%s/%s", datapath, filename);
+
     auto find_res = std::find_if(
                         resources.begin(),
                         resources.end(),
@@ -91,7 +129,7 @@ Resource *ResourceHandler::getResource(const char *filename)
         Resource *res = getByType(ext);
 
         if(res != 0) {
-            if(res->load(filename)) {
+            if(res->load(datafile)) {
                 res->filename = new char[strlen(filename) + 1];
                 snprintf(res->filename, strlen(filename) + 1, "%s", filename);
 
