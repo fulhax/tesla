@@ -38,7 +38,7 @@ endif
 all: package
 
 build: $(BUILD_DIR)/$(UNAME)/$(BUILD_TYPE)/Makefile
-	@make -C $(BUILD_DIR)/$(UNAME)/$(BUILD_TYPE)
+	$(MAKE) -C $(BUILD_DIR)/$(UNAME)/$(BUILD_TYPE)
 
 package: build
 	mkdir -p bin
@@ -53,7 +53,7 @@ ${BUILD_DIR}/$(UNAME)/$(BUILD_TYPE)/Makefile: src/CMakeLists.txt
 		 -DCMAKE_EXPORT_COMPILE_COMMANDS=1
 
 clean:
-	@make -C "$(BUILD_DIR)/$(UNAME)/$(BUILD_TYPE)" clean
+	$(MAKE) -C "$(BUILD_DIR)/$(UNAME)/$(BUILD_TYPE)" clean
 
 distclean:
 	@rm -rf $(BUILD_DIR)
