@@ -21,28 +21,31 @@ list(APPEND INCLUDE_DIRS
 list(APPEND LIBRARY_DIRS
     )
 
-set(CMAKE_CXX_FLAGS "-O0 -Wall -g")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+set(CMAKE_CXX_FLAGS "-Wall -std=c++11")
 
 makelistabs("${INCLUDE_DIRS}" INCLUDE_DIRS)
 makelistabs("${LIBRARY_DIRS}" LIBRARY_DIRS)
+include_directories(${INCLUDE_DIRS})
 
 find_package(OpenGL REQUIRED)
 
-include_directories(${INCLUDE_DIRS} ${OPENGL_INCLUDE_DIR})
+include_directories(${OPENGL_INCLUDE_DIR})
 link_directories(${OPENGL_LIBRARY_DIRS} ${LIBRARY_DIRS})
 add_definitions(${OPENGL_DEFINITIONS})
 
 INCLUDE(FindPkgConfig)
 PKG_SEARCH_MODULE(SDL2 REQUIRED sdl2)
-
-include_directories(${INCLUDE_DIRS} ${SDL2_INCLUDE_DIR})
+include_directories(${SDL2_INCLUDE_DIR})
 link_directories(${SDL2_LIBRARY_DIRS} ${LIBRARY_DIRS})
 add_definitions(${SDL2_DEFINITIONS})
+
+find_package(PNG REQUIRED)
+include_directories(${PNG_INCLUDE_DIRS})
+
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 
 target_link_libraries(${PROJECT_NAME}
     ${OPENGL_LIBRARIES}
     ${SDL2_LIBRARIES}
-    png
+    ${PNG_LIBRARIES}
     )
