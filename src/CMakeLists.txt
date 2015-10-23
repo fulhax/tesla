@@ -23,8 +23,18 @@ list(APPEND INCLUDE_DIRS
 list(APPEND LIBRARY_DIRS
     )
 
-set(CMAKE_CXX_FLAGS "-Wall -std=c++11")
+set(CMAKE_CXX_FLAGS "-Wall -Wno-unknown-pragmas -std=c++11")
 add_definitions("-DGL_GLEXT_PROTOTYPES")
+
+option(USEOPENMP "enable openmp mutlithreading" ON)
+
+if(USEOPENMP)
+    find_package(OpenMP)
+    if (OPENMP_FOUND)
+        set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+        set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+    endif()
+endif()
 
 makelistabs("${INCLUDE_DIRS}" INCLUDE_DIRS)
 makelistabs("${LIBRARY_DIRS}" LIBRARY_DIRS)
