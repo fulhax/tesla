@@ -46,6 +46,9 @@ include_directories(${OPENGL_INCLUDE_DIR})
 link_directories(${OPENGL_LIBRARY_DIRS} ${LIBRARY_DIRS})
 add_definitions(${OPENGL_DEFINITIONS})
 
+find_package(glm REQUIRED)
+include_directories(${GLM_INCLUDE_DIRS})
+
 INCLUDE(FindPkgConfig)
 PKG_SEARCH_MODULE(SDL2 REQUIRED sdl2)
 include_directories(${SDL2_INCLUDE_DIR})
