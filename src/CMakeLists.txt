@@ -24,7 +24,7 @@ list(APPEND INCLUDE_DIRS
 list(APPEND LIBRARY_DIRS
     )
 
-set(CMAKE_CXX_FLAGS "-Wall -std=c++11")
+set(CMAKE_CXX_FLAGS "-Wall -Wno-unknown-pragmas -std=c++11")
 add_definitions("-DGL_GLEXT_PROTOTYPES")
 
 option(USEOPENMP "enable openmp mutlithreading" ON)
