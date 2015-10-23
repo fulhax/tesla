@@ -4,9 +4,10 @@
 #include <SDL2/SDL_opengl.h>
 #include <unistd.h>
 #include <stdio.h>
+#include <string.h>
 #include <GL/glu.h>
 
-#include <vector>
+#include <map>
 
 #include "errorhandler.hpp"
 
@@ -18,12 +19,9 @@ class Resource
 public:
     Resource()
     {
-        filename = 0;
     }
     virtual ~Resource() {}
     virtual int load(const char *filename) = 0;
-
-    char *filename;
 };
 
 class TextureResource : public Resource
@@ -89,8 +87,6 @@ public:
     }
 };
 
-typedef std::vector<Resource *> resContainer;
-
 class ResourceHandler
 {
 public:
@@ -103,10 +99,16 @@ public:
     TextureResource *getTexture(const char *filename);
     ModelResource *getModel(const char *filename);
 private:
+    struct cmp_char {
+        bool operator()(char const *a, char const *b)
+        {
+            return (strcmp(a, b) < 0);
+        }
+    };
+    std::map<const char *, Resource *, cmp_char> resources;
+
     Resource *getResource(const char *filename);
     Resource *getByType(const char *ext);
-
-    resContainer resources;
 
     char datapath[FILENAME_MAX];
     int watcher;

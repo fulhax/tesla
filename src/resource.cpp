@@ -1,6 +1,5 @@
 #include "resource.hpp"
 
-#include <string.h>
 #include <sys/inotify.h>
 #include <poll.h>
 
@@ -13,20 +12,6 @@
 // ModelResource
 #include "resources/obj.hpp"
 
-struct findResource {
-    explicit findResource(const char *s)
-    {
-        this->s = s;
-    }
-
-    bool operator()(Resource *r)
-    {
-        return (strcmp(r->filename, s) == 0);
-    }
-
-    const char *s;
-};
-
 ResourceHandler::ResourceHandler()
 {
     watcher = 0;
@@ -36,9 +21,9 @@ ResourceHandler::ResourceHandler()
 
 ResourceHandler::~ResourceHandler()
 {
-    for(uint32_t i = 0; i < resources.size(); ++i) {
-        lprintf(LOG_INFO, "Unloading ^g\"%s\"^0.", resources[i]->filename);
-        delete resources[i];
+    for(auto res : resources) {
+        lprintf(LOG_INFO, "Unloading ^g\"%s\"^0.", res.first);
+        delete res.second;
     }
 
     resources.clear();
@@ -93,15 +78,16 @@ void ResourceHandler::update()
             reinterpret_cast<const inotify_event &>(buffer[i]);
 
         if(event.mask & IN_CLOSE_WRITE) {
-            auto find_res = std::find_if(
-                                resources.begin(),
-                                resources.end(),
-                                findResource(event.name));
+            auto res = resources.find(event.name);
 
-            if(find_res != resources.end()) {
+            if(res != resources.end()) {
                 lprintf(LOG_INFO, "Unloading ^g\"%s\"^0.", event.name);
-                resources.erase(find_res);
-                delete *find_res;
+                delete res->second;
+                resources.erase(res);
+            } else {
+                for(auto r : resources) {
+                    printf("Resource: %s\n", r.first);
+                }
             }
         }
 
@@ -124,13 +110,10 @@ Resource *ResourceHandler::getResource(const char *filename)
     char datafile[FILENAME_MAX];
     snprintf(datafile, FILENAME_MAX, "%s/%s", datapath, filename);
 
-    auto find_res = std::find_if(
-                        resources.begin(),
-                        resources.end(),
-                        findResource(filename));
+    auto res = resources.find(filename);
 
-    if(find_res != resources.end()) {
-        return *find_res;
+    if(res != resources.end()) {
+        return res->second;
     }
 
     const char *ext = strrchr(filename, '.') + 1;
@@ -140,12 +123,8 @@ Resource *ResourceHandler::getResource(const char *filename)
 
         if(res != 0) {
             if(res->load(datafile)) {
-                res->filename = new char[strlen(filename) + 1];
-                snprintf(res->filename, strlen(filename) + 1, "%s", filename);
-
                 lprintf(LOG_INFO, "^g\"%s\"^0 loaded.", filename);
-
-                resources.push_back(res);
+                resources[filename] = res;
                 return res;
             }
 
