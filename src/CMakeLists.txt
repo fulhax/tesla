@@ -13,17 +13,18 @@ list(APPEND SOURCE_FILES
     "./resources/tga.cpp"
     "./resources/png.cpp"
     "./resources/obj.cpp"
-    "./fast_obj_loader/fast_obj_loader.cpp"
+    "../externals/fast_obj_loader/fast_obj_loader.cpp"
     )
 
 list(APPEND INCLUDE_DIRS
     "./"
+    "../externals/fast_obj_loader/"
     )
 
 list(APPEND LIBRARY_DIRS
     )
 
-set(CMAKE_CXX_FLAGS "-Wall -Wno-unknown-pragmas -std=c++11")
+set(CMAKE_CXX_FLAGS "-Wall -std=c++11")
 add_definitions("-DGL_GLEXT_PROTOTYPES")
 
 option(USEOPENMP "enable openmp mutlithreading" ON)

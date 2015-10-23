@@ -1,6 +1,6 @@
 #include "obj.hpp"
 
-#include "../fast_obj_loader/fast_obj_loader.h"
+#include <fast_obj_loader.h>
 
 OBJ_Resource::OBJ_Resource()
 {
@@ -56,8 +56,4 @@ int OBJ_Resource::load(const char *filename)
     lprintf(LOG_ERROR, "Unable to load ^g\"%s\"^0", filename);
 
     return 0;
-}
-
-void OBJ_Resource::unload()
-{
 }

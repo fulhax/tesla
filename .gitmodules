@@ -1,3 +1,6 @@
 [submodule "src/fast_obj_loader"]
 	path = src/fast_obj_loader
 	url = https://github.com/FredrikHson/fast_obj_loader
+[submodule "externals/fast_obj_loader"]
+	path = externals/fast_obj_loader
+	url = git://github.com/FredrikHson/fast_obj_loader.git
