@@ -91,13 +91,13 @@ void Video::update()
     checkOpenGLErrors();
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    camera.pos = glm::vec3(0,0,-5);
+    camera.pos = glm::vec3(0, 0, -5);
 
     static glm::mat4 mProjection =
         glm::perspective(
             45.0f,
             static_cast<float>(
-            static_cast<float>(screen_width) / static_cast<float>(screen_height)
+                static_cast<float>(screen_width) / static_cast<float>(screen_height)
             ),
             0.1f,
             1000.0f);
@@ -153,6 +153,7 @@ void Video::update()
         glDisableVertexAttribArray(1);
         glDisableVertexAttribArray(2);
     }
+
     glUseProgram(0);
 
     SDL_GL_SwapWindow(window);

@@ -13,7 +13,7 @@ public:
 
     int load(const char *filename);
 private:
-    obj* data;
+    obj *data;
 };
 
 #endif // OBJ_HPP_

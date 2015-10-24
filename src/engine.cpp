@@ -25,6 +25,7 @@ int Engine::init()
     }
 
     resources.init();
+
     if(video.init()) {
         running = false;
         return 1;

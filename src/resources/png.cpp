@@ -69,7 +69,7 @@ int PNG_Resource::load(const char *filename)
 
     png_read_info(png, info);
 
-    int* pbpp = reinterpret_cast<int*>(&bpp);
+    int *pbpp = reinterpret_cast<int *>(&bpp);
     png_get_IHDR(png, info, &width, &height, pbpp, NULL, NULL, NULL, NULL);
 
     png_read_update_info(png, info);
@@ -77,7 +77,8 @@ int PNG_Resource::load(const char *filename)
     int imageSize = png_get_rowbytes(png, info);
     imageSize += 3 - ((imageSize - 1) % 4);
 
-    png_bytep imageData = new png_byte[imageSize * height * sizeof(png_byte) + 15];
+    png_bytep imageData = new png_byte[imageSize * height * sizeof(
+                                           png_byte) + 15];
     png_bytepp imageDataPtr = new png_bytep[height];
 
     for(uint32_t i = 0; i < height; ++i) {

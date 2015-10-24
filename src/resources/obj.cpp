@@ -17,6 +17,7 @@ int OBJ_Resource::load(const char *filename)
     if(data) {
         delete data;
     }
+
     data = loadObj(filename);
 
     if(data) {

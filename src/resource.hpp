@@ -53,7 +53,7 @@ public:
 class ShaderResource : public Resource
 {
 public:
-    std::vector<Shader*> parents;
+    std::vector<Shader *> parents;
     uint32_t handle;
 
     ShaderResource()
@@ -65,6 +65,7 @@ public:
         for(auto p : parents) {
             p->unload();
         }
+
         parents.clear();
 
         if(handle) {
@@ -111,7 +112,7 @@ public:
 
     TextureResource *getTexture(const char *filename);
     ModelResource *getModel(const char *filename);
-    ShaderResource *getShader(Shader* parent, const char *filename);
+    ShaderResource *getShader(Shader *parent, const char *filename);
 private:
     std::map<std::string, Resource *> resources;
     std::map<int, std::string> watchers;

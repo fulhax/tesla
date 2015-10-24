@@ -6,7 +6,9 @@ int main(int argc, char *argv[])
         while(engine.running) {
             engine.update();
         }
+
         engine.shutdown();
     }
+
     return 0;
 }

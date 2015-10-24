@@ -64,7 +64,7 @@ int GLSL_Resource::load(const char *filename)
     fclose(file);
 
     handle = glCreateShader(type);
-    glShaderSource(handle, 1, const_cast<const char**>(&code), NULL);
+    glShaderSource(handle, 1, const_cast<const char **>(&code), NULL);
     delete [] code;
 
     glCompileShader(handle);

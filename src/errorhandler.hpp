@@ -26,6 +26,6 @@ enum logType {
     LOG_ERROR
 };
 
-void lprintf(logType t, const char* f, ...);
+void lprintf(logType t, const char *f, ...);
 
 #endif // ERRORHANDLER_HPP_

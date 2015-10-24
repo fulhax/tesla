@@ -40,6 +40,7 @@ void cfprintf(FILE *f, const char *fo, ...)
             at++;
 
             #ifdef __linux__
+
             switch(*at) {
                 case '0':
                     ao += ccolor(&out[ao]);
@@ -77,6 +78,7 @@ void cfprintf(FILE *f, const char *fo, ...)
                     ao += scolor(&out[ao], DIM, WHITE);
                     break;
             }
+
             #endif
         } else {
             out[ao++] = *at;

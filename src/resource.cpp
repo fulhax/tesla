@@ -85,7 +85,7 @@ void ResourceHandler::watchDir(const char *dirname)
         if(strncmp(entry->d_name, "..", 2) != 0 &&
             strncmp(entry->d_name, ".", 1) != 0) {
 
-            if (entry->d_type == DT_DIR) {
+            if(entry->d_type == DT_DIR) {
                 snprintf(
                     fullpath,
                     FILENAME_MAX,
@@ -167,9 +167,11 @@ ShaderResource *ResourceHandler::getShader(Shader *parent,
         const char *filename)
 {
     ShaderResource *s = reinterpret_cast<ShaderResource *>(getResource(filename));
-    if (s) {
+
+    if(s) {
         s->parents.push_back(parent);
     }
+
     return s;
 }
 
