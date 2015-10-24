@@ -11,6 +11,7 @@ list(APPEND SOURCE_FILES
     "./video.cpp"
     "./resource.cpp"
     "./shader.cpp"
+    "./entity.cpp"
     "./resources/tga.cpp"
     "./resources/png.cpp"
     "./resources/obj.cpp"

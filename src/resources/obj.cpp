@@ -3,6 +3,7 @@
 OBJ_Resource::OBJ_Resource()
 {
     data = 0;
+    faces = 0;
 }
 
 OBJ_Resource::~OBJ_Resource()
@@ -10,15 +11,27 @@ OBJ_Resource::~OBJ_Resource()
     if(data) {
         delete data;
     }
+
+    if(faces) {
+        delete [] faces;
+    }
 }
 
 int OBJ_Resource::load(const char *filename)
 {
     if(data) {
         delete data;
+        data = 0;
     }
 
-    data = loadObj(filename);
+    if(faces) {
+        delete [] faces;
+        faces = 0;
+    }
+
+    obj *tmpObj = loadObj(filename);
+    data = ObjMakeUniqueFullVerts(tmpObj);
+    delete tmpObj;
 
     if(data) {
         num_tris = data->numfaces;
@@ -44,11 +57,19 @@ int OBJ_Resource::load(const char *filename)
             data->uvs,
             GL_STATIC_DRAW);
 
+        faces = new obj_face[data->numfaces];
+
+        for(int i = 0; i < data->numfaces; ++i) {
+            faces[i].f[0] = data->faces[i].verts[0];
+            faces[i].f[1] = data->faces[i].verts[1];
+            faces[i].f[2] = data->faces[i].verts[2];
+        }
+
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices_buffer);
         glBufferData(
-            GL_ARRAY_BUFFER,
-            data->numfaces * sizeof(vec3),
-            data->faces,
+            GL_ELEMENT_ARRAY_BUFFER,
+            data->numfaces * sizeof(obj_face),
+            faces,
             GL_STATIC_DRAW);
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);

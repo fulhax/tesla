@@ -48,6 +48,8 @@ int Video::init(int width, int height)
     }
 
     glEnable(GL_TEXTURE_2D);
+    glEnable(GL_CULL_FACE);
+    glEnable(GL_DEPTH_TEST);
 
     glClearColor(0, 0.3f, 0.3f, 0);
     glViewport(0, 0, width, height);
@@ -70,8 +72,10 @@ int Video::init(int width, int height)
         "^cRenderer:^0\t%s",
         glGetString(GL_RENDERER));
 
-    testshader.attach("shaders/default.frag");
-    testshader.attach("shaders/default.vert");
+    testentity.init("WoodResource.obj","WoodResource.png");
+
+    testentity.shader.attach("shaders/default.frag");
+    testentity.shader.attach("shaders/default.vert");
 
     return 0;
 }
@@ -113,48 +117,7 @@ void Video::update()
     glm::mat4 mCamera = mTranslate * mRotation;
     glm::mat4 mView = glm::inverse(mCamera);
 
-    if(testshader.use()) {
-        glm::mat4 mModel = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0));
-
-        TextureResource *t = engine.resources.getTexture("WoodResource.png");
-        ModelResource *m = engine.resources.getModel("WoodResource.obj");
-
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, t->id);
-
-        testshader.bindAttribLocation(0, "in_Position");
-        testshader.bindAttribLocation(1, "in_TexCoord");
-        testshader.bindAttribLocation(2, "in_Normal");
-
-        testshader.setUniform("DiffuseMap", 0);
-        testshader.setUniform("in_ModelMatrix", mModel);
-        testshader.setUniform("in_ProjMatrix", mProjection);
-        testshader.setUniform("in_ViewMatrix", mView);
-
-        glBindBuffer(GL_ARRAY_BUFFER, m->vertex_buffer);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), 0);
-        glEnableVertexAttribArray(0);
-
-        glBindBuffer(GL_ARRAY_BUFFER, m->uv_buffer);
-        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec2), 0);
-        glEnableVertexAttribArray(1);
-
-        glBindBuffer(GL_ARRAY_BUFFER, m->normals_buffer);
-        glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), 0);
-        glEnableVertexAttribArray(2);
-
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m->indices_buffer);
-        glDrawElements(GL_TRIANGLES, m->num_tris * 12, GL_UNSIGNED_INT, 0);
-
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-        glDisableVertexAttribArray(0);
-        glDisableVertexAttribArray(1);
-        glDisableVertexAttribArray(2);
-    }
-
-    glUseProgram(0);
+    testentity.draw(&mProjection, &mView);
 
     SDL_GL_SwapWindow(window);
 }

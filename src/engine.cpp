@@ -52,6 +52,7 @@ void Engine::update()
     static float timer = 0;
 
     if(timer >= 1.f) {
+        printf("FPS %d\n", fps);
         fps = 0;
         timer = time;
     } else {

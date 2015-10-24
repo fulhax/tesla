@@ -12,6 +12,7 @@
 #include <glm/gtx/euler_angles.hpp>
 
 #include "shader.hpp"
+#include "entity.hpp"
 
 #define RAD 0.017453292519943295769236907684886f
 
@@ -50,7 +51,7 @@ private:
     int screen_width;
     int screen_height;
 
-    Shader testshader;
+    Entity testentity;
 };
 
 #endif // VIDEO_HPP_
