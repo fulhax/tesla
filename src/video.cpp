@@ -8,6 +8,16 @@ int Video::init(int width, int height)
     screen_width = width;
     screen_height = height;
 
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
+
+    SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+
+    SDL_GL_SetAttribute(
+        SDL_GL_CONTEXT_PROFILE_MASK,
+        SDL_GL_CONTEXT_PROFILE_CORE);
+
     SDL_RendererInfo ri;
     int ret = SDL_CreateWindowAndRenderer(
                   width,
@@ -20,16 +30,6 @@ int Video::init(int width, int height)
         lprintf(LOG_ERROR, "Failed to create SDL window");
         return 1;
     }
-
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
-
-    SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
-    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-
-    SDL_GL_SetAttribute(
-        SDL_GL_CONTEXT_PROFILE_MASK,
-        SDL_GL_CONTEXT_PROFILE_CORE);
 
     context = SDL_GL_CreateContext(window);
 
@@ -91,7 +91,7 @@ void Video::update()
     checkOpenGLErrors();
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    camera.pos = glm::vec3(0, 0, -5);
+    camera.pos = glm::vec3(0, 0, 5);
 
     static glm::mat4 mProjection =
         glm::perspective(

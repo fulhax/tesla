@@ -21,6 +21,8 @@ int OBJ_Resource::load(const char *filename)
     data = loadObj(filename);
 
     if(data) {
+        num_tris = data->numfaces;
+
         glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
         glBufferData(
             GL_ARRAY_BUFFER,
