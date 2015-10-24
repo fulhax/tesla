@@ -2,6 +2,7 @@
 
 #include <sys/inotify.h>
 #include <poll.h>
+#include <dirent.h>
 
 #include <algorithm>
 
@@ -12,9 +13,11 @@
 // ModelResource
 #include "resources/obj.hpp"
 
+// ShaderResource
+#include "resources/glsl.hpp"
+
 ResourceHandler::ResourceHandler()
 {
-    watcher = 0;
     inotify = 0;
     snprintf(datapath, FILENAME_MAX, "./data");
 }
@@ -22,12 +25,17 @@ ResourceHandler::ResourceHandler()
 ResourceHandler::~ResourceHandler()
 {
     for(auto res : resources) {
-        lprintf(LOG_INFO, "Unloading ^g\"%s\"^0.", res.first);
+        lprintf(LOG_INFO, "Unloading ^g\"%s\"^0.", res.first.c_str());
         delete res.second;
     }
 
     resources.clear();
-    inotify_rm_watch(inotify, watcher);
+
+    for(auto watch : watchers) {
+        inotify_rm_watch(inotify, watch.first);
+    }
+
+    watchers.clear();
     close(inotify);
 }
 
@@ -35,15 +43,60 @@ Resource *ResourceHandler::getByType(const char *ext)
 {
     Resource *res = nullptr;
 
-    if(!strcmp("tga", ext)) {
+    if(strcmp("tga", ext) == 0) {
         res = new TGA_Resource;
-    } else if(!strcmp("png", ext)) {
+    } else if(strcmp("png", ext) == 0) {
         res = new PNG_Resource;
-    } else if(!strcmp("obj", ext)) {
+    } else if(strcmp("obj", ext) == 0) {
         res = new OBJ_Resource;
+    } else if(
+        strcmp("vs", ext) == 0 ||
+        strcmp("vert", ext) == 0 ||
+        strcmp("gs", ext) == 0 ||
+        strcmp("geom", ext) == 0 ||
+        strcmp("tcs", ext) == 0 ||
+        strcmp("tes", ext) == 0 ||
+        strcmp("fs", ext) == 0 ||
+        strcmp("frag", ext) == 0
+    ) {
+        res = new GLSL_Resource;
     }
 
     return res;
+}
+
+void ResourceHandler::watchDir(const char *dirname)
+{
+    DIR *dh;
+    dirent *entry;
+    char fullpath[FILENAME_MAX];
+
+    int watch = inotify_add_watch(inotify, dirname, IN_CLOSE_WRITE);
+    watchers[watch] = dirname;
+
+    lprintf(LOG_INFO, "Watching %s for filechanges", dirname);
+
+    if((dh = opendir(dirname)) == NULL) {
+        lprintf(LOG_ERROR, "Could not open directory ^g\"%s\"^0", dirname);
+        return;
+    }
+
+    while((entry = readdir(dh)) != NULL) {
+        if(strncmp(entry->d_name, "..", 2) != 0 &&
+            strncmp(entry->d_name, ".", 1) != 0) {
+
+            if (entry->d_type == DT_DIR) {
+                snprintf(
+                    fullpath,
+                    FILENAME_MAX,
+                    "%s/%s",
+                    dirname,
+                    entry->d_name);
+
+                watchDir(fullpath);
+            }
+        }
+    }
 }
 
 int ResourceHandler::init()
@@ -55,8 +108,7 @@ int ResourceHandler::init()
         return 1;
     }
 
-    watcher = inotify_add_watch(inotify, datapath, IN_CLOSE_WRITE);
-    lprintf(LOG_INFO, "Watching %s for filechanges", datapath);
+    watchDir(datapath);
 
     return 0;
 }
@@ -78,16 +130,22 @@ void ResourceHandler::update()
             reinterpret_cast<const inotify_event &>(buffer[i]);
 
         if(event.mask & IN_CLOSE_WRITE) {
-            auto res = resources.find(event.name);
+            char fullpath[FILENAME_MAX];
+            auto watch = watchers[event.wd];
+
+            snprintf(
+                fullpath,
+                FILENAME_MAX,
+                "%s/%s",
+                watch.c_str(),
+                event.name);
+
+            auto res = resources.find(fullpath);
 
             if(res != resources.end()) {
                 lprintf(LOG_INFO, "Unloading ^g\"%s\"^0.", event.name);
                 delete res->second;
                 resources.erase(res);
-            } else {
-                for(auto r : resources) {
-                    printf("Resource: %s\n", r.first);
-                }
             }
         }
 
@@ -105,12 +163,22 @@ TextureResource *ResourceHandler::getTexture(const char *filename)
     return reinterpret_cast<TextureResource *>(getResource(filename));
 }
 
+ShaderResource *ResourceHandler::getShader(Shader *parent,
+        const char *filename)
+{
+    ShaderResource *s = reinterpret_cast<ShaderResource *>(getResource(filename));
+    if (s) {
+        s->parents.push_back(parent);
+    }
+    return s;
+}
+
 Resource *ResourceHandler::getResource(const char *filename)
 {
-    char datafile[FILENAME_MAX];
-    snprintf(datafile, FILENAME_MAX, "%s/%s", datapath, filename);
+    char fullpath[FILENAME_MAX];
+    snprintf(fullpath, FILENAME_MAX, "%s/%s", datapath, filename);
 
-    auto res = resources.find(filename);
+    auto res = resources.find(fullpath);
 
     if(res != resources.end()) {
         return res->second;
@@ -121,22 +189,21 @@ Resource *ResourceHandler::getResource(const char *filename)
     if(ext) {
         Resource *res = getByType(ext);
 
-        if(res != 0) {
-            if(res->load(datafile)) {
+        if(res) {
+            if(res->load(fullpath)) {
                 lprintf(LOG_INFO, "^g\"%s\"^0 loaded.", filename);
-                resources[filename] = res;
+                resources[fullpath] = res;
                 return res;
             }
 
-            return nullptr;
-
+            return 0;
         }
     } else {
         lprintf(LOG_WARNING, "Unable to get extension from ^g\"%s\"^0!", filename);
-        return nullptr;
+        return 0;
     }
 
     lprintf(LOG_ERROR, "^g\"%s\"^0 invalid resource type ^r%s^0!", filename, ext);
 
-    return nullptr;
+    return 0;
 }

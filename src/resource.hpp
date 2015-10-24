@@ -8,8 +8,11 @@
 #include <GL/glu.h>
 
 #include <map>
+#include <vector>
+#include <string>
 
 #include "errorhandler.hpp"
+#include "shader.hpp"
 
 #define EVENT_SIZE (sizeof(inotify_event))
 #define BUF_LEN (1024 * (EVENT_SIZE + 16))
@@ -17,9 +20,7 @@
 class Resource
 {
 public:
-    Resource()
-    {
-    }
+    Resource() {}
     virtual ~Resource() {}
     virtual int load(const char *filename) = 0;
 };
@@ -52,11 +53,23 @@ public:
 class ShaderResource : public Resource
 {
 public:
+    std::vector<Shader*> parents;
+    uint32_t handle;
+
     ShaderResource()
     {
+        handle = 0;
     }
     ~ShaderResource()
     {
+        for(auto p : parents) {
+            p->unload();
+        }
+        parents.clear();
+
+        if(handle) {
+            glDeleteShader(handle);
+        }
     }
 };
 
@@ -98,20 +111,16 @@ public:
 
     TextureResource *getTexture(const char *filename);
     ModelResource *getModel(const char *filename);
+    ShaderResource *getShader(Shader* parent, const char *filename);
 private:
-    struct cmp_char {
-        bool operator()(char const *a, char const *b)
-        {
-            return (strcmp(a, b) < 0);
-        }
-    };
-    std::map<const char *, Resource *, cmp_char> resources;
+    std::map<std::string, Resource *> resources;
+    std::map<int, std::string> watchers;
 
+    void watchDir(const char *dirname);
     Resource *getResource(const char *filename);
     Resource *getByType(const char *ext);
 
     char datapath[FILENAME_MAX];
-    int watcher;
     int inotify;
 };
 

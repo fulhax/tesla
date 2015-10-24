@@ -11,21 +11,46 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/euler_angles.hpp>
 
+#include "shader.hpp"
+
+#define RAD 0.017453292519943295769236907684886f
+
+struct Camera {
+    glm::vec3 pos;
+
+    float yaw;
+    float pitch;
+
+    Camera()
+    {
+        pos = glm::vec3(0.0f, 0.0f, 0.0f);
+        yaw = 0;
+        pitch = 0;
+    }
+};
+
 class Video
 {
 public:
     Video();
     virtual ~Video();
 
-    int init(int width = 640, int height = 480);
+    int init(int width = 1024, int height = 768);
     void update();
     void shutdown();
 
     SDL_Renderer *renderer;
     SDL_Window *window;
     SDL_GLContext context;
+
+    Camera camera;
 private:
     void checkOpenGLErrors();
+
+    int screen_width;
+    int screen_height;
+
+    Shader testshader;
 };
 
 #endif // VIDEO_HPP_

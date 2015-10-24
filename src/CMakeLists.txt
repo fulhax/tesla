@@ -10,9 +10,11 @@ list(APPEND SOURCE_FILES
     "./main.cpp"
     "./video.cpp"
     "./resource.cpp"
+    "./shader.cpp"
     "./resources/tga.cpp"
     "./resources/png.cpp"
     "./resources/obj.cpp"
+    "./resources/glsl.cpp"
     "../externals/fast_obj_loader/fast_obj_loader.cpp"
     )
 

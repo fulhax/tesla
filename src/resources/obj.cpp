@@ -1,52 +1,55 @@
 #include "obj.hpp"
 
-#include <fast_obj_loader.h>
-
 OBJ_Resource::OBJ_Resource()
 {
+    data = 0;
 }
 
 OBJ_Resource::~OBJ_Resource()
 {
+    if(data) {
+        delete data;
+    }
 }
 
 int OBJ_Resource::load(const char *filename)
 {
-    obj *m = loadObj(filename);
+    if(data) {
+        delete data;
+    }
+    data = loadObj(filename);
 
-    if(m) {
+    if(data) {
         glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
         glBufferData(
             GL_ARRAY_BUFFER,
-            m->numverts * sizeof(vec3),
-            m->verts,
+            data->numverts * sizeof(vec3),
+            data->verts,
             GL_STATIC_DRAW);
 
         glBindBuffer(GL_ARRAY_BUFFER, normals_buffer);
         glBufferData(
             GL_ARRAY_BUFFER,
-            m->numnormals * sizeof(vec3),
-            m->normals,
+            data->numnormals * sizeof(vec3),
+            data->normals,
             GL_STATIC_DRAW);
 
         glBindBuffer(GL_ARRAY_BUFFER, uv_buffer);
         glBufferData(
             GL_ARRAY_BUFFER,
-            m->numuvs * sizeof(vec2),
-            m->uvs,
+            data->numuvs * sizeof(vec2),
+            data->uvs,
             GL_STATIC_DRAW);
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices_buffer);
         glBufferData(
             GL_ARRAY_BUFFER,
-            m->numfaces * sizeof(vec3),
-            m->faces,
+            data->numfaces * sizeof(vec3),
+            data->faces,
             GL_STATIC_DRAW);
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-        delete m;
 
         lprintf(LOG_INFO, "OBJ Loaded ^g\"%s\"^0", filename);
 
