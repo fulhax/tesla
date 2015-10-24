@@ -101,6 +101,18 @@ public:
     }
 };
 
+class ScriptResource : public Resource
+{
+public:
+    ScriptResource()
+    {
+
+    }
+    ~ScriptResource()
+    {
+    }
+};
+
 class ResourceHandler
 {
 public:

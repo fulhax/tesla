@@ -1,7 +1,8 @@
 #include "png.hpp"
 
-#include <stdio.h>
 #include <memory.h>
+#include <stdio.h>
+#include <string.h>
 
 PNG_Resource::PNG_Resource()
 {
@@ -13,7 +14,12 @@ PNG_Resource::~PNG_Resource()
 
 int PNG_Resource::load(const char *filename)
 {
-    png_byte header[8];
+    FILE *file = fopen(filename, "rb");
+
+    if(file == NULL) {
+        lprintf(LOG_WARNING, "Unable to open ^g\"%s\"^0", filename);
+        return 0;
+    }
 
     png_struct *png = png_create_read_struct(
                           PNG_LIBPNG_VER_STRING,
@@ -23,6 +29,7 @@ int PNG_Resource::load(const char *filename)
 
     if(png == NULL) {
         lprintf(LOG_ERROR, "Unable to create png struct!");
+        fclose(file);
         return 0;
     }
 
@@ -31,63 +38,53 @@ int PNG_Resource::load(const char *filename)
     if(info == NULL) {
         lprintf(LOG_ERROR, "Unable to create png_info struct!");
         png_destroy_read_struct(&png, NULL, NULL);
-        return 0;
-    }
-
-    png_info *info_end = png_create_info_struct(png);
-
-    if(info == NULL) {
-        lprintf(LOG_ERROR, "Unable to create png_info struct!");
-        png_destroy_read_struct(&png, &info, NULL);
+        fclose(file);
         return 0;
     }
 
     if(setjmp(png_jmpbuf(png))) {
         lprintf(LOG_ERROR, "PNG error!");
-        png_destroy_read_struct(&png, &info, &info_end);
-        return 0;
-    }
-
-    FILE *file = fopen(filename, "rb");
-
-    if(file == NULL) {
-        lprintf(LOG_WARNING, "Unable to open ^g\"%s\"^0", filename);
-        return 0;
-    }
-
-    fread(header, 1, 8, file);
-
-    if(png_sig_cmp(header, 0, 8)) {
-        lprintf(LOG_ERROR, "^g\"%s\"^0 is not a PNG file!", filename);
-        png_destroy_read_struct(&png, &info, &info_end);
+        png_destroy_read_struct(&png, &info, NULL);
         fclose(file);
         return 0;
     }
 
     png_init_io(png, file);
-    png_set_sig_bytes(png, 8);
+    png_set_sig_bytes(png, 0);
 
-    png_read_info(png, info);
+    png_read_png(
+        png,
+        info,
+        PNG_TRANSFORM_STRIP_16 | PNG_TRANSFORM_PACKING | PNG_TRANSFORM_EXPAND,
+        NULL);
 
     int *pbpp = reinterpret_cast<int *>(&bpp);
-    png_get_IHDR(png, info, &width, &height, pbpp, NULL, NULL, NULL, NULL);
+    int color = 0;
+    int interlace = 0;
+    png_get_IHDR(
+        png,
+        info,
+        &width,
+        &height,
+        pbpp,
+        &color,
+        &interlace,
+        NULL,
+        NULL);
 
-    png_read_update_info(png, info);
+    uint32_t row_bytes = png_get_rowbytes(png, info);
+    unsigned char *imageData = new unsigned char[row_bytes * height];
 
-    int imageSize = png_get_rowbytes(png, info);
-    imageSize += 3 - ((imageSize - 1) % 4);
+    png_bytepp row_pointers = png_get_rows(png, info);
 
-    png_bytep imageData = new png_byte[imageSize * height * sizeof(
-                                           png_byte) + 15];
-    png_bytepp imageDataPtr = new png_bytep[height];
-
-    for(uint32_t i = 0; i < height; ++i) {
-        imageDataPtr[height - 1 - i] = imageData + i * imageSize;
+    for(int i = 0; i < height; i++) {
+        memcpy(
+            imageData + row_bytes * (height - 1 - i),
+            row_pointers[i],
+            row_bytes);
     }
 
-    png_read_image(png, imageDataPtr);
-    png_destroy_read_struct(&png, &info, &info_end);
-
+    png_destroy_read_struct(&png, &info, NULL);
     fclose(file);
 
     lprintf(
@@ -111,7 +108,7 @@ int PNG_Resource::load(const char *filename)
         GL_TEXTURE_MIN_FILTER,
         GL_LINEAR);
 
-    if(bpp == 24) {
+    if(color == PNG_COLOR_TYPE_RGB) {
         type = GL_RGB;
     }
 
@@ -125,7 +122,6 @@ int PNG_Resource::load(const char *filename)
         imageData);
 
     delete [] imageData;
-    delete [] imageDataPtr;
 
     return 1;
 }

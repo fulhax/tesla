@@ -38,7 +38,6 @@ public:
 
     int init(int width = 1024, int height = 768);
     void update();
-    void shutdown();
 
     SDL_Renderer *renderer;
     SDL_Window *window;
@@ -51,7 +50,7 @@ private:
     int screen_width;
     int screen_height;
 
-    Entity testentity;
+    Entity testentity[3];
 };
 
 #endif // VIDEO_HPP_

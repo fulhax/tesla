@@ -12,16 +12,19 @@ list(APPEND SOURCE_FILES
     "./resource.cpp"
     "./shader.cpp"
     "./entity.cpp"
+    "./script.cpp"
     "./resources/tga.cpp"
     "./resources/png.cpp"
     "./resources/obj.cpp"
     "./resources/glsl.cpp"
     "../externals/fast_obj_loader/fast_obj_loader.cpp"
+    "../externals/as_scriptstdstring/scriptstdstring.cpp"
     )
 
 list(APPEND INCLUDE_DIRS
     "./"
     "../externals/fast_obj_loader/"
+    "../externals/as_scriptstdstring"
     )
 
 list(APPEND LIBRARY_DIRS
@@ -68,4 +71,5 @@ target_link_libraries(${PROJECT_NAME}
     ${OPENGL_LIBRARIES}
     ${SDL2_LIBRARIES}
     ${PNG_LIBRARIES}
+    angelscript
     )

@@ -24,6 +24,8 @@ ResourceHandler::ResourceHandler()
 
 ResourceHandler::~ResourceHandler()
 {
+    lprintf(LOG_INFO, "Shutting down resourcehandler");
+
     for(auto res : resources) {
         lprintf(LOG_INFO, "Unloading ^g\"%s\"^0.", res.first.c_str());
         delete res.second;

@@ -31,13 +31,16 @@ int Engine::init()
         return 1;
     }
 
+    if(script.init()) {
+        running = false;
+        return 1;
+    }
+
     return 0;
 }
 
 void Engine::shutdown()
 {
-    video.shutdown();
-
     SDL_Quit();
 }
 

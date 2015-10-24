@@ -72,10 +72,20 @@ int Video::init(int width, int height)
         "^cRenderer:^0\t%s",
         glGetString(GL_RENDERER));
 
-    testentity.init("WoodResource.obj","WoodResource.png");
+    testentity[0].init("test1", "WoodResource.obj", "WoodResource.png");
 
-    testentity.shader.attach("shaders/default.frag");
-    testentity.shader.attach("shaders/default.vert");
+    testentity[0].shader.attach("shaders/default.frag");
+    testentity[0].shader.attach("shaders/default.vert");
+
+    testentity[1].init("test2", "MetalOre.obj", "MetalOre.png");
+
+    testentity[1].shader.attach("shaders/default.frag");
+    testentity[1].shader.attach("shaders/default.vert");
+
+    testentity[2].init("test3", "CoalResource.obj", "CoalResource.png");
+
+    testentity[2].shader.attach("shaders/default.frag");
+    testentity[2].shader.attach("shaders/default.vert");
 
     return 0;
 }
@@ -117,14 +127,16 @@ void Video::update()
     glm::mat4 mCamera = mTranslate * mRotation;
     glm::mat4 mView = glm::inverse(mCamera);
 
-    testentity.draw(&mProjection, &mView);
+    glm::mat4 mWorld = glm::translate(glm::mat4(1.0f), glm::vec3(1.5f,-0.5f,0));
+    testentity[0].draw(&mProjection, &mView, &mWorld);
+
+    mWorld = glm::translate(glm::mat4(1.0f), glm::vec3(-1.5f,-0.5f,0));
+    testentity[1].draw(&mProjection, &mView, &mWorld);
+
+    mWorld = glm::translate(glm::mat4(1.0f), glm::vec3(0,1.5f,0));
+    testentity[2].draw(&mProjection, &mView, &mWorld);
 
     SDL_GL_SwapWindow(window);
-}
-
-void Video::shutdown()
-{
-    lprintf(LOG_INFO, "Shutting down video");
 }
 
 Video::Video()
@@ -139,4 +151,5 @@ Video::Video()
 
 Video::~Video()
 {
+    lprintf(LOG_INFO, "Shutting down video");
 }

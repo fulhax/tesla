@@ -3,9 +3,10 @@
 
 #include <GLFW/glfw3.h>
 
-#include "video.hpp"
 #include "errorhandler.hpp"
+#include "video.hpp"
 #include "resource.hpp"
+#include "script.hpp"
 
 class Engine
 {
@@ -22,6 +23,7 @@ public:
     int fps;
 
     Video video;
+    Script script;
     ResourceHandler resources;
 private:
     uint64_t oldtime;
