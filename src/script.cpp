@@ -99,8 +99,13 @@ void Script::registerObjects()
         asCALL_THISCALL);
     core->RegisterObjectMethod(
         "Entity",
-        "void setTexture(int id, const string &in)",
+        "void setTexture(const string &in, const string &in)",
         asMETHOD(Entity, setTexture),
+        asCALL_THISCALL);
+    core->RegisterObjectMethod(
+        "Entity",
+        "void attachShader(const string &in)",
+        asMETHOD(Entity, attachShader),
         asCALL_THISCALL);
 }
 

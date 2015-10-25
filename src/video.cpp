@@ -73,19 +73,8 @@ int Video::init(int width, int height)
         glGetString(GL_RENDERER));
 
     testentity[0].init("test1", "scripts/test.as");
-
-    testentity[0].shader.attach("shaders/default.frag");
-    testentity[0].shader.attach("shaders/default.vert");
-
     testentity[1].init("test2", "scripts/test2.as");
-
-    testentity[1].shader.attach("shaders/default.frag");
-    testentity[1].shader.attach("shaders/default.vert");
-
     testentity[2].init("test3", "scripts/test3.as");
-
-    testentity[2].shader.attach("shaders/default.frag");
-    testentity[2].shader.attach("shaders/default.vert");
 
     return 0;
 }

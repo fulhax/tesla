@@ -42,9 +42,14 @@ void Entity::setModel(const std::string &in)
     snprintf(model, FILENAME_MAX, "%s", in.c_str());
 }
 
-void Entity::setTexture(int id, const std::string &in)
+void Entity::attachShader(const std::string &infile)
 {
-    textures[id] = in;
+    shader.attach(infile.c_str());
+}
+
+void Entity::setTexture(const std::string &inname, const std::string &infile)
+{
+    textures[inname] = infile;
     //snprintf(texture, FILENAME_MAX, "%s", in.c_str());
 }
 
@@ -89,12 +94,17 @@ void Entity::draw(const glm::mat4 &Projection, const glm::mat4 &View)
         ModelResource *m = engine.resources.getModel(model);
 
         if(m) {
+            int num = 0;
+
             for(auto texture : textures) {
                 TextureResource *t = engine.resources.getTexture(texture.second.c_str());
 
                 if(t) {
-                    glActiveTexture(GL_TEXTURE0 + texture.first);
+                    glActiveTexture(GL_TEXTURE0 + num);
                     glBindTexture(GL_TEXTURE_2D, t->id);
+
+                    shader.setUniform(texture.first.c_str(), 0);
+                    num++;
                 }
             }
 
@@ -103,7 +113,6 @@ void Entity::draw(const glm::mat4 &Projection, const glm::mat4 &View)
             shader.bindAttribLocation(1, "in_TexCoord");
             shader.bindAttribLocation(2, "in_Normal");
 
-            shader.setUniform("DiffuseMap", 0);
             shader.setUniform("in_ModelMatrix", Model);
             shader.setUniform("in_ProjMatrix", Projection);
             shader.setUniform("in_ViewMatrix", View);

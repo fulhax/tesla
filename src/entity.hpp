@@ -12,7 +12,7 @@
 
 class Entity
 {
-    std::map<int, std::string> textures;
+    std::map<std::string, std::string> textures;
     char model[FILENAME_MAX];
     char script[FILENAME_MAX];
     char name[MAX_NAMELEN];
@@ -36,7 +36,8 @@ public:
     void setScale(float size);
 
     void setModel(const std::string &in);
-    void setTexture(int id, const std::string &in);
+    void setTexture(const std::string &inname, const std::string &infile);
+    void attachShader(const std::string &infile);
 
     // For AngelScript {
     void addRef()
