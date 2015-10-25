@@ -124,7 +124,7 @@ void ResourceHandler::update()
 {
     int length = 0;
     int i = 0;
-    inotify_event buffer[BUF_LEN] = {0};
+    char buffer[BUF_LEN] = {0};
 
     do {
         length = read(inotify, buffer, BUF_LEN);
@@ -133,31 +133,30 @@ void ResourceHandler::update()
             return;
         }
 
-        const inotify_event &event =
-            reinterpret_cast<const inotify_event &>(buffer[i]);
+        inotify_event *event = reinterpret_cast<inotify_event *>(&buffer[i]);
 
-        if(event.mask & IN_CLOSE_WRITE || event.mask & IN_MOVED_TO) {
+        if(event->mask & IN_CLOSE_WRITE || event->mask & IN_MOVED_TO) {
             char fullpath[FILENAME_MAX];
-            auto watch = watchers[event.wd];
+            auto watch = watchers[event->wd];
 
             snprintf(
                 fullpath,
                 FILENAME_MAX,
                 "%s/%s",
                 watch.c_str(),
-                event.name);
+                event->name);
 
             auto res = resources.find(fullpath);
 
             if(res != resources.end()) {
-                lprintf(LOG_INFO, "Unloading ^g\"%s\"^0.", event.name);
+                lprintf(LOG_INFO, "Unloading ^g\"%s\"^0.", event->name);
                 delete res->second;
                 resources.erase(res);
-                getResource(event.name);
+                getResource(event->name);
             }
         }
 
-        i += EVENT_SIZE + event.len;
+        i += EVENT_SIZE + event->len;
     } while(i < length);
 }
 
