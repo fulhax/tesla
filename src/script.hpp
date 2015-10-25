@@ -17,6 +17,8 @@ public:
     asIScriptEngine *core;
 private:
     asIScriptContext* ctx;
+
+    void registerObjects();
     static void MessageCallback(const asSMessageInfo *msg, void *param);
 
     // AngelScript functions

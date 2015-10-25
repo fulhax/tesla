@@ -2,8 +2,11 @@
 
 #include <scriptstdstring.h>
 
-#include "errorhandler.hpp"
+#include <string>
+
+#include "engine.hpp"
 #include "entity.hpp"
+#include "errorhandler.hpp"
 
 Script::Script()
 {
@@ -27,26 +30,32 @@ void Script::print(const std::string &in)
     lprintf(LOG_SCRIPT, in.c_str());
 }
 
-int Script::init()
+void Script::registerObjects()
 {
-    core = asCreateScriptEngine();
-
-    int ret = core->SetMessageCallback(
-                  asFUNCTION(MessageCallback),
-                  0,
-                  asCALL_CDECL);
-
-    if(ret < 0) {
-        lprintf(LOG_ERROR, "Failed to set message callback!");
-        return 1;
-    }
-
-    RegisterStdString(core);
-
     core->RegisterGlobalFunction(
         "void print(const string &in)",
         asFUNCTION(Script::print),
         asCALL_CDECL);
+
+    core->RegisterObjectType("Engine", 0, asOBJ_REF);
+    core->RegisterGlobalProperty("Engine engine", &engine);
+    core->RegisterObjectBehaviour(
+        "Engine",
+        asBEHAVE_ADDREF,
+        "void f()",
+        asMETHOD(Engine, addRef),
+        asCALL_THISCALL);
+    core->RegisterObjectBehaviour(
+        "Engine",
+        asBEHAVE_RELEASE,
+        "void f()",
+        asMETHOD(Engine, releaseRef),
+        asCALL_THISCALL);
+    core->RegisterObjectMethod(
+        "Engine",
+        "float getTime()",
+        asMETHOD(Engine, getTime),
+        asCALL_THISCALL);
 
     core->RegisterObjectType("Entity", 0, asOBJ_REF);
     core->RegisterObjectBehaviour(
@@ -74,6 +83,16 @@ int Script::init()
         asCALL_THISCALL);
     core->RegisterObjectMethod(
         "Entity",
+        "void setRot(float x, float y, float z)",
+        asMETHOD(Entity, setRot),
+        asCALL_THISCALL);
+    core->RegisterObjectMethod(
+        "Entity",
+        "void setScale(float size)",
+        asMETHOD(Entity, setScale),
+        asCALL_THISCALL);
+    core->RegisterObjectMethod(
+        "Entity",
         "void setModel(const string &in)",
         asMETHOD(Entity, setModel),
         asCALL_THISCALL);
@@ -82,6 +101,24 @@ int Script::init()
         "void setTexture(const string &in)",
         asMETHOD(Entity, setTexture),
         asCALL_THISCALL);
+}
+
+int Script::init()
+{
+    core = asCreateScriptEngine();
+
+    int ret = core->SetMessageCallback(
+                  asFUNCTION(MessageCallback),
+                  0,
+                  asCALL_CDECL);
+
+    if(ret < 0) {
+        lprintf(LOG_ERROR, "Failed to set message callback!");
+        return 1;
+    }
+
+    RegisterStdString(core);
+    registerObjects();
 
     ctx = core->CreateContext();
 

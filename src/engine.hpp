@@ -18,15 +18,31 @@ public:
     void shutdown();
     void update();
 
+    float getTime();
+
     bool running;
-    float time;
     int fps;
 
     Video video;
     Script script;
     ResourceHandler resources;
+
+    // For AngelScript {
+    void addRef()
+    {
+        ref_count++;
+    }
+    void releaseRef()
+    {
+        if(--ref_count == 0) {
+            delete this;
+        }
+    }
+    // }
 private:
     uint64_t oldtime;
+    float time;
+    int ref_count;
 };
 
 extern Engine engine;

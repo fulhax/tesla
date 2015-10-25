@@ -1,5 +1,7 @@
 #include "entity.hpp"
 
+#include <string>
+
 #include "engine.hpp"
 
 Entity::Entity()
@@ -11,10 +13,24 @@ Entity::Entity()
     memset(name, 0, MAX_NAMELEN);
 
     ref_count = 1;
+
+    pos = glm::vec3(0, 0, 0);
+    rot = glm::vec3(0, 0, 0);
+    size = 1.0f;
 }
 
 Entity::~Entity()
 {
+}
+
+void Entity::setScale(float size)
+{
+    this->size = size;
+}
+
+void Entity::setRot(float x, float y, float z)
+{
+    rot = glm::vec3(x, y, z);
 }
 
 void Entity::setPos(float x, float y, float z)
@@ -62,17 +78,15 @@ void Entity::draw(const glm::mat4 &Projection, const glm::mat4 &View)
         return;
     }
 
-    static float rot = 0;
-    rot = (rot + 1.0f * engine.time);
-
-    if(rot > 360) {
-        rot = 0;
-    }
-
     if(shader.use()) {
+        glm::mat4 Scale = glm::scale(glm::mat4(1.0f), glm::vec3(size, size, size));
         glm::mat4 Pos = glm::translate(glm::mat4(1.0f), pos);
-        glm::mat4 Rot = glm::rotate(glm::mat4(1.0f), rot, glm::vec3(0, 1, 1));
-        glm::mat4 Model = Pos * Rot;
+
+        glm::mat4 RotX = glm::rotate(glm::mat4(1.0f), rot.x, glm::vec3(1, 0, 0));
+        glm::mat4 RotY = glm::rotate(glm::mat4(1.0f), rot.y, glm::vec3(0, 1, 0));
+        glm::mat4 RotZ = glm::rotate(glm::mat4(1.0f), rot.z, glm::vec3(0, 0, 1));
+
+        glm::mat4 Model = Pos * Scale *  RotX * RotY * RotZ;
 
         ModelResource *m = engine.resources.getModel(model);
 

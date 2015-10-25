@@ -17,6 +17,9 @@ class Entity
     char name[MAX_NAMELEN];
 
     glm::vec3 pos;
+    glm::vec3 rot;
+    float size;
+
     int ref_count;
 public:
     Entity();
@@ -28,6 +31,9 @@ public:
     Shader shader;
 
     void setPos(float x, float y, float z);
+    void setRot(float x, float y, float z);
+    void setScale(float size);
+
     void setModel(const std::string &in);
     void setTexture(const std::string &in);
 

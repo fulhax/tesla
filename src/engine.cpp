@@ -8,11 +8,17 @@ Engine::Engine()
     oldtime = 0;
     time = 0;
     fps = 0;
+    ref_count = 1;
 }
 
 Engine::~Engine()
 {
 
+}
+
+float Engine::getTime()
+{
+    return time;
 }
 
 int Engine::init()

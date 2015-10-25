@@ -30,10 +30,11 @@ int OBJ_Resource::load(const char *filename)
     }
 
     obj *tmpObj = loadObj(filename);
-    data = ObjMakeUniqueFullVerts(tmpObj);
-    delete tmpObj;
 
-    if(data) {
+    if(tmpObj) {
+        data = ObjMakeUniqueFullVerts(tmpObj);
+        delete tmpObj;
+
         num_tris = data->numfaces;
 
         glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
