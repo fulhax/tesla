@@ -26,12 +26,12 @@ int Engine::init()
 
     resources.init();
 
-    if(video.init()) {
+    if(script.init()) {
         running = false;
         return 1;
     }
 
-    if(script.init()) {
+    if(video.init()) {
         running = false;
         return 1;
     }
@@ -55,7 +55,7 @@ void Engine::update()
     static float timer = 0;
 
     if(timer >= 1.f) {
-        printf("FPS %d\n", fps);
+        //printf("FPS %d\n", fps);
         fps = 0;
         timer = time;
     } else {

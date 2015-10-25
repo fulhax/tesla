@@ -103,6 +103,10 @@ void lprintf(logType t, const char *f, ...)
             cfprintf(stdout, "^0[^gINFO^0]    %s\n", output);
             break;
 
+        case LOG_SCRIPT:
+            cfprintf(stdout, "^0[^cSCRIPT^0]  %s\n", output);
+            break;
+
         case LOG_WARNING:
             cfprintf(stdout, "^0[^yWARNING^0] %s\n", output);
             break;

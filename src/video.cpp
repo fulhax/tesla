@@ -72,17 +72,29 @@ int Video::init(int width, int height)
         "^cRenderer:^0\t%s",
         glGetString(GL_RENDERER));
 
-    testentity[0].init("test1", "WoodResource.obj", "WoodResource.png");
+    testentity[0].init(
+        "test1",
+        "WoodResource.obj",
+        "WoodResource.png",
+        "scripts/test.as");
 
     testentity[0].shader.attach("shaders/default.frag");
     testentity[0].shader.attach("shaders/default.vert");
 
-    testentity[1].init("test2", "MetalOre.obj", "MetalOre.png");
+    testentity[1].init(
+        "test2",
+        "MetalOre.obj",
+        "MetalOre.png",
+        "scripts/test.as");
 
     testentity[1].shader.attach("shaders/default.frag");
     testentity[1].shader.attach("shaders/default.vert");
 
-    testentity[2].init("test3", "CoalResource.obj", "CoalResource.png");
+    testentity[2].init(
+        "test3",
+        "CoalResource.obj",
+        "CoalResource.png",
+        "scripts/test.as");
 
     testentity[2].shader.attach("shaders/default.frag");
     testentity[2].shader.attach("shaders/default.vert");

@@ -23,7 +23,8 @@
 enum logType {
     LOG_INFO,
     LOG_WARNING,
-    LOG_ERROR
+    LOG_ERROR,
+    LOG_SCRIPT
 };
 
 void lprintf(logType t, const char *f, ...);

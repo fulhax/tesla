@@ -3,6 +3,7 @@
 
 #include "resource.hpp"
 #include "shader.hpp"
+#include "script.hpp"
 
 #define MAX_NAMELEN 64
 
@@ -10,12 +11,16 @@ class Entity
 {
     char model[FILENAME_MAX];
     char texture[FILENAME_MAX];
+    char script[FILENAME_MAX];
     char name[MAX_NAMELEN];
+
 public:
     Entity();
     virtual ~Entity();
 
-    void init(const char *name, const char *model, const char *texture);
+    void init(const char *name, const char *model, const char *texture,
+              const char *script);
+
     void draw(glm::mat4 *Projection, glm::mat4 *View, glm::mat4 *World);
 
     Shader shader;

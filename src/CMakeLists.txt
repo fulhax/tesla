@@ -17,6 +17,7 @@ list(APPEND SOURCE_FILES
     "./resources/png.cpp"
     "./resources/obj.cpp"
     "./resources/glsl.cpp"
+    "./resources/as.cpp"
     "../externals/fast_obj_loader/fast_obj_loader.cpp"
     "../externals/as_scriptstdstring/scriptstdstring.cpp"
     )

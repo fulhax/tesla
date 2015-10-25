@@ -87,13 +87,13 @@ int PNG_Resource::load(const char *filename)
     png_destroy_read_struct(&png, &info, NULL);
     fclose(file);
 
-    lprintf(
-        LOG_INFO,
-        "PNG Loaded ^g\"%s\"^0 (^y%d^0x^y%d^0x^y%d^0)",
-        filename,
-        width,
-        height,
-        bpp);
+    // lprintf(
+    //     LOG_INFO,
+    //     "PNG Loaded ^g\"%s\"^0 (^y%d^0x^y%d^0x^y%d^0)",
+    //     filename,
+    //     width,
+    //     height,
+    //     bpp);
 
     type = GL_RGBA;
 

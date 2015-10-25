@@ -92,7 +92,7 @@ int GLSL_Resource::load(const char *filename)
         }
     }
 
-    lprintf(LOG_INFO, "GLSL loaded ^g\"%s\"^0", filename);
+    // lprintf(LOG_INFO, "GLSL loaded ^g\"%s\"^0", filename);
 
     return 1;
 }

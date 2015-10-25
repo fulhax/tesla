@@ -81,13 +81,13 @@ int TGA_Resource::load(const char *filename)
 
     fclose(file);
 
-    lprintf(
-        LOG_INFO,
-        "TGA Loaded ^g\"%s\"^0 (^y%d^0x^y%d^0x^y%d^0)",
-        filename,
-        width,
-        height,
-        bpp);
+    // lprintf(
+    //     LOG_INFO,
+    //     "TGA Loaded ^g\"%s\"^0 (^y%d^0x^y%d^0x^y%d^0)",
+    //     filename,
+    //     width,
+    //     height,
+    //     bpp);
 
     type = GL_RGBA;
 

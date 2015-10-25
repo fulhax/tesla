@@ -2,6 +2,7 @@
 #define SCRIPT_HPP_
 
 #include <angelscript.h>
+#include <string>
 
 class Script
 {
@@ -10,10 +11,16 @@ public:
     virtual ~Script();
 
     int init();
+    void run(asIScriptModule* module, const char* func);
     void shutdown();
+
+    asIScriptEngine *core;
 private:
+    asIScriptContext* ctx;
     static void MessageCallback(const asSMessageInfo *msg, void *param);
-    asIScriptEngine *engine;
+
+    // AngelScript functions
+    static void print(std::string in);
 };
 
 #endif // SCRIPT_HPP_

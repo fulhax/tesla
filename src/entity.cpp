@@ -6,6 +6,8 @@ Entity::Entity()
 {
     memset(texture, 0, FILENAME_MAX);
     memset(model, 0, FILENAME_MAX);
+    memset(script, 0, FILENAME_MAX);
+
     memset(name, 0, MAX_NAMELEN);
 }
 
@@ -13,17 +15,25 @@ Entity::~Entity()
 {
 }
 
-void Entity::init(const char *name, const char *model, const char *texture)
+void Entity::init(const char *name, const char *model, const char *texture,
+                  const char *script)
 {
     snprintf(this->name, MAX_NAMELEN, "%s", name);
     snprintf(this->model, FILENAME_MAX, "%s", model);
     snprintf(this->texture, FILENAME_MAX, "%s", texture);
+    snprintf(this->script, FILENAME_MAX, "%s", script);
 
     lprintf(LOG_INFO, "Entity ^g\"%s\"^0 initialized", name);
+
+    ScriptResource *s = engine.resources.getScript(script);
+    engine.script.run(s->module, "init");
 }
 
 void Entity::draw(glm::mat4 *Projection, glm::mat4 *View, glm::mat4 *World)
 {
+    ScriptResource *s = engine.resources.getScript(script);
+    engine.script.run(s->module, "update");
+
     static float rot = 0;
     rot = (rot + 1.0f * engine.time);
 

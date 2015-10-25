@@ -13,6 +13,7 @@
 
 #include "errorhandler.hpp"
 #include "shader.hpp"
+#include "script.hpp"
 
 #define EVENT_SIZE (sizeof(inotify_event))
 #define BUF_LEN (1024 * (EVENT_SIZE + 16))
@@ -104,12 +105,17 @@ public:
 class ScriptResource : public Resource
 {
 public:
+    asIScriptModule *module;
+
     ScriptResource()
     {
-
+        module = 0;
     }
     ~ScriptResource()
     {
+        if(module) {
+            module->Discard();
+        }
     }
 };
 
@@ -125,6 +131,7 @@ public:
     TextureResource *getTexture(const char *filename);
     ModelResource *getModel(const char *filename);
     ShaderResource *getShader(Shader *parent, const char *filename);
+    ScriptResource *getScript(const char *filename);
 private:
     std::map<std::string, Resource *> resources;
     std::map<int, std::string> watchers;

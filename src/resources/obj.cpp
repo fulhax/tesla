@@ -75,7 +75,7 @@ int OBJ_Resource::load(const char *filename)
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-        lprintf(LOG_INFO, "OBJ Loaded ^g\"%s\"^0", filename);
+        // lprintf(LOG_INFO, "OBJ Loaded ^g\"%s\"^0", filename);
 
         return 1;
     }

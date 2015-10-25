@@ -16,6 +16,9 @@
 // ShaderResource
 #include "resources/glsl.hpp"
 
+// ScriptResource
+#include "resources/as.hpp"
+
 ResourceHandler::ResourceHandler()
 {
     inotify = 0;
@@ -62,6 +65,8 @@ Resource *ResourceHandler::getByType(const char *ext)
         strcmp("frag", ext) == 0
     ) {
         res = new GLSL_Resource;
+    } else if(strcmp("as", ext) == 0) {
+        res = new AS_Resource;
     }
 
     return res;
@@ -163,6 +168,11 @@ ModelResource *ResourceHandler::getModel(const char *filename)
 TextureResource *ResourceHandler::getTexture(const char *filename)
 {
     return reinterpret_cast<TextureResource *>(getResource(filename));
+}
+
+ScriptResource *ResourceHandler::getScript(const char *filename)
+{
+    return reinterpret_cast<ScriptResource *>(getResource(filename));
 }
 
 ShaderResource *ResourceHandler::getShader(Shader *parent,
