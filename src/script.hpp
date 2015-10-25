@@ -11,7 +11,7 @@ public:
     virtual ~Script();
 
     int init();
-    void run(asIScriptModule* module, const char* func);
+    void run(asIScriptModule* module, const char* func, void* arg = 0);
     void shutdown();
 
     asIScriptEngine *core;
@@ -20,7 +20,7 @@ private:
     static void MessageCallback(const asSMessageInfo *msg, void *param);
 
     // AngelScript functions
-    static void print(std::string in);
+    static void print(const std::string &in);
 };
 
 #endif // SCRIPT_HPP_

@@ -9,30 +9,48 @@ Entity::Entity()
     memset(script, 0, FILENAME_MAX);
 
     memset(name, 0, MAX_NAMELEN);
+
+    ref_count = 1;
 }
 
 Entity::~Entity()
 {
 }
 
-void Entity::init(const char *name, const char *model, const char *texture,
-                  const char *script)
+void Entity::setPos(float x, float y, float z)
+{
+    pos = glm::vec3(x, y, z);
+}
+
+void Entity::setModel(const std::string &in)
+{
+    snprintf(model, FILENAME_MAX, "%s", in.c_str());
+}
+
+void Entity::setTexture(const std::string &in)
+{
+    snprintf(texture, FILENAME_MAX, "%s", in.c_str());
+}
+
+void Entity::init(const char *name, const char *script)
 {
     snprintf(this->name, MAX_NAMELEN, "%s", name);
-    snprintf(this->model, FILENAME_MAX, "%s", model);
-    snprintf(this->texture, FILENAME_MAX, "%s", texture);
     snprintf(this->script, FILENAME_MAX, "%s", script);
 
     lprintf(LOG_INFO, "Entity ^g\"%s\"^0 initialized", name);
 
     ScriptResource *s = engine.resources.getScript(script);
-    engine.script.run(s->module, "init");
+    engine.script.run(s->module, "void init(Entity@ this)", this);
 }
 
-void Entity::draw(glm::mat4 *Projection, glm::mat4 *View, glm::mat4 *World)
+void Entity::draw(const glm::mat4 &Projection, const glm::mat4 &View)
 {
     ScriptResource *s = engine.resources.getScript(script);
-    engine.script.run(s->module, "update");
+    engine.script.run(s->module, "void update(Entity@ this)", this);
+
+    if(!strlen(model) || !strlen(texture)) {
+        return;
+    }
 
     static float rot = 0;
     rot = (rot + 1.0f * engine.time);
@@ -42,8 +60,9 @@ void Entity::draw(glm::mat4 *Projection, glm::mat4 *View, glm::mat4 *World)
     }
 
     if(shader.use()) {
+        glm::mat4 Pos = glm::translate(glm::mat4(1.0f), pos);
         glm::mat4 Rot = glm::rotate(glm::mat4(1.0f), rot, glm::vec3(0, 1, 1));
-        glm::mat4 Model = (*World) * glm::translate(Rot, pos);
+        glm::mat4 Model = Pos * Rot;
 
         ModelResource *m = engine.resources.getModel(model);
 
@@ -61,8 +80,8 @@ void Entity::draw(glm::mat4 *Projection, glm::mat4 *View, glm::mat4 *World)
 
             shader.setUniform("DiffuseMap", 0);
             shader.setUniform("in_ModelMatrix", Model);
-            shader.setUniform("in_ProjMatrix", *Projection);
-            shader.setUniform("in_ViewMatrix", *View);
+            shader.setUniform("in_ProjMatrix", Projection);
+            shader.setUniform("in_ViewMatrix", View);
 
             glBindBuffer(GL_ARRAY_BUFFER, m->vertex_buffer);
             glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), 0);

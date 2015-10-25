@@ -72,29 +72,17 @@ int Video::init(int width, int height)
         "^cRenderer:^0\t%s",
         glGetString(GL_RENDERER));
 
-    testentity[0].init(
-        "test1",
-        "WoodResource.obj",
-        "WoodResource.png",
-        "scripts/test.as");
+    testentity[0].init("test1", "scripts/test.as");
 
     testentity[0].shader.attach("shaders/default.frag");
     testentity[0].shader.attach("shaders/default.vert");
 
-    testentity[1].init(
-        "test2",
-        "MetalOre.obj",
-        "MetalOre.png",
-        "scripts/test.as");
+    testentity[1].init("test2", "scripts/test2.as");
 
     testentity[1].shader.attach("shaders/default.frag");
     testentity[1].shader.attach("shaders/default.vert");
 
-    testentity[2].init(
-        "test3",
-        "CoalResource.obj",
-        "CoalResource.png",
-        "scripts/test.as");
+    testentity[2].init("test3", "scripts/test3.as");
 
     testentity[2].shader.attach("shaders/default.frag");
     testentity[2].shader.attach("shaders/default.vert");
@@ -139,14 +127,9 @@ void Video::update()
     glm::mat4 mCamera = mTranslate * mRotation;
     glm::mat4 mView = glm::inverse(mCamera);
 
-    glm::mat4 mWorld = glm::translate(glm::mat4(1.0f), glm::vec3(1.5f,-0.5f,0));
-    testentity[0].draw(&mProjection, &mView, &mWorld);
-
-    mWorld = glm::translate(glm::mat4(1.0f), glm::vec3(-1.5f,-0.5f,0));
-    testentity[1].draw(&mProjection, &mView, &mWorld);
-
-    mWorld = glm::translate(glm::mat4(1.0f), glm::vec3(0,1.5f,0));
-    testentity[2].draw(&mProjection, &mView, &mWorld);
+    testentity[0].draw(mProjection, mView);
+    testentity[1].draw(mProjection, mView);
+    testentity[2].draw(mProjection, mView);
 
     SDL_GL_SwapWindow(window);
 }

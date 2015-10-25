@@ -1,6 +1,8 @@
 #ifndef ENTITY_HPP_
 #define ENTITY_HPP_
 
+#include <string>
+
 #include "resource.hpp"
 #include "shader.hpp"
 #include "script.hpp"
@@ -14,17 +16,37 @@ class Entity
     char script[FILENAME_MAX];
     char name[MAX_NAMELEN];
 
+    glm::vec3 pos;
+    int ref_count;
 public:
     Entity();
     virtual ~Entity();
 
-    void init(const char *name, const char *model, const char *texture,
-              const char *script);
-
-    void draw(glm::mat4 *Projection, glm::mat4 *View, glm::mat4 *World);
+    void init(const char *name, const char *script);
+    void draw(const glm::mat4 &Projection, const glm::mat4 &View);
 
     Shader shader;
-    glm::vec3 pos;
+
+    void setPos(float x, float y, float z);
+    void setModel(const std::string &in);
+    void setTexture(const std::string &in);
+
+    // For AngelScript {
+    void addRef()
+    {
+        ref_count++;
+    }
+    void releaseRef()
+    {
+        if(--ref_count == 0) {
+            delete this;
+        }
+    }
+    static Entity *factory()
+    {
+        return new Entity();
+    }
+    // }
 };
 
 #endif // ENTITY_HPP_

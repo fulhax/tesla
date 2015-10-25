@@ -31,7 +31,7 @@ int AS_Resource::load(const char *filename)
 
         // TODO(c0r73x): Module name!!!!
         module = engine.script.core->GetModule(
-                    "foobar",
+                    filename,
                     asGM_CREATE_IF_NOT_EXISTS);
 
         module->AddScriptSection(filename, script, len, 0);
