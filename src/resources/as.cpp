@@ -29,7 +29,6 @@ int AS_Resource::load(const char *filename)
 
         fclose(file);
 
-        // TODO(c0r73x): Module name!!!!
         module = engine.script.core->GetModule(
                     filename,
                     asGM_CREATE_IF_NOT_EXISTS);

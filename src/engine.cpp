@@ -5,7 +5,7 @@ Engine engine;
 Engine::Engine()
 {
     running = true;
-    oldtime = 0;
+    oldtime = SDL_GetPerformanceCounter();
     time = 0;
     fps = 0;
     ref_count = 1;
