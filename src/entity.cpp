@@ -103,7 +103,7 @@ void Entity::draw(const glm::mat4 &Projection, const glm::mat4 &View)
                     glActiveTexture(GL_TEXTURE0 + num);
                     glBindTexture(GL_TEXTURE_2D, t->id);
 
-                    shader.setUniform(texture.first.c_str(), 0);
+                    shader.setUniform(texture.first.c_str(), num);
                     num++;
                 }
             }
