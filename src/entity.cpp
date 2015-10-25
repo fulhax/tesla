@@ -6,7 +6,6 @@
 
 Entity::Entity()
 {
-    memset(texture, 0, FILENAME_MAX);
     memset(model, 0, FILENAME_MAX);
     memset(script, 0, FILENAME_MAX);
 
@@ -43,9 +42,10 @@ void Entity::setModel(const std::string &in)
     snprintf(model, FILENAME_MAX, "%s", in.c_str());
 }
 
-void Entity::setTexture(const std::string &in)
+void Entity::setTexture(int id, const std::string &in)
 {
-    snprintf(texture, FILENAME_MAX, "%s", in.c_str());
+    textures[id] = in;
+    //snprintf(texture, FILENAME_MAX, "%s", in.c_str());
 }
 
 void Entity::init(const char *name, const char *script)
@@ -72,7 +72,7 @@ void Entity::draw(const glm::mat4 &Projection, const glm::mat4 &View)
         engine.script.run(s, "void update(Entity@ self)", this);
     }
 
-    if(!strlen(model) || !strlen(texture)) {
+    if(!strlen(model) || !textures.size()) {
         return;
     }
 
@@ -89,12 +89,15 @@ void Entity::draw(const glm::mat4 &Projection, const glm::mat4 &View)
         ModelResource *m = engine.resources.getModel(model);
 
         if(m) {
-            TextureResource *t = engine.resources.getTexture(texture);
+            for(auto texture : textures) {
+                TextureResource *t = engine.resources.getTexture(texture.second.c_str());
 
-            if(t) {
-                glActiveTexture(GL_TEXTURE0);
-                glBindTexture(GL_TEXTURE_2D, t->id);
+                if(t) {
+                    glActiveTexture(GL_TEXTURE0 + texture.first);
+                    glBindTexture(GL_TEXTURE_2D, t->id);
+                }
             }
+
 
             shader.bindAttribLocation(0, "in_Position");
             shader.bindAttribLocation(1, "in_TexCoord");

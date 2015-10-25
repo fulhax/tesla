@@ -2,6 +2,7 @@
 #define ENTITY_HPP_
 
 #include <string>
+#include <map>
 
 #include "resource.hpp"
 #include "shader.hpp"
@@ -11,8 +12,8 @@
 
 class Entity
 {
+    std::map<int, std::string> textures;
     char model[FILENAME_MAX];
-    char texture[FILENAME_MAX];
     char script[FILENAME_MAX];
     char name[MAX_NAMELEN];
 
@@ -35,7 +36,7 @@ public:
     void setScale(float size);
 
     void setModel(const std::string &in);
-    void setTexture(const std::string &in);
+    void setTexture(int id, const std::string &in);
 
     // For AngelScript {
     void addRef()
