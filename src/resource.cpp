@@ -124,7 +124,7 @@ void ResourceHandler::update()
 {
     int length = 0;
     int i = 0;
-    char buffer[BUF_LEN] = {0};
+    inotify_event buffer[BUF_LEN] = {0};
 
     do {
         length = read(inotify, buffer, BUF_LEN);
