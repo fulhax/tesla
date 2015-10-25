@@ -37,16 +37,26 @@ void Entity::init(const char *name, const char *script)
     snprintf(this->name, MAX_NAMELEN, "%s", name);
     snprintf(this->script, FILENAME_MAX, "%s", script);
 
-    lprintf(LOG_INFO, "Entity ^g\"%s\"^0 initialized", name);
+    lprintf(LOG_INFO, "Entity ^m\"%s\"^0 initialized", name);
 
     ScriptResource *s = engine.resources.getScript(script);
-    engine.script.run(s->module, "void init(Entity@ this)", this);
+
+    if(s) {
+        engine.script.run(s->module, "void init(Entity@ this)", this);
+    } else {
+        lprintf(LOG_WARNING, "Entity ^m\"%s\"^0 no script found!", name);
+    }
 }
 
 void Entity::draw(const glm::mat4 &Projection, const glm::mat4 &View)
 {
     ScriptResource *s = engine.resources.getScript(script);
-    engine.script.run(s->module, "void update(Entity@ this)", this);
+
+    if(s) {
+        engine.script.run(s->module, "void update(Entity@ this)", this);
+    } else {
+        lprintf(LOG_WARNING, "Entity ^m\"%s\"^0 no script found!", name);
+    }
 
     if(!strlen(model) || !strlen(texture)) {
         return;

@@ -92,6 +92,11 @@ int Script::init()
 
 void Script::run(asIScriptModule *module, const char *func, void *arg)
 {
+    if(!module) {
+        lprintf(LOG_WARNING, "No script loaded!");
+        return;
+    }
+
     asIScriptFunction *f = module->GetFunctionByDecl(func);
 
     if(!f) {
