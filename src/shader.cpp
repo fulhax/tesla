@@ -43,7 +43,6 @@ int Shader::use()
             if(shader) {
                 glAttachShader(program, shader->handle);
             } else {
-                lprintf(LOG_ERROR, "Unable to link program!");
                 unload();
                 return 0;
             }

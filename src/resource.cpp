@@ -78,7 +78,7 @@ void ResourceHandler::watchDir(const char *dirname)
     dirent *entry;
     char fullpath[FILENAME_MAX];
 
-    int watch = inotify_add_watch(inotify, dirname, IN_CLOSE_WRITE);
+    int watch = inotify_add_watch(inotify, dirname, IN_CLOSE_WRITE | IN_MOVED_TO);
     watchers[watch] = dirname;
 
     lprintf(LOG_INFO, "Watching %s for filechanges", dirname);
@@ -136,7 +136,7 @@ void ResourceHandler::update()
         const inotify_event &event =
             reinterpret_cast<const inotify_event &>(buffer[i]);
 
-        if(event.mask & IN_CLOSE_WRITE) {
+        if(event.mask & IN_CLOSE_WRITE || event.mask & IN_MOVED_TO) {
             char fullpath[FILENAME_MAX];
             auto watch = watchers[event.wd];
 
@@ -153,6 +153,7 @@ void ResourceHandler::update()
                 lprintf(LOG_INFO, "Unloading ^g\"%s\"^0.", event.name);
                 delete res->second;
                 resources.erase(res);
+                getResource(event.name);
             }
         }
 
@@ -195,8 +196,13 @@ Resource *ResourceHandler::getResource(const char *filename)
     auto res = resources.find(fullpath);
 
     if(res != resources.end()) {
+        if(res->second->failed) {
+            return 0;
+        }
+
         return res->second;
     }
+
 
     const char *ext = strrchr(filename, '.') + 1;
 
@@ -206,14 +212,15 @@ Resource *ResourceHandler::getResource(const char *filename)
         if(res) {
             if(res->load(fullpath)) {
                 lprintf(LOG_INFO, "^g\"%s\"^0 loaded.", filename);
+                res->failed = false;
                 resources[fullpath] = res;
                 return res;
             }
 
-            return 0;
+            delete res;
         }
-    } else {
-        lprintf(LOG_WARNING, "Unable to get extension from ^g\"%s\"^0!", filename);
+
+        resources[fullpath] = new Resource();
         return 0;
     }
 

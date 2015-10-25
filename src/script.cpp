@@ -7,6 +7,7 @@
 #include "engine.hpp"
 #include "entity.hpp"
 #include "errorhandler.hpp"
+#include "resource.hpp"
 
 Script::Script()
 {
@@ -127,17 +128,19 @@ int Script::init()
     return 0;
 }
 
-void Script::run(asIScriptModule *module, const char *func, void *arg)
+void Script::run(ScriptResource *script, const char *func, void *arg)
 {
-    if(!module) {
+    if(!script->module) {
         lprintf(LOG_WARNING, "No script loaded!");
+        script->failed = true;
         return;
     }
 
-    asIScriptFunction *f = module->GetFunctionByDecl(func);
+    asIScriptFunction *f = script->module->GetFunctionByDecl(func);
 
     if(!f) {
         lprintf(LOG_WARNING, "Unable to find function ^g\"%s\"^0", func);
+        script->failed = true;
         return;
     }
 
