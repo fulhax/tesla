@@ -77,7 +77,7 @@ int PNG_Resource::load(const char *filename)
 
     png_bytepp row_pointers = png_get_rows(png, info);
 
-    for(int i = 0; i < height; i++) {
+    for(unsigned int i = 0; i < height; i++) {
         memcpy(
             imageData + row_bytes * (height - 1 - i),
             row_pointers[i],

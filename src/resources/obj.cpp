@@ -60,7 +60,7 @@ int OBJ_Resource::load(const char *filename)
 
         faces = new obj_face[data->numfaces];
 
-        for(int i = 0; i < data->numfaces; ++i) {
+        for(unsigned int i = 0; i < data->numfaces; ++i) {
             faces[i].f[0] = data->faces[i].verts[0];
             faces[i].f[1] = data->faces[i].verts[1];
             faces[i].f[2] = data->faces[i].verts[2];
