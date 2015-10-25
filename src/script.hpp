@@ -4,6 +4,8 @@
 #include <angelscript.h>
 #include <string>
 
+class ScriptResource;
+
 class Script
 {
 public:
@@ -11,7 +13,7 @@ public:
     virtual ~Script();
 
     int init();
-    void run(asIScriptModule* module, const char* func, void* arg = 0);
+    void run(ScriptResource* script, const char* func, void* arg = 0);
     void shutdown();
 
     asIScriptEngine *core;

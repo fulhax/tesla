@@ -58,7 +58,7 @@ void Entity::init(const char *name, const char *script)
     ScriptResource *s = engine.resources.getScript(script);
 
     if(s) {
-        engine.script.run(s->module, "void init(Entity@ this)", this);
+        engine.script.run(s, "void init(Entity@ self)", this);
     } else {
         lprintf(LOG_WARNING, "Entity ^m\"%s\"^0 no script found!", name);
     }
@@ -69,9 +69,7 @@ void Entity::draw(const glm::mat4 &Projection, const glm::mat4 &View)
     ScriptResource *s = engine.resources.getScript(script);
 
     if(s) {
-        engine.script.run(s->module, "void update(Entity@ this)", this);
-    } else {
-        lprintf(LOG_WARNING, "Entity ^m\"%s\"^0 no script found!", name);
+        engine.script.run(s, "void update(Entity@ self)", this);
     }
 
     if(!strlen(model) || !strlen(texture)) {
