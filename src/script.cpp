@@ -19,7 +19,9 @@ Script::~Script()
 {
     lprintf(LOG_INFO, "Shutting down script engine");
 
-    ctx->Unprepare();
+    if(ctx) {
+        ctx->Unprepare();
+    }
 
     if(core) {
         core->ShutDownAndRelease();
