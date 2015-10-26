@@ -15,10 +15,9 @@ public:
     virtual ~Engine();
 
     int init();
-    void shutdown();
     void update();
-
-    float getTime();
+    static void shutdown();
+    const float getTime();
 
     bool running;
     int fps;

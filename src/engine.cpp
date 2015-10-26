@@ -16,7 +16,7 @@ Engine::~Engine()
 
 }
 
-float Engine::getTime()
+const float Engine::getTime()
 {
     return time;
 }

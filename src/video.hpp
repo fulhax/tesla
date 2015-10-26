@@ -45,7 +45,7 @@ public:
 
     Camera camera;
 private:
-    void checkOpenGLErrors();
+    static void checkOpenGLErrors();
 
     int screen_width;
     int screen_height;
