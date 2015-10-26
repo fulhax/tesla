@@ -8,8 +8,8 @@
 // not cause any problem for most applications.
 //
 
-#ifndef SCRIPTSTDSTRING_H
-#define SCRIPTSTDSTRING_H
+#ifndef SCRIPTSTDSTRING_H_
+#define SCRIPTSTDSTRING_H_
 
 #ifndef ANGELSCRIPT_H 
 // Avoid having to inform include path if header is already include before
@@ -50,4 +50,4 @@ void RegisterStdStringUtils(asIScriptEngine *engine);
 
 END_AS_NAMESPACE
 
-#endif
+#endif // SCRIPTSTDSTRING_H_
