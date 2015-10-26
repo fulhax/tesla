@@ -54,7 +54,7 @@ void Script::registerObjects()
         asCALL_THISCALL);
     core->RegisterObjectMethod(
         "Engine",
-        "const float getTime()",
+        "float getTime()",
         asMETHOD(Engine, getTime),
         asCALL_THISCALL);
 

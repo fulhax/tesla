@@ -17,7 +17,7 @@ public:
     int init();
     void update();
     static void shutdown();
-    const float getTime();
+    float getTime() const;
 
     bool running;
     int fps;
