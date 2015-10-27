@@ -13,12 +13,12 @@ public:
     virtual ~Script();
 
     int init();
-    void run(ScriptResource* script, const char* func, void* arg = 0);
+    void run(ScriptResource *script, const char *func, void *arg = 0);
     void shutdown();
 
     asIScriptEngine *core;
 private:
-    asIScriptContext* ctx;
+    asIScriptContext *ctx;
 
     void registerObjects();
     static void MessageCallback(const asSMessageInfo *msg, void *param);

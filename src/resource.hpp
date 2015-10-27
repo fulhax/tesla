@@ -21,11 +21,15 @@
 class Resource
 {
 public:
-    Resource() {
+    Resource()
+    {
         failed = true;
     }
     virtual ~Resource() {}
-    virtual int load(const char *filename) { return 0; }
+    virtual int load(const char *filename)
+    {
+        return 0;
+    }
 
     bool failed;
 };

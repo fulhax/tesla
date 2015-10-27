@@ -30,8 +30,8 @@ int AS_Resource::load(const char *filename)
         fclose(file);
 
         module = engine.script.core->GetModule(
-                    filename,
-                    asGM_CREATE_IF_NOT_EXISTS);
+                     filename,
+                     asGM_CREATE_IF_NOT_EXISTS);
 
         module->AddScriptSection(filename, script, len, 0);
         delete [] script;
