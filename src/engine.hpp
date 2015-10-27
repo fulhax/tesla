@@ -1,8 +1,6 @@
 #ifndef ENGINE_HPP_
 #define ENGINE_HPP_
 
-#include <GLFW/glfw3.h>
-
 #include "errorhandler.hpp"
 #include "video.hpp"
 #include "resource.hpp"
