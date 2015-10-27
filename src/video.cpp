@@ -46,7 +46,7 @@ int Video::init(int width, int height)
         lprintf(LOG_ERROR, "Unsupported hardware!");
         return 1;
     }
-
+#ifdef _WIN32
         if (gl3wInit()) {
                 fprintf(stderr, "failed to initialize OpenGL\n");
                 return -1;
@@ -55,7 +55,7 @@ int Video::init(int width, int height)
                 fprintf(stderr, "OpenGL 3.2 not supported\n");
                 return -1;
         }
-
+#endif
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);

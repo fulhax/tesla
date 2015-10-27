@@ -1,7 +1,8 @@
 #ifndef VIDEO_HPP_
 #define VIDEO_HPP_
-
+#ifdef _WIN32
 #include <GL/gl3w.h>
+#endif
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>

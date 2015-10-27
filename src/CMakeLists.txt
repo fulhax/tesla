@@ -28,9 +28,11 @@ list(APPEND INCLUDE_DIRS
     "../externals/as_scriptstdstring"
     )
 
+if(WIN32)
 list(APPEND LIBRARY_DIRS
-    "/home/c0r73x/x-tools/x86_64-unknown-mingw32/lib"
+    ${CMAKE_FIND_ROOT_PATH}/lib
     )
+endif()
 
 set(CMAKE_CXX_FLAGS "-Wall -Wno-unknown-pragmas -std=c++11")
 add_definitions("-DGL_GLEXT_PROTOTYPES")
@@ -69,12 +71,28 @@ include_directories(${PNG_INCLUDE_DIRS})
 
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 
+if(WIN32)
 target_link_libraries(${PROJECT_NAME}
     mingw32
     gdi32
     gl3w.a
+    )
+endif()
+
+target_link_libraries(${PROJECT_NAME}
     ${OPENGL_LIBRARIES}
     ${SDL2_LIBRARIES}
     ${PNG_LIBRARIES}
     angelscript.a
     )
+
+
+message("sysroot: ${CMAKE_SYSROOT}")
+get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
+foreach(dir ${dirs})
+    message(STATUS "include dir='${dir}'")
+endforeach()
+get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY LINK_DIRECTORIES)
+foreach(dir ${dirs})
+    message(STATUS "library dir='${dir}'")
+endforeach()
