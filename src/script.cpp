@@ -113,7 +113,7 @@ void Script::registerObjects()
 
 int Script::init()
 {
-    core = asCreateScriptEngine();
+    core = asCreateScriptEngine(ANGELSCRIPT_VERSION);
 
     int ret = core->SetMessageCallback(
                   asFUNCTION(MessageCallback),

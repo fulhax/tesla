@@ -1,5 +1,8 @@
 #ifndef RESOURCE_HPP_
 #define RESOURCE_HPP_
+#ifdef _WIN32
+#include <GL/gl3w.h>
+#endif
 
 #include <SDL2/SDL_opengl.h>
 #include <unistd.h>

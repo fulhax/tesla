@@ -20,18 +20,32 @@ list(APPEND SOURCE_FILES
     "./resources/as.cpp"
     "../externals/fast_obj_loader/fast_obj_loader.cpp"
     "../externals/as_scriptstdstring/scriptstdstring.cpp"
-    "./linux/notify.cpp"
     )
 
 list(APPEND INCLUDE_DIRS
     "./"
     "../externals/fast_obj_loader/"
     "../externals/as_scriptstdstring"
-    "./linux"
     )
 
-list(APPEND LIBRARY_DIRS
-    )
+if(WIN32)
+    list(APPEND SOURCE_FILES
+        "./windows/notify.cpp"
+        )
+    list(APPEND INCLUDE_DIRS
+        "./windows"
+        )
+    list(APPEND LIBRARY_DIRS
+        ${CMAKE_FIND_ROOT_PATH}/lib
+        )
+else()
+    list(APPEND SOURCE_FILES
+        "./linux/notify.cpp"
+        )
+    list(APPEND INCLUDE_DIRS
+        "./linux"
+        )
+endif()
 
 set(CMAKE_CXX_FLAGS "-Wall -Wno-unknown-pragmas -std=c++11")
 add_definitions("-DGL_GLEXT_PROTOTYPES")
@@ -70,9 +84,28 @@ include_directories(${PNG_INCLUDE_DIRS})
 
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 
+if(WIN32)
+    target_link_libraries(${PROJECT_NAME}
+        mingw32
+        gdi32
+        gl3w.a
+        )
+endif()
+
 target_link_libraries(${PROJECT_NAME}
     ${OPENGL_LIBRARIES}
     ${SDL2_LIBRARIES}
     ${PNG_LIBRARIES}
-    angelscript
+    angelscript.a
     )
+
+
+message("sysroot: ${CMAKE_SYSROOT}")
+get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
+foreach(dir ${dirs})
+    message(STATUS "include dir='${dir}'")
+endforeach()
+get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY LINK_DIRECTORIES)
+foreach(dir ${dirs})
+    message(STATUS "library dir='${dir}'")
+endforeach()
