@@ -1,9 +1,5 @@
 #include "resource.hpp"
 
-#include <sys/inotify.h>
-#include <poll.h>
-#include <dirent.h>
-
 #include <algorithm>
 
 // TextureResource
@@ -21,7 +17,6 @@
 
 ResourceHandler::ResourceHandler()
 {
-    inotify = 0;
     snprintf(datapath, FILENAME_MAX, "./data");
 }
 
@@ -35,13 +30,6 @@ ResourceHandler::~ResourceHandler()
     }
 
     resources.clear();
-
-    for(auto watch : watchers) {
-        inotify_rm_watch(inotify, watch.first);
-    }
-
-    watchers.clear();
-    close(inotify);
 }
 
 Resource *ResourceHandler::getByType(const char *ext)
@@ -72,92 +60,25 @@ Resource *ResourceHandler::getByType(const char *ext)
     return res;
 }
 
-void ResourceHandler::watchDir(const char *dirname)
-{
-    DIR *dh;
-    dirent *entry;
-    char fullpath[FILENAME_MAX];
-
-    int watch = inotify_add_watch(inotify, dirname, IN_CLOSE_WRITE | IN_MOVED_TO);
-    watchers[watch] = dirname;
-
-    lprintf(LOG_INFO, "Watching %s for filechanges", dirname);
-
-    if((dh = opendir(dirname)) == NULL) {
-        lprintf(LOG_ERROR, "Could not open directory ^g\"%s\"^0", dirname);
-        return;
-    }
-
-    while((entry = readdir(dh)) != NULL) {
-        if(strncmp(entry->d_name, "..", 2) != 0 &&
-            strncmp(entry->d_name, ".", 1) != 0) {
-
-            if(entry->d_type == DT_DIR) {
-                snprintf(
-                    fullpath,
-                    FILENAME_MAX,
-                    "%s/%s",
-                    dirname,
-                    entry->d_name);
-
-                watchDir(fullpath);
-            }
-        }
-    }
-}
-
 int ResourceHandler::init()
 {
-    inotify = inotify_init1(IN_NONBLOCK);
-
-    if(inotify < 0) {
-        lprintf(LOG_WARNING, "Failed to start inotify!");
-        return 1;
-    }
-
-    watchDir(datapath);
+    notify.watchDir(datapath);
 
     return 0;
 }
 
 void ResourceHandler::update()
 {
-    int length = 0;
-    int i = 0;
-    char buffer[BUF_LEN] = {0};
+    for(auto changes : notify.checkForChanges()) {
+        auto res = resources.find(changes.second.c_str());
 
-    do {
-        length = read(inotify, buffer, BUF_LEN);
-
-        if(length < 0) {
-            return;
+        if(res != resources.end()) {
+            lprintf(LOG_INFO, "Unloading ^g\"%s\"^0.", changes.first.c_str());
+            delete res->second;
+            resources.erase(res);
+            getResource(changes.first.c_str());
         }
-
-        inotify_event *event = reinterpret_cast<inotify_event *>(&buffer[i]);
-
-        if(event->mask & IN_CLOSE_WRITE || event->mask & IN_MOVED_TO) {
-            char fullpath[FILENAME_MAX];
-            auto watch = watchers[event->wd];
-
-            snprintf(
-                fullpath,
-                FILENAME_MAX,
-                "%s/%s",
-                watch.c_str(),
-                event->name);
-
-            auto res = resources.find(fullpath);
-
-            if(res != resources.end()) {
-                lprintf(LOG_INFO, "Unloading ^g\"%s\"^0.", event->name);
-                delete res->second;
-                resources.erase(res);
-                getResource(event->name);
-            }
-        }
-
-        i += EVENT_SIZE + event->len;
-    } while(i < length);
+    }
 }
 
 ModelResource *ResourceHandler::getModel(const char *filename)

@@ -11,12 +11,11 @@
 #include <vector>
 #include <string>
 
+#include <notify.hpp>
+
 #include "errorhandler.hpp"
 #include "shader.hpp"
 #include "script.hpp"
-
-#define EVENT_SIZE (sizeof(inotify_event))
-#define BUF_LEN (1024 * (EVENT_SIZE + 16))
 
 class Resource
 {
@@ -141,15 +140,14 @@ public:
     ShaderResource *getShader(Shader *parent, const char *filename);
     ScriptResource *getScript(const char *filename);
 private:
-    std::map<std::string, Resource *> resources;
-    std::map<int, std::string> watchers;
+    Notify notify;
 
-    void watchDir(const char *dirname);
+    std::map<std::string, Resource *> resources;
+
     Resource *getResource(const char *filename);
     Resource *getByType(const char *ext);
 
     char datapath[FILENAME_MAX];
-    int inotify;
 };
 
 #endif // RESOURCE_HPP_

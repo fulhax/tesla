@@ -20,12 +20,14 @@ list(APPEND SOURCE_FILES
     "./resources/as.cpp"
     "../externals/fast_obj_loader/fast_obj_loader.cpp"
     "../externals/as_scriptstdstring/scriptstdstring.cpp"
+    "./linux/notify.cpp"
     )
 
 list(APPEND INCLUDE_DIRS
     "./"
     "../externals/fast_obj_loader/"
     "../externals/as_scriptstdstring"
+    "./linux"
     )
 
 list(APPEND LIBRARY_DIRS
