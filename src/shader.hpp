@@ -2,6 +2,7 @@
 #define SHADER_HPP_
 
 #include <glm/glm.hpp>
+#include <GL/gl3w.h>
 #include <SDL2/SDL_opengl.h>
 
 #include <map>

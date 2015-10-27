@@ -29,6 +29,7 @@ list(APPEND INCLUDE_DIRS
     )
 
 list(APPEND LIBRARY_DIRS
+    "/home/c0r73x/x-tools/x86_64-unknown-mingw32/lib"
     )
 
 set(CMAKE_CXX_FLAGS "-Wall -Wno-unknown-pragmas -std=c++11")
@@ -69,8 +70,11 @@ include_directories(${PNG_INCLUDE_DIRS})
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 
 target_link_libraries(${PROJECT_NAME}
+    mingw32
+    gdi32
+    gl3w.a
     ${OPENGL_LIBRARIES}
     ${SDL2_LIBRARIES}
     ${PNG_LIBRARIES}
-    angelscript
+    angelscript.a
     )

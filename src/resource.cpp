@@ -1,8 +1,8 @@
 #include "resource.hpp"
 
-#include <sys/inotify.h>
-#include <poll.h>
-#include <dirent.h>
+//#include <sys/inotify.h>
+//#include <poll.h>
+//#include <dirent.h>
 
 #include <algorithm>
 
@@ -37,7 +37,7 @@ ResourceHandler::~ResourceHandler()
     resources.clear();
 
     for(auto watch : watchers) {
-        inotify_rm_watch(inotify, watch.first);
+//        inotify_rm_watch(inotify, watch.first);
     }
 
     watchers.clear();
@@ -74,41 +74,41 @@ Resource *ResourceHandler::getByType(const char *ext)
 
 void ResourceHandler::watchDir(const char *dirname)
 {
-    DIR *dh;
-    dirent *entry;
-    char fullpath[FILENAME_MAX];
+    //DIR *dh;
+    //dirent *entry;
+    //char fullpath[FILENAME_MAX];
 
-    int watch = inotify_add_watch(inotify, dirname, IN_CLOSE_WRITE | IN_MOVED_TO);
-    watchers[watch] = dirname;
+    //int watch = inotify_add_watch(inotify, dirname, IN_CLOSE_WRITE | IN_MOVED_TO);
+    //watchers[watch] = dirname;
 
-    lprintf(LOG_INFO, "Watching %s for filechanges", dirname);
+    //lprintf(LOG_INFO, "Watching %s for filechanges", dirname);
 
-    if((dh = opendir(dirname)) == NULL) {
-        lprintf(LOG_ERROR, "Could not open directory ^g\"%s\"^0", dirname);
-        return;
-    }
+    //if((dh = opendir(dirname)) == NULL) {
+    //    lprintf(LOG_ERROR, "Could not open directory ^g\"%s\"^0", dirname);
+    //    return;
+    //}
 
-    while((entry = readdir(dh)) != NULL) {
-        if(strncmp(entry->d_name, "..", 2) != 0 &&
-            strncmp(entry->d_name, ".", 1) != 0) {
+    //while((entry = readdir(dh)) != NULL) {
+    //    if(strncmp(entry->d_name, "..", 2) != 0 &&
+    //        strncmp(entry->d_name, ".", 1) != 0) {
 
-            if(entry->d_type == DT_DIR) {
-                snprintf(
-                    fullpath,
-                    FILENAME_MAX,
-                    "%s/%s",
-                    dirname,
-                    entry->d_name);
+    //        if(entry->d_type == DT_DIR) {
+    //            snprintf(
+    //                fullpath,
+    //                FILENAME_MAX,
+    //                "%s/%s",
+    //                dirname,
+    //                entry->d_name);
 
-                watchDir(fullpath);
-            }
-        }
-    }
+    //            watchDir(fullpath);
+    //        }
+    //    }
+    //}
 }
 
 int ResourceHandler::init()
 {
-    inotify = inotify_init1(IN_NONBLOCK);
+    //inotify = inotify_init1(IN_NONBLOCK);
 
     if(inotify < 0) {
         lprintf(LOG_WARNING, "Failed to start inotify!");
@@ -122,42 +122,42 @@ int ResourceHandler::init()
 
 void ResourceHandler::update()
 {
-    int length = 0;
-    int i = 0;
-    char buffer[BUF_LEN] = {0};
+    //int length = 0;
+    //int i = 0;
+    //char buffer[BUF_LEN] = {0};
 
-    do {
-        length = read(inotify, buffer, BUF_LEN);
+    //do {
+    //    length = read(inotify, buffer, BUF_LEN);
 
-        if(length < 0) {
-            return;
-        }
+    //    if(length < 0) {
+    //        return;
+    //    }
 
-        inotify_event *event = reinterpret_cast<inotify_event *>(&buffer[i]);
+    //    inotify_event *event = reinterpret_cast<inotify_event *>(&buffer[i]);
 
-        if(event->mask & IN_CLOSE_WRITE || event->mask & IN_MOVED_TO) {
-            char fullpath[FILENAME_MAX];
-            auto watch = watchers[event->wd];
+    //    if(event->mask & IN_CLOSE_WRITE || event->mask & IN_MOVED_TO) {
+    //        char fullpath[FILENAME_MAX];
+    //        auto watch = watchers[event->wd];
 
-            snprintf(
-                fullpath,
-                FILENAME_MAX,
-                "%s/%s",
-                watch.c_str(),
-                event->name);
+    //        snprintf(
+    //            fullpath,
+    //            FILENAME_MAX,
+    //            "%s/%s",
+    //            watch.c_str(),
+    //            event->name);
 
-            auto res = resources.find(fullpath);
+    //        auto res = resources.find(fullpath);
 
-            if(res != resources.end()) {
-                lprintf(LOG_INFO, "Unloading ^g\"%s\"^0.", event->name);
-                delete res->second;
-                resources.erase(res);
-                getResource(event->name);
-            }
-        }
+    //        if(res != resources.end()) {
+    //            lprintf(LOG_INFO, "Unloading ^g\"%s\"^0.", event->name);
+    //            delete res->second;
+    //            resources.erase(res);
+    //            getResource(event->name);
+    //        }
+    //    }
 
-        i += EVENT_SIZE + event->len;
-    } while(i < length);
+    //    i += EVENT_SIZE + event->len;
+    //} while(i < length);
 }
 
 ModelResource *ResourceHandler::getModel(const char *filename)

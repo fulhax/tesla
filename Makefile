@@ -1,6 +1,7 @@
 BASE_DIR=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 BUILD_DIR=$(BASE_DIR)/build
 
+SUFFIX=""
 UNAME=$(shell uname)
 ifeq ($(UNAME), windows32)
 	MKDIR=mkdir
@@ -25,6 +26,11 @@ ifdef RELEASE
 	BUILD_INFO=Release
 	export RELEASE=1
 endif
+ifdef WINDOWS
+	UNAME=Windows
+	TOOLCHAIN="-DCMAKE_TOOLCHAIN_FILE=~/winbuildenv/cmake/toolchain-mingw32.cmake"
+	SUFFIX=".exe"
+endif
 PLATFORM_LIST=default
 ifdef PLATFORM
 	PLATFORM_LIST=$(PLATFORM)
@@ -42,7 +48,7 @@ build: $(BUILD_DIR)/$(UNAME)/$(BUILD_TYPE)/Makefile
 
 package: build
 	mkdir -p bin
-	cp -v ${BUILD_DIR}/$(UNAME)/$(BUILD_TYPE)/game bin/
+	cp -v ${BUILD_DIR}/$(UNAME)/$(BUILD_TYPE)/game$(SUFFIX) bin/
 
 ${BUILD_DIR}/$(UNAME)/$(BUILD_TYPE)/Makefile: src/CMakeLists.txt
 	-@$(MKDIR) "$(BUILD_DIR)/$(UNAME)/$(BUILD_TYPE)"
@@ -50,7 +56,8 @@ ${BUILD_DIR}/$(UNAME)/$(BUILD_TYPE)/Makefile: src/CMakeLists.txt
 		cmake -G $(BUILD_TARGET) \
 		-DCMAKE_BUILD_TYPE=$(BUILD_INFO) \
 		"$(BASE_DIR)/src" \
-		 -DCMAKE_EXPORT_COMPILE_COMMANDS=1
+		 -DCMAKE_EXPORT_COMPILE_COMMANDS=1 \
+		$(TOOLCHAIN)
 
 clean:
 	$(MAKE) -C "$(BUILD_DIR)/$(UNAME)/$(BUILD_TYPE)" clean
