@@ -90,6 +90,11 @@ if(WIN32)
         gdi32
         gl3w.a
         )
+    # turn off .rsp files so compile_commands.json will work with autocomplete
+    set(CMAKE_C_USE_RESPONSE_FILE_FOR_OBJECTS 0)
+    set(CMAKE_CXX_USE_RESPONSE_FILE_FOR_OBJECTS 0)
+    set(CMAKE_C_USE_RESPONSE_FILE_FOR_INCLUDES 0)
+    set(CMAKE_CXX_USE_RESPONSE_FILE_FOR_INCLUDES 0)
 endif()
 
 target_link_libraries(${PROJECT_NAME}
@@ -98,14 +103,3 @@ target_link_libraries(${PROJECT_NAME}
     ${PNG_LIBRARIES}
     angelscript.a
     )
-
-
-message("sysroot: ${CMAKE_SYSROOT}")
-get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
-foreach(dir ${dirs})
-    message(STATUS "include dir='${dir}'")
-endforeach()
-get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY LINK_DIRECTORIES)
-foreach(dir ${dirs})
-    message(STATUS "library dir='${dir}'")
-endforeach()
