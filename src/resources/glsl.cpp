@@ -50,7 +50,7 @@ int GLSL_Resource::load(const char *filename)
     FILE *file = fopen(filename, "rb");
 
     if(file == NULL) {
-        lprintf(LOG_WARNING, "Unable to open ^g\"%s\"^0", filename);
+        lprintf(LOG_ERROR, "Unable to open ^g\"%s\"^0", filename);
         return 0;
     }
 
@@ -58,7 +58,14 @@ int GLSL_Resource::load(const char *filename)
     int64_t size = ftell(file);
     char *code = new char[size + 1];
     fseek(file, 0, SEEK_SET);
-    fread(code, size, 1, file);
+
+    if(!fread(code, size, 1, file)) {
+        lprintf(LOG_ERROR, "Unable to read ^g\"%s\"^0", filename);
+        delete [] code;
+        fclose(file);
+        return 0;
+    }
+
     code[size] = 0;
 
     fclose(file);

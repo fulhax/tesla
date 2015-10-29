@@ -58,7 +58,6 @@ int PNG_Resource::load(const char *filename)
         PNG_TRANSFORM_STRIP_16 | PNG_TRANSFORM_PACKING | PNG_TRANSFORM_EXPAND,
         NULL);
 
-    int *pbpp = reinterpret_cast<int *>(&bpp);
     int color = 0;
     int interlace = 0;
     png_get_IHDR(
@@ -66,7 +65,7 @@ int PNG_Resource::load(const char *filename)
         info,
         &width,
         &height,
-        pbpp,
+        reinterpret_cast<int *>(&bpp),
         &color,
         &interlace,
         NULL,
