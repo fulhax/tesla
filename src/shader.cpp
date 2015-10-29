@@ -73,6 +73,7 @@ int Shader::use()
         uniform_locations.clear();
     }
 
+    validate();
     glUseProgram(program);
     return 1;
 }
@@ -177,9 +178,20 @@ int Shader::getUniformLocation(const char *name)
 {
     auto pos = uniform_locations.find(name);
 
+    GLint uniform = -1;
+
     if(pos == uniform_locations.end()) {
+        uniform = glGetUniformLocation(program, name);
         uniform_locations[name] = glGetUniformLocation(program, name);
+
+        if(uniform_locations[name] < 0) {
+            printf("setuniform failure:%s\n", name);
+        } else {
+            uniform_locations[name] = uniform;
+        }
+    } else {
+        uniform = pos->second;
     }
 
-    return uniform_locations[name];
+    return uniform;
 }

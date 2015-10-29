@@ -37,7 +37,7 @@ public:
     void setUniform(const char *name, bool b);
     void setUniform(const char *name, GLuint i);
 private:
-    std::map<const char *, int> uniform_locations;
+    std::map<std::string, int> uniform_locations;
     GLint getUniformLocation(const char *name);
 
     uint32_t program;

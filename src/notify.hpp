@@ -5,12 +5,9 @@
 #include <string>
 
 #ifdef _WIN32
-struct notify_directory
-{
-    bool recursive;
-    std::string dir_name;
-};
+struct notify_directory;
 #endif
+
 
 class Notify
 {
