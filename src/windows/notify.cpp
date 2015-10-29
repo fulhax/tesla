@@ -60,10 +60,6 @@ std::map<std::string, std::string> Notify::checkForChanges()
         DWORD wait = WaitForMultipleObjects(1, &waitHandle, false, 0);
 
         if(wait == WAIT_OBJECT_0) {
-            printf("waitHandle:%p\n", waitHandle);
-
-            //if(WaitForSingleObject(&waitHandle, 0))
-            //{
             if(ReadDirectoryChangesW(watchhandle, (LPVOID)&strFileNotifyInfo,
                                      sizeof(strFileNotifyInfo),
                                      TRUE,
@@ -71,37 +67,39 @@ std::map<std::string, std::string> Notify::checkForChanges()
                                      &dwBytesReturned,
                                      nullptr,
                                      nullptr) != 0) {
-                printf("stuff\n");
 
                 if(strFileNotifyInfo[0].Action == FILE_ACTION_MODIFIED) {
-                    printf("File Modified: %ls\n", strFileNotifyInfo[0].FileName);
-                    char fullpath[FILENAME_MAX];
-                    char filename[FILENAME_MAX];
+                    char fullpath[FILENAME_MAX] = {0};
+                    char filename[FILENAME_MAX] = {0};
                     wcstombs(filename, strFileNotifyInfo[0].FileName, FILENAME_MAX);
                     snprintf(fullpath, FILENAME_MAX, "%s/%s", dir.dir_name.c_str(), filename);
+
+                    for(char &l : fullpath) {
+                        if(l == '\\') {
+                            l = '/';
+                        } else if(l == 0) {
+                            break;
+                        }
+                    }
+
                     output[filename] = fullpath;
+                    lprintf(LOG_INFO, "File Modified: %ls\n", fullpath);
                 }
             }
-
-            printf("afterreaddirectorychanges\n");
 
             HANDLE newhandle = nullptr;
 
             if(FindNextChangeNotification(&newhandle) != 0) {
                 watchers[watchhandle].handle = newhandle;
-                printf("going by FindNextChangeNotification\n");
             } else {
 
-                printf("before FindFirstChangeNotification\n");
                 watchers[watchhandle].handle = FindFirstChangeNotification(
-                                                   dir.dir_name.c_str(), true, FILE_NOTIFY_CHANGE_LAST_WRITE);
-                printf("going by FindFirstChangeNotification\n");
-
+                                                   dir.dir_name.c_str(),
+                                                   true,
+                                                   FILE_NOTIFY_CHANGE_LAST_WRITE);
             }
 
             CloseHandle(waitHandle);
-
-            //printf("newHandle:  %p\nfindnextreturn:%i\n", newhandle, findnextreturncode);
         }
     }
 
