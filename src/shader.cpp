@@ -70,10 +70,11 @@ int Shader::use()
             }
         }
 
+        validate();
+
         uniform_locations.clear();
     }
 
-    validate();
     glUseProgram(program);
     return 1;
 }
@@ -185,7 +186,7 @@ int Shader::getUniformLocation(const char *name)
         uniform_locations[name] = glGetUniformLocation(program, name);
 
         if(uniform_locations[name] < 0) {
-            printf("setuniform failure:%s\n", name);
+            lprintf(LOG_WARNING, "setUniform failed: %s", name);
         } else {
             uniform_locations[name] = uniform;
         }

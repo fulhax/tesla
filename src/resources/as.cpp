@@ -25,7 +25,13 @@ int AS_Resource::load(const char *filename)
         fseek(file, 0, SEEK_SET);
 
         script = new char[len];
-        fread(script, len, 1, file);
+
+        if(!fread(script, len, 1, file)) {
+            lprintf(LOG_ERROR, "Unable to read ^g\"%s\"^0", filename);
+            delete [] script;
+            fclose(file);
+            return 0;
+        }
 
         fclose(file);
 

@@ -69,8 +69,10 @@ int ResourceHandler::init()
 
 void ResourceHandler::update()
 {
-    for(auto changes : notify.checkForChanges()) {
-        auto res = resources.find(changes.second.c_str());
+    auto check = notify.checkForChanges();
+
+    for(auto changes : check) {
+        auto res = resources.find(changes.second);
 
         if(res != resources.end()) {
             lprintf(LOG_INFO, "Unloading ^g\"%s\"^0.", changes.first.c_str());
