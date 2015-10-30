@@ -15,6 +15,9 @@
 // ScriptResource
 #include "resources/as.hpp"
 
+// SoundResource
+#include "resources/ogg.hpp"
+
 ResourceHandler::ResourceHandler()
 {
     snprintf(datapath, FILENAME_MAX, "./data");
@@ -55,6 +58,10 @@ Resource *ResourceHandler::getByType(const char *ext)
         res = new GLSL_Resource;
     } else if(strcmp("as", ext) == 0) {
         res = new AS_Resource;
+    } else if(strcmp("ogg", ext) == 0) {
+        res = new OGG_Resource;
+    } else {
+        lprintf(LOG_ERROR, "Unrecognized file format ^g%s^0", ext);
     }
 
     return res;
@@ -96,6 +103,11 @@ TextureResource *ResourceHandler::getTexture(const char *filename)
 ScriptResource *ResourceHandler::getScript(const char *filename)
 {
     return reinterpret_cast<ScriptResource *>(getResource(filename));
+}
+
+SoundResource *ResourceHandler::getSound(const char *filename)
+{
+    return reinterpret_cast<SoundResource *>(getResource(filename));
 }
 
 ShaderResource *ResourceHandler::getShader(Shader *parent,

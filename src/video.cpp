@@ -27,14 +27,14 @@ int Video::init(int width, int height)
                   &renderer);
 
     if(ret != 0) {
-        lprintf(LOG_ERROR, "Failed to create SDL window");
+        lprintf(LOG_ERROR, "Failed to create SDL window!");
         return 1;
     }
 
     context = SDL_GL_CreateContext(window);
 
     if(!context) {
-        lprintf(LOG_ERROR, "Failed to create GL context");
+        lprintf(LOG_ERROR, "Failed to create OpenGL context!");
         return 1;
     }
 
@@ -50,13 +50,13 @@ int Video::init(int width, int height)
     #ifdef _WIN32
 
     if(gl3wInit()) {
-        fprintf(stderr, "failed to initialize OpenGL\n");
-        return -1;
+        lprintf(LOG_ERROR, "Failed to initialize OpenGL!");
+        return 1;
     }
 
     if(!gl3wIsSupported(3, 2)) {
-        fprintf(stderr, "OpenGL 3.2 not supported\n");
-        return -1;
+        lprintf(LOG_ERROR, "OpenGL 3.2 not supported!");
+        return 1;
     }
 
     #endif

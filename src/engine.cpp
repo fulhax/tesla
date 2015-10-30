@@ -31,13 +31,14 @@ int Engine::init()
     }
 
     resources.init();
+    audio.init();
 
-    if(script.init()) {
+    if(script.init() != 0) {
         running = false;
         return 1;
     }
 
-    if(video.init()) {
+    if(video.init() != 0) {
         running = false;
         return 1;
     }
@@ -79,6 +80,13 @@ void Engine::update()
         }
     }
 
+    static int sound = -1;
+    if(!audio.isPlaying(sound)) {
+        sound = audio.play("sound/Example.ogg", glm::vec3(0,0,0));
+    }
+
+    // TODO(c0r73x): Add playerlocation to audio.update!
+    audio.update();
     video.update();
     resources.update();
 }

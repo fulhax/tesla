@@ -5,16 +5,19 @@
 #endif
 
 #include <SDL2/SDL_opengl.h>
+#include <GL/glu.h>
+
+#include <AL/al.h>
+
 #include <unistd.h>
 #include <stdio.h>
 #include <string.h>
-#include <GL/glu.h>
+
+#include <notify.hpp>
 
 #include <map>
 #include <vector>
 #include <string>
-
-#include <notify.hpp>
 
 #include "errorhandler.hpp"
 #include "shader.hpp"
@@ -58,6 +61,27 @@ public:
     ~TextureResource()
     {
         glDeleteTextures(1, &id);
+    }
+};
+
+class SoundResource : public Resource
+{
+public:
+    uint32_t buffer;
+    uint32_t format;
+    int64_t freq;
+
+    SoundResource()
+    {
+        buffer = -1;
+        freq = 0;
+        format = 0;
+
+        alGenBuffers(1, &buffer);
+    }
+    ~SoundResource()
+    {
+        alDeleteBuffers(1, &buffer);
     }
 };
 
@@ -142,6 +166,7 @@ public:
     ModelResource *getModel(const char *filename);
     ShaderResource *getShader(Shader *parent, const char *filename);
     ScriptResource *getScript(const char *filename);
+    SoundResource *getSound(const char *filename);
 private:
     Notify notify;
 

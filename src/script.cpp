@@ -17,7 +17,7 @@ Script::Script()
 
 Script::~Script()
 {
-    lprintf(LOG_INFO, "Shutting down script engine");
+    lprintf(LOG_INFO, "Shutting down AngelScript");
 
     if(ctx) {
         ctx->Unprepare();
@@ -130,7 +130,7 @@ int Script::init()
 
     ctx = core->CreateContext();
 
-    lprintf(LOG_INFO, "Script engine started successfully");
+    lprintf(LOG_INFO, "AngelScript started successfully");
 
     return 0;
 }

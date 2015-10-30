@@ -14,7 +14,6 @@ public:
 
     int init();
     void run(ScriptResource *script, const char *func, void *arg = 0);
-    void shutdown();
 
     asIScriptEngine *core;
 private:

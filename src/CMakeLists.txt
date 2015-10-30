@@ -13,11 +13,13 @@ list(APPEND SOURCE_FILES
     "./shader.cpp"
     "./entity.cpp"
     "./script.cpp"
+    "./audio.cpp"
     "./resources/tga.cpp"
     "./resources/png.cpp"
     "./resources/obj.cpp"
     "./resources/glsl.cpp"
     "./resources/as.cpp"
+    "./resources/ogg.cpp"
     "../externals/fast_obj_loader/fast_obj_loader.cpp"
     "../externals/as_scriptstdstring/scriptstdstring.cpp"
     )
@@ -73,14 +75,17 @@ add_definitions(${OPENGL_DEFINITIONS})
 find_package(glm REQUIRED)
 include_directories(${GLM_INCLUDE_DIRS})
 
+find_package(PNG REQUIRED)
+include_directories(${PNG_INCLUDE_DIRS})
+
 INCLUDE(FindPkgConfig)
 PKG_SEARCH_MODULE(SDL2 REQUIRED sdl2)
 include_directories(${SDL2_INCLUDE_DIR})
 link_directories(${SDL2_LIBRARY_DIRS} ${LIBRARY_DIRS})
 add_definitions(${SDL2_DEFINITIONS})
 
-find_package(PNG REQUIRED)
-include_directories(${PNG_INCLUDE_DIRS})
+PKG_SEARCH_MODULE(OPENAL REQUIRED openal)
+PKG_SEARCH_MODULE(VORBISFILE REQUIRED vorbisfile)
 
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 
@@ -98,6 +103,8 @@ if(WIN32)
 endif()
 
 target_link_libraries(${PROJECT_NAME}
+    ${OPENAL_LIBRARIES}
+    ${VORBISFILE_LIBRARIES}
     ${OPENGL_LIBRARIES}
     ${SDL2_LIBRARIES}
     ${PNG_LIBRARIES}

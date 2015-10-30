@@ -5,6 +5,7 @@
 #include "video.hpp"
 #include "resource.hpp"
 #include "script.hpp"
+#include "audio.hpp"
 
 class Engine
 {
@@ -20,6 +21,7 @@ public:
     bool running;
     int fps;
 
+    Audio audio;
     Video video;
     Script script;
     ResourceHandler resources;
