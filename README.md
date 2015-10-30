@@ -1,5 +1,5 @@
 
-Linux:[![Build Status](http://fredrik.fulhax.nu:8090/buildStatus/icon?job=GOL_Jam)](http://fredrik.fulhax.nu:8090/job/GOL_Jam)
-Windows:[![Build Status](http://fredrik.fulhax.nu:8090/buildStatus/icon?job=GOL_Jam_Win)](http://fredrik.fulhax.nu:8090/job/GOL_Jam_Win)
+Linux:[![Build Status](http://fredrik.fulhax.nu:8090/buildStatus/icon?job=tesla_linux_64bit)](http://fredrik.fulhax.nu:8090/job/tesla_linux_64bit)
+Windows:[![Build Status](http://fredrik.fulhax.nu:8090/buildStatus/icon?job=tesla_windows_64bit)](http://fredrik.fulhax.nu:8090/job/tesla_windows_64bit)
 
-# GOL Jam game project
+# Tesla Game Engine
