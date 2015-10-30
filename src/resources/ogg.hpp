@@ -11,7 +11,7 @@ public:
     OGG_Resource();
     ~OGG_Resource();
 
-    int load(const char* filename);
+    int load(const char *filename);
 private:
     std::vector <char> bufferData;
 };

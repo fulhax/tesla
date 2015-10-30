@@ -16,14 +16,14 @@ OGG_Resource::~OGG_Resource()
     bufferData.clear();
 }
 
-int OGG_Resource::load(const char* filename)
+int OGG_Resource::load(const char *filename)
 {
     char array[BUFFER_SIZE];
     int64_t bytes;
     int bitStream;
     int endian = 0;
 
-    vorbis_info* info;
+    vorbis_info *info;
     OggVorbis_File file;
 
     if(ov_fopen(filename, &file) != 0) {
@@ -33,6 +33,7 @@ int OGG_Resource::load(const char* filename)
             filename);
         return 0;
     }
+
     info = ov_info(&file, -1);
 
     if(info->channels == 1) {

@@ -17,8 +17,8 @@ public:
     virtual ~Audio();
 
     int init();
-    void update(glm::vec3 player = glm::vec3(0,0,0));
-    int play(const char* filename, glm::vec3 position);
+    void update(glm::vec3 player = glm::vec3(0, 0, 0));
+    int play(const char *filename, glm::vec3 position);
     bool isPlaying(uint32_t source);
 private:
     ALCdevice *device;

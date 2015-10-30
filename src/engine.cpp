@@ -81,8 +81,9 @@ void Engine::update()
     }
 
     static int sound = -1;
+
     if(!audio.isPlaying(sound)) {
-        sound = audio.play("sound/Example.ogg", glm::vec3(0,0,0));
+        sound = audio.play("sound/Example.ogg", glm::vec3(0, 0, 0));
     }
 
     // TODO(c0r73x): Add playerlocation to audio.update!
