@@ -18,11 +18,11 @@ public:
     void watchDir(const char *dirname, bool recursive = true);
     std::map<std::string, std::string> checkForChanges();
 private:
-    #ifndef _WIN32
+    #ifdef __linux__
     std::map<int, std::string> watchers;
 
     int inotify;
-    #else
+    #elif _WIN32
     std::map<void *, notify_directory> watchers;
     #endif
 };

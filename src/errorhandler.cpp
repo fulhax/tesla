@@ -4,6 +4,7 @@
 #include <stdarg.h>
 #include <string.h>
 
+#ifdef __linux__
 int scolor(char *out, int attr, int fg, int bg = -1)
 {
     if(bg != -1) {
@@ -20,6 +21,7 @@ int ccolor(char *out)
     snprintf(out, MAX_STRLEN, "%c[0m", 0x1B);
     return strlen(out);
 }
+#endif
 
 void cfprintf(FILE *f, const char *fo, ...)
 {

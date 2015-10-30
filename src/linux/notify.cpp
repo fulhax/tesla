@@ -6,8 +6,8 @@
 #include <dirent.h>
 #include <unistd.h>
 
-#include <string>
 #include <map>
+#include <string>
 
 #include "../errorhandler.hpp"
 
