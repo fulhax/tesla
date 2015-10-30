@@ -94,16 +94,20 @@ if(WIN32)
         mingw32
         gdi32
         gl3w.a
+        OpenAL32.dll.a
         )
     # turn off .rsp files so compile_commands.json will work with autocomplete
     set(CMAKE_C_USE_RESPONSE_FILE_FOR_OBJECTS 0)
     set(CMAKE_CXX_USE_RESPONSE_FILE_FOR_OBJECTS 0)
     set(CMAKE_C_USE_RESPONSE_FILE_FOR_INCLUDES 0)
     set(CMAKE_CXX_USE_RESPONSE_FILE_FOR_INCLUDES 0)
+else()
+    target_link_libraries(${PROJECT_NAME}
+        ${OPENAL_LIBRARIES}
+        )
 endif()
 
 target_link_libraries(${PROJECT_NAME}
-    ${OPENAL_LIBRARIES}
     ${VORBISFILE_LIBRARIES}
     ${OPENGL_LIBRARIES}
     ${SDL2_LIBRARIES}
