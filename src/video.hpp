@@ -24,6 +24,7 @@ public:
 
     int init(int width = 1024, int height = 768);
     void update();
+    void resize(int width, int height);
 
     SDL_Renderer *renderer;
     SDL_Window *window;
@@ -31,6 +32,8 @@ public:
 
     Camera camera;
 private:
+    glm::mat4 ProjMat;
+
     static void checkOpenGLErrors();
 
     int screen_width;

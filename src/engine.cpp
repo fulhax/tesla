@@ -74,6 +74,15 @@ void Engine::update()
 
     while(SDL_PollEvent(&event)) {
         switch(event.type) {
+            case SDL_WINDOWEVENT: {
+                if(event.window.event == SDL_WINDOWEVENT_RESIZED) {
+                    video.resize(event.window.data1, event.window.data2);
+                }
+
+                break;
+            }
+
+
             case SDL_QUIT:
                 running = false;
                 break;

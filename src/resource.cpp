@@ -162,3 +162,15 @@ Resource *ResourceHandler::getResource(const char *filename)
 
     return 0;
 }
+
+void ModelResource::updateBoundingBox(glm::vec3 vertex)
+{
+    for(int i = 0; i < 3; i++) {
+        if(vertex[i] < bounding_box.min[i]) {
+            bounding_box.min[i] = vertex[i];
+        }
+        if(vertex[i] > bounding_box.max[i]) {
+            bounding_box.max[i] = vertex[i];
+        }
+    }
+}

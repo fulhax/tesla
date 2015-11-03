@@ -44,6 +44,14 @@ int OBJ_Resource::load(const char *filename)
             data->verts,
             GL_STATIC_DRAW);
 
+        for(unsigned int i = 0; i < data->numverts; ++i) {
+            updateBoundingBox(glm::vec3(
+                                  data->verts[i].x,
+                                  data->verts[i].y,
+                                  data->verts[i].z
+                              ));
+        }
+
         glBindBuffer(GL_ARRAY_BUFFER, normals_buffer);
         glBufferData(
             GL_ARRAY_BUFFER,

@@ -27,7 +27,7 @@ int Video::init(int width, int height)
     int ret = SDL_CreateWindowAndRenderer(
                   width,
                   height,
-                  SDL_WINDOW_OPENGL,
+                  SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE,
                   &window,
                   &renderer);
 
@@ -90,11 +90,33 @@ int Video::init(int width, int height)
         "^cRenderer:^0\t%s",
         glGetString(GL_RENDERER));
 
+    ProjMat = glm::perspective(
+            45.0f,
+            static_cast<float>(width) /
+            static_cast<float>(height),
+            0.1f,
+            1000.0f);
+
     testentity[0].init("test1", "scripts/test.as");
     testentity[1].init("test2", "scripts/test2.as");
     testentity[2].init("test3", "scripts/test3.as");
 
     return 0;
+}
+
+void Video::resize(int width, int height)
+{
+    glViewport(0, 0, width, height);
+
+    ProjMat = glm::perspective(
+            45.0f,
+            static_cast<float>(width) /
+            static_cast<float>(height),
+            0.1f,
+            1000.0f);
+
+    screen_width = width;
+    screen_height = height;
 }
 
 void Video::checkOpenGLErrors()
@@ -114,30 +136,23 @@ void Video::update()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     camera.pos = glm::vec3(0, 0, 5);
 
-    static glm::mat4 mProjection =
-        glm::perspective(
-            45.0f,
-            static_cast<float>(screen_width) /
-            static_cast<float>(screen_height),
-            0.1f,
-            1000.0f);
 
-    glm::mat4 mRotation =
+    glm::mat4 CamRotMat =
         glm::yawPitchRoll(
             -camera.yaw * RAD,
             -camera.pitch * RAD,
             0.0f);
 
-    glm::mat4 mTranslate = glm::translate(glm::mat4(1.0f), camera.pos);
+    glm::mat4 CamTransMat = glm::translate(glm::mat4(1.0f), camera.pos);
 
-    glm::mat4 mCamera = mTranslate * mRotation;
-    glm::mat4 mView = glm::inverse(mCamera);
+    glm::mat4 CamMat = CamTransMat * CamRotMat;
+    glm::mat4 ViewMat = glm::inverse(CamMat);
 
-    camera.update(mProjection, mView);
+    camera.update(ProjMat, ViewMat);
 
-    testentity[0].draw(mProjection, mView);
-    testentity[1].draw(mProjection, mView);
-    testentity[2].draw(mProjection, mView);
+    testentity[0].draw(ProjMat, ViewMat);
+    testentity[1].draw(ProjMat, ViewMat);
+    testentity[2].draw(ProjMat, ViewMat);
 
     SDL_GL_SwapWindow(window);
 }

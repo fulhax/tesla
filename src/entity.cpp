@@ -70,19 +70,50 @@ void Entity::init(const char *name, const char *script)
     }
 }
 
-void Entity::draw(const glm::mat4 &Projection, const glm::mat4 &View)
+int Entity::cullCheck(const glm::mat4 &ModelMat, ModelResource *m)
 {
+    Camera *camera = &engine.video.camera;
+
+    glm::vec4 tmax =  ModelMat * glm::vec4(m->bounding_box.max, 1.0);
+    glm::vec4 tmin =  ModelMat * glm::vec4(m->bounding_box.min, 1.0);
+
+    glm::vec3 bb_size =
+        glm::vec3(
+            tmax.x - tmin.x,
+            tmax.y - tmin.y,
+            tmax.z - tmin.z
+        );
+
+    glm::vec3 bb_center =
+        glm::vec3(
+            (tmin.x + tmax.x) / 2,
+            (tmin.y + tmax.y) / 2,
+            (tmin.z + tmax.z) / 2
+        );
+
+    if(camera->rectInFrustum(bb_center, bb_size) == FRUSTUM_OUTSIDE) {
+        return 0;
+    }
+
+    return 1;
+}
+
+void Entity::draw(const glm::mat4 &ProjMat, const glm::mat4 &ViewMat)
+{
+
     ScriptResource *s = engine.resources.getScript(script);
 
     if(s) {
         engine.script.run(s, "void update(Entity@ self)", this);
     }
 
-    if(!strlen(model) || !textures.size()) {
+    if(!strlen(model) || textures.empty()) {
         return;
     }
 
-    if(shader.use()) {
+    ModelResource *m = engine.resources.getModel(model);
+
+    if(m) {
         glm::mat4 Scale = glm::scale(glm::mat4(1.0f), glm::vec3(size, size, size));
         glm::mat4 Pos = glm::translate(glm::mat4(1.0f), pos);
 
@@ -90,11 +121,14 @@ void Entity::draw(const glm::mat4 &Projection, const glm::mat4 &View)
         glm::mat4 RotY = glm::rotate(glm::mat4(1.0f), rot.y, glm::vec3(0, 1, 0));
         glm::mat4 RotZ = glm::rotate(glm::mat4(1.0f), rot.z, glm::vec3(0, 0, 1));
 
-        glm::mat4 Model = Pos * Scale *  RotX * RotY * RotZ;
+        glm::mat4 ModelMat = Pos * Scale *  RotX * RotY * RotZ;
 
-        ModelResource *m = engine.resources.getModel(model);
+        if(!cullCheck(ModelMat, m)) {
+            return;
+        }
 
-        if(m) {
+        if(shader.use()) {
+
             int num = 0;
 
             for(auto texture : textures) {
@@ -114,9 +148,9 @@ void Entity::draw(const glm::mat4 &Projection, const glm::mat4 &View)
             shader.bindAttribLocation(1, "in_TexCoord");
             shader.bindAttribLocation(2, "in_Normal");
 
-            shader.setUniform("in_ModelMatrix", Model);
-            shader.setUniform("in_ProjMatrix", Projection);
-            shader.setUniform("in_ViewMatrix", View);
+            shader.setUniform("in_ModelMatrix", ModelMat);
+            shader.setUniform("in_ProjMatrix", ProjMat);
+            shader.setUniform("in_ViewMatrix", ViewMat);
 
             glBindBuffer(GL_ARRAY_BUFFER, m->vertex_buffer);
             glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), 0);
@@ -140,7 +174,7 @@ void Entity::draw(const glm::mat4 &Projection, const glm::mat4 &View)
             glDisableVertexAttribArray(1);
             glDisableVertexAttribArray(2);
         }
-    }
 
-    glUseProgram(0);
+        glUseProgram(0);
+    }
 }
