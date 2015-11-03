@@ -14,6 +14,7 @@ list(APPEND SOURCE_FILES
     "./entity.cpp"
     "./script.cpp"
     "./audio.cpp"
+    "./camera.cpp"
     "./resources/tga.cpp"
     "./resources/png.cpp"
     "./resources/obj.cpp"
@@ -50,7 +51,7 @@ else()
 endif()
 
 set(CMAKE_CXX_FLAGS "-Wall -Wno-unknown-pragmas -std=c++11")
-add_definitions("-DGL_GLEXT_PROTOTYPES")
+add_definitions("-DGL_GLEXT_PROTOTYPES -DGLM_SWIZZLE")
 
 option(USEOPENMP "enable openmp mutlithreading" ON)
 

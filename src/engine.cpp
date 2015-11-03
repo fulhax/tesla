@@ -86,8 +86,7 @@ void Engine::update()
         sound = audio.play("sound/Example.ogg", glm::vec3(0, 0, 0));
     }
 
-    // TODO(c0r73x): Add playerlocation to audio.update!
-    audio.update();
+    audio.update(&video.camera);
     video.update();
     resources.update();
 }

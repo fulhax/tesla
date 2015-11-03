@@ -7,6 +7,8 @@
 
 #include <glm/glm.hpp>
 
+#include "camera.hpp"
+
 // TODO(c0r73x): reserve one source for music
 #define MAX_SOURCES 32
 
@@ -17,7 +19,7 @@ public:
     virtual ~Audio();
 
     int init();
-    void update(glm::vec3 player = glm::vec3(0, 0, 0));
+    void update(Camera *camera);
     int play(const char *filename, glm::vec3 position);
     bool isPlaying(uint32_t source);
 private:

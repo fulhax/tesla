@@ -3,6 +3,11 @@
 
 #include "engine.hpp"
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/euler_angles.hpp>
+
+
 int Video::init(int width, int height)
 {
     screen_width = width;
@@ -112,9 +117,8 @@ void Video::update()
     static glm::mat4 mProjection =
         glm::perspective(
             45.0f,
-            static_cast<float>(
-                static_cast<float>(screen_width) / static_cast<float>(screen_height)
-            ),
+            static_cast<float>(screen_width) /
+            static_cast<float>(screen_height),
             0.1f,
             1000.0f);
 
@@ -128,6 +132,8 @@ void Video::update()
 
     glm::mat4 mCamera = mTranslate * mRotation;
     glm::mat4 mView = glm::inverse(mCamera);
+
+    camera.update(mProjection, mView);
 
     testentity[0].draw(mProjection, mView);
     testentity[1].draw(mProjection, mView);

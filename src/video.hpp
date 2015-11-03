@@ -9,29 +9,12 @@
 
 #include <GL/glu.h>
 
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtx/euler_angles.hpp>
-
 #include "shader.hpp"
 #include "entity.hpp"
+#include "camera.hpp"
 
 #define RAD 0.017453292519943295769236907684886f
 
-struct Camera {
-    glm::vec3 pos;
-
-    float yaw;
-    float pitch;
-
-    Camera()
-    {
-        pos = glm::vec3(0.0f, 0.0f, 0.0f);
-        yaw = 0;
-        pitch = 0;
-    }
-};
 
 class Video
 {

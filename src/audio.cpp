@@ -53,10 +53,20 @@ int Audio::init()
     return 0;
 }
 
-void Audio::update(glm::vec3 player)
+void Audio::update(Camera *camera)
 {
     if(device && context) {
-        alListener3f(AL_POSITION, player.x, player.y, player.z);
+        alListener3f(
+            AL_POSITION,
+            camera->pos.x,
+            camera->pos.y,
+            camera->pos.z);
+
+        alListener3f(
+            AL_ORIENTATION,
+            -camera->yaw * RAD,
+            -camera->pitch * RAD,
+            0);
     }
 }
 
