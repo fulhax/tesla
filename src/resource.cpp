@@ -131,7 +131,7 @@ Resource *ResourceHandler::getResource(const char *filename)
 
     if(res != resources.end()) {
         if(res->second->failed) {
-            return 0;
+            return nullptr;
         }
 
         return res->second;
@@ -155,12 +155,12 @@ Resource *ResourceHandler::getResource(const char *filename)
         }
 
         resources[fullpath] = new Resource();
-        return 0;
+        return nullptr;
     }
 
     lprintf(LOG_ERROR, "^g\"%s\"^0 invalid resource type ^r%s^0!", filename, ext);
 
-    return 0;
+    return nullptr;
 }
 
 void ModelResource::updateBoundingBox(glm::vec3 vertex)

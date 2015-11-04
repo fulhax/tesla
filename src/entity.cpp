@@ -153,19 +153,19 @@ void Entity::draw(const glm::mat4 &ProjMat, const glm::mat4 &ViewMat)
             shader.setUniform("in_ViewMatrix", ViewMat);
 
             glBindBuffer(GL_ARRAY_BUFFER, m->vertex_buffer);
-            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), 0);
+            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), nullptr);
             glEnableVertexAttribArray(0);
 
             glBindBuffer(GL_ARRAY_BUFFER, m->uv_buffer);
-            glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec2), 0);
+            glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec2), nullptr);
             glEnableVertexAttribArray(1);
 
             glBindBuffer(GL_ARRAY_BUFFER, m->normals_buffer);
-            glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), 0);
+            glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), nullptr);
             glEnableVertexAttribArray(2);
 
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m->indices_buffer);
-            glDrawElements(GL_TRIANGLES, m->num_tris * 12, GL_UNSIGNED_INT, 0);
+            glDrawElements(GL_TRIANGLES, m->num_tris * 12, GL_UNSIGNED_INT, nullptr);
 
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
             glBindBuffer(GL_ARRAY_BUFFER, 0);

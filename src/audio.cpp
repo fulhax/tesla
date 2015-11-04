@@ -6,8 +6,8 @@
 
 Audio::Audio()
 {
-    device = 0;
-    context = 0;
+    device = nullptr;
+    context = nullptr;
     memset(sources, 0, MAX_SOURCES);
 }
 
@@ -27,14 +27,14 @@ Audio::~Audio()
 
 int Audio::init()
 {
-    device = alcOpenDevice(0);
+    device = alcOpenDevice(nullptr);
 
     if(!device) {
         lprintf(LOG_ERROR, "Failed to open audio device!");
         return 1;
     }
 
-    context = alcCreateContext(device, 0);
+    context = alcCreateContext(device, nullptr);
 
     if(!context) {
         lprintf(LOG_ERROR, "Could not create OpenAL context!");

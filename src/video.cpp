@@ -159,9 +159,9 @@ void Video::update()
 
 Video::Video()
 {
-    renderer = 0;
-    window = 0;
-    context = 0;
+    renderer = nullptr;
+    window = nullptr;
+    context = nullptr;
 
     screen_width = 0;
     screen_height = 0;

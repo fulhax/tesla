@@ -11,8 +11,8 @@
 
 Script::Script()
 {
-    ctx = 0;
-    core = 0;
+    ctx = nullptr;
+    core = nullptr;
 }
 
 Script::~Script()
@@ -117,7 +117,7 @@ int Script::init()
 
     int ret = core->SetMessageCallback(
                   asFUNCTION(MessageCallback),
-                  0,
+                  nullptr,
                   asCALL_CDECL);
 
     if(ret < 0) {
