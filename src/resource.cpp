@@ -21,6 +21,7 @@
 ResourceHandler::ResourceHandler()
 {
     snprintf(datapath, FILENAME_MAX, "./data");
+    snprintf(enginepath, FILENAME_MAX, "./engine");
 }
 
 ResourceHandler::~ResourceHandler()
@@ -79,7 +80,7 @@ void ResourceHandler::update()
     auto check = notify.checkForChanges();
 
     for(auto changes : check) {
-        auto res = resources.find(changes.second);
+        auto res = resources.find(changes.first);
 
         if(res != resources.end()) {
             lprintf(LOG_INFO, "Unloading ^g\"%s\"^0.", changes.first.c_str());
@@ -124,10 +125,7 @@ ShaderResource *ResourceHandler::getShader(Shader *parent,
 
 Resource *ResourceHandler::getResource(const char *filename)
 {
-    char fullpath[FILENAME_MAX];
-    snprintf(fullpath, FILENAME_MAX, "%s/%s", datapath, filename);
-
-    auto res = resources.find(fullpath);
+    auto res = resources.find(filename);
 
     if(res != resources.end()) {
         if(res->second->failed) {
@@ -137,6 +135,17 @@ Resource *ResourceHandler::getResource(const char *filename)
         return res->second;
     }
 
+    char fullpath[FILENAME_MAX];
+    snprintf(fullpath, FILENAME_MAX, "%s/%s", datapath, filename);
+
+    if(access(fullpath, F_OK) < 0) {
+        snprintf(fullpath, FILENAME_MAX, "%s/%s", enginepath, filename);
+
+        if(access(fullpath, F_OK) < 0) {
+            lprintf(LOG_WARNING, "File not found ^g\"%s\"^0!", filename);
+            return nullptr;
+        }
+    }
 
     const char *ext = strrchr(filename, '.') + 1;
 
@@ -145,16 +154,16 @@ Resource *ResourceHandler::getResource(const char *filename)
 
         if(res) {
             if(res->load(fullpath)) {
-                lprintf(LOG_INFO, "^g\"%s\"^0 loaded.", filename);
+                lprintf(LOG_INFO, "^g\"%s\"^0 loaded.", fullpath);
                 res->failed = false;
-                resources[fullpath] = res;
+                resources[filename] = res;
                 return res;
             }
 
             delete res;
         }
 
-        resources[fullpath] = new Resource();
+        resources[filename] = new Resource();
         return nullptr;
     }
 
@@ -169,6 +178,7 @@ void ModelResource::updateBoundingBox(glm::vec3 vertex)
         if(vertex[i] < bounding_box.min[i]) {
             bounding_box.min[i] = vertex[i];
         }
+
         if(vertex[i] > bounding_box.max[i]) {
             bounding_box.max[i] = vertex[i];
         }

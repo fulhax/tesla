@@ -185,6 +185,7 @@ private:
     Resource *getByType(const char *ext);
 
     char datapath[FILENAME_MAX];
+    char enginepath[FILENAME_MAX];
 };
 
 #endif // RESOURCE_HPP_
