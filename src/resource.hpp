@@ -176,6 +176,9 @@ public:
     ShaderResource *getShader(Shader *parent, const char *filename);
     ScriptResource *getScript(const char *filename);
     SoundResource *getSound(const char *filename);
+
+    char datapath[FILENAME_MAX];
+    char enginepath[FILENAME_MAX];
 private:
     Notify notify;
 
@@ -183,9 +186,6 @@ private:
 
     Resource *getResource(const char *filename);
     Resource *getByType(const char *ext);
-
-    char datapath[FILENAME_MAX];
-    char enginepath[FILENAME_MAX];
 };
 
 #endif // RESOURCE_HPP_

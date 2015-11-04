@@ -10,6 +10,7 @@
 #include <string>
 
 #include "../errorhandler.hpp"
+#include "../engine.hpp"
 
 #define EVENT_SIZE (sizeof(inotify_event))
 #define BUF_LEN (1024 * (EVENT_SIZE + 16))
@@ -91,7 +92,21 @@ std::map<std::string, std::string> Notify::checkForChanges()
 
         if(event->mask & IN_CLOSE_WRITE || event->mask & IN_MOVED_TO) {
             char fullpath[FILENAME_MAX];
+            char filename[FILENAME_MAX];
+
             auto watch = watchers[event->wd];
+            const char *path = watch.c_str();
+
+            int cmp = strncmp(
+                          watch.c_str(),
+                          engine.resources.datapath,
+                          strlen(engine.resources.datapath));
+
+            if(cmp == 0) {
+                path += strlen(engine.resources.datapath) + 1;
+            } else {
+                path += strlen(engine.resources.enginepath) + 1;
+            }
 
             snprintf(
                 fullpath,
@@ -100,11 +115,20 @@ std::map<std::string, std::string> Notify::checkForChanges()
                 watch.c_str(),
                 event->name);
 
-            output[event->name] = fullpath;
+            snprintf(
+                filename,
+                FILENAME_MAX,
+                "%s/%s",
+                path,
+                event->name);
+
+            output[filename] = fullpath;
         }
 
         i += EVENT_SIZE + event->len;
-    } while(i < length);
+    }
+
+    while(i < length);
 
     return output;
 }
