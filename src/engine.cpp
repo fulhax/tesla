@@ -43,6 +43,8 @@ int Engine::init()
         return 1;
     }
 
+    debugger.init();
+
     return 0;
 }
 

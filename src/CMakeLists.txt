@@ -15,6 +15,7 @@ list(APPEND SOURCE_FILES
     "./script.cpp"
     "./audio.cpp"
     "./camera.cpp"
+    "./debugger.cpp"
     "./resources/tga.cpp"
     "./resources/png.cpp"
     "./resources/obj.cpp"

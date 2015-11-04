@@ -127,54 +127,89 @@ void Entity::draw(const glm::mat4 &ProjMat, const glm::mat4 &ViewMat)
             return;
         }
 
-        if(shader.use()) {
+        Shader* current = &shader;
 
-            int num = 0;
+        if(!current->use()) {
+            current = engine.debugger.useDebugShader();
 
-            for(auto texture : textures) {
-                TextureResource *t = engine.resources.getTexture(texture.second.c_str());
-
-                if(t) {
-                    glActiveTexture(GL_TEXTURE0 + num);
-                    glBindTexture(GL_TEXTURE_2D, t->id);
-
-                    shader.setUniform(texture.first.c_str(), num);
-                    num++;
-                }
+            if(!current) {
+                lprintf(LOG_ERROR, "Unable to load debug shader!");
+                return;
             }
-
-
-            shader.bindAttribLocation(0, "in_Position");
-            shader.bindAttribLocation(1, "in_TexCoord");
-            shader.bindAttribLocation(2, "in_Normal");
-
-            shader.setUniform("in_ModelMatrix", ModelMat);
-            shader.setUniform("in_ProjMatrix", ProjMat);
-            shader.setUniform("in_ViewMatrix", ViewMat);
-
-            glBindBuffer(GL_ARRAY_BUFFER, m->vertex_buffer);
-            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), nullptr);
-            glEnableVertexAttribArray(0);
-
-            glBindBuffer(GL_ARRAY_BUFFER, m->uv_buffer);
-            glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec2), nullptr);
-            glEnableVertexAttribArray(1);
-
-            glBindBuffer(GL_ARRAY_BUFFER, m->normals_buffer);
-            glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), nullptr);
-            glEnableVertexAttribArray(2);
-
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m->indices_buffer);
-            glDrawElements(GL_TRIANGLES, m->num_tris * 12, GL_UNSIGNED_INT, nullptr);
-
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-            glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-            glDisableVertexAttribArray(0);
-            glDisableVertexAttribArray(1);
-            glDisableVertexAttribArray(2);
         }
 
+        int num = 0;
+
+        for(auto texture : textures) {
+            TextureResource *t = engine.resources.getTexture(texture.second.c_str());
+
+            if(t) {
+                glActiveTexture(GL_TEXTURE0 + num);
+                glBindTexture(GL_TEXTURE_2D, t->id);
+
+                current->setUniform(texture.first.c_str(), num);
+                num++;
+            }
+        }
+
+
+        current->bindAttribLocation(0, "in_Position");
+        current->bindAttribLocation(1, "in_TexCoord");
+        current->bindAttribLocation(2, "in_Normal");
+
+        current->setUniform("in_ModelMatrix", ModelMat);
+        current->setUniform("in_ProjMatrix", ProjMat);
+        current->setUniform("in_ViewMatrix", ViewMat);
+
+        glBindBuffer(GL_ARRAY_BUFFER, m->vertex_buffer);
+        glVertexAttribPointer(
+            0,
+            3,
+            GL_FLOAT,
+            GL_FALSE,
+            sizeof(glm::vec3),
+            nullptr);
+
+        glEnableVertexAttribArray(0);
+
+        glBindBuffer(GL_ARRAY_BUFFER, m->uv_buffer);
+        glVertexAttribPointer(
+            1,
+            2,
+            GL_FLOAT,
+            GL_FALSE,
+            sizeof(glm::vec2),
+            nullptr);
+
+        glEnableVertexAttribArray(1);
+
+        glBindBuffer(GL_ARRAY_BUFFER, m->normals_buffer);
+        glVertexAttribPointer(
+            2,
+            3,
+            GL_FLOAT,
+            GL_FALSE,
+            sizeof(glm::vec3),
+            nullptr);
+
+        glEnableVertexAttribArray(2);
+
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m->indices_buffer);
+        glDrawElements(
+            GL_TRIANGLES,
+            m->num_tris * 12,
+            GL_UNSIGNED_INT,
+            nullptr);
+
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+        glDisableVertexAttribArray(0);
+        glDisableVertexAttribArray(1);
+        glDisableVertexAttribArray(2);
+
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        glEnable(GL_CULL_FACE);
         glUseProgram(0);
     }
 }

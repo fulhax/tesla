@@ -82,6 +82,14 @@ std::map<std::string, std::string> Notify::checkForChanges()
                         }
                     }
 
+                    for(char &l : filename) {
+                        if(l == '\\') {
+                            l = '/';
+                        } else if(l == 0) {
+                            break;
+                        }
+                    }
+
                     output[filename] = fullpath;
                     lprintf(LOG_INFO, "File Modified: %ls\n", fullpath);
                 }

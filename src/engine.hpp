@@ -6,6 +6,7 @@
 #include "resource.hpp"
 #include "script.hpp"
 #include "audio.hpp"
+#include "debugger.hpp"
 
 class Engine
 {
@@ -25,6 +26,7 @@ public:
     Video video;
     Script script;
     ResourceHandler resources;
+    Debugger debugger;
 
     // For AngelScript {
     void addRef()
