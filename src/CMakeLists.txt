@@ -23,12 +23,14 @@ list(APPEND SOURCE_FILES
     "./resources/as.cpp"
     "./resources/ogg.cpp"
     "../externals/fast_obj_loader/fast_obj_loader.cpp"
+    "../externals/as_scriptbuilder/scriptbuilder.cpp"
     "../externals/as_scriptstdstring/scriptstdstring.cpp"
     )
 
 list(APPEND INCLUDE_DIRS
     "./"
-    "../externals/fast_obj_loader/"
+    "../externals/fast_obj_loader"
+    "../externals/as_scriptbuilder"
     "../externals/as_scriptstdstring"
     )
 

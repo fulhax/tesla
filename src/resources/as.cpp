@@ -1,5 +1,7 @@
 #include "as.hpp"
 
+#include <scriptbuilder.h>
+
 #include "../engine.hpp"
 
 AS_Resource::AS_Resource()
@@ -14,43 +16,26 @@ AS_Resource::~AS_Resource()
 
 int AS_Resource::load(const char *filename)
 {
-    FILE *file = fopen(filename, "rb");
+    CScriptBuilder builder;
 
-    if(file) {
-        int len = 0;
-        char *script = 0;
+    if(builder.StartNewModule(engine.script.core, filename) >= 0) {
 
-        fseek(file, 0, SEEK_END);
-        len = ftell(file);
-        fseek(file, 0, SEEK_SET);
-
-        script = new char[len];
-
-        if(!fread(script, len, 1, file)) {
+        if(builder.AddSectionFromFile(filename) < 0) {
             lprintf(LOG_ERROR, "Unable to read ^g\"%s\"^0", filename);
-            delete [] script;
-            fclose(file);
             return 0;
         }
 
-        fclose(file);
-
-        module = engine.script.core->GetModule(
-                     filename,
-                     asGM_CREATE_IF_NOT_EXISTS);
-
-        module->AddScriptSection(filename, script, len, 0);
-        delete [] script;
-
-        if(module->Build() > 0) {
+        if(builder.BuildModule() > 0) {
             lprintf(LOG_ERROR, "Failed to build script");
             return 0;
         }
 
+        module = builder.GetModule();
+
         return 1;
     }
 
-    lprintf(LOG_WARNING, "Unable to open ^g\"%s\"^0", filename);
+    lprintf(LOG_WARNING, "Unable to create module for ^g\"%s\"^0", filename);
 
     return 0;
 }

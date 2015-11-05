@@ -43,6 +43,12 @@ endif
 
 all: package
 
+windows:
+	$(MAKE) WINDOWS=1
+
+release:
+	$(MAKE) RELEASE=1
+
 build: $(BUILD_DIR)/$(UNAME)/$(BUILD_TYPE)/Makefile
 	$(MAKE) -C $(BUILD_DIR)/$(UNAME)/$(BUILD_TYPE)
 

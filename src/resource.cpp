@@ -154,7 +154,7 @@ Resource *ResourceHandler::getResource(const char *filename)
 
         if(res) {
             if(res->load(fullpath)) {
-                lprintf(LOG_INFO, "^g\"%s\"^0 loaded.", fullpath);
+                lprintf(LOG_INFO, "^g\"%s\"^0 loaded.", filename);
                 res->failed = false;
                 resources[filename] = res;
                 return res;
