@@ -30,6 +30,8 @@ int Engine::init()
         return 1;
     }
 
+    config.readConfig("settings.conf");
+
     resources.init();
     audio.init();
 
@@ -50,6 +52,7 @@ int Engine::init()
 
 void Engine::shutdown()
 {
+    config.saveConfig("settings.conf");
     SDL_Quit();
 }
 

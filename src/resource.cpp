@@ -2,6 +2,8 @@
 
 #include <algorithm>
 
+#include "engine.hpp"
+
 // TextureResource
 #include "resources/tga.hpp"
 #include "resources/png.hpp"
@@ -20,8 +22,8 @@
 
 ResourceHandler::ResourceHandler()
 {
-    snprintf(datapath, FILENAME_MAX, "./data");
-    snprintf(enginepath, FILENAME_MAX, "./engine");
+    memset(datapath, 0, FILENAME_MAX);
+    memset(enginepath, 0, FILENAME_MAX);
 }
 
 ResourceHandler::~ResourceHandler()
@@ -70,6 +72,22 @@ Resource *ResourceHandler::getByType(const char *ext)
 
 int ResourceHandler::init()
 {
+    snprintf(
+        datapath,
+        FILENAME_MAX,
+        engine.config.getString(
+            "resource.datapath",
+            "./data"
+        ).c_str());
+
+    snprintf(
+        enginepath,
+        FILENAME_MAX,
+        engine.config.getString(
+            "resource.enginepath",
+            "./engine"
+        ).c_str());
+
     notify.watchDir(datapath);
 
     return 0;

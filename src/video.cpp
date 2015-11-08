@@ -1,17 +1,16 @@
 #include "video.hpp"
-#include "errorhandler.hpp"
-
-#include "engine.hpp"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/euler_angles.hpp>
 
+#include "engine.hpp"
+#include "errorhandler.hpp"
 
-int Video::init(int width, int height)
+int Video::init()
 {
-    screen_width = width;
-    screen_height = height;
+    screen_width = engine.config.getInt("video.width", 1024);
+    screen_height = engine.config.getInt("video.height", 786);
 
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
@@ -25,8 +24,8 @@ int Video::init(int width, int height)
 
     SDL_RendererInfo ri;
     int ret = SDL_CreateWindowAndRenderer(
-                  width,
-                  height,
+                  screen_width,
+                  screen_height,
                   SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE,
                   &window,
                   &renderer);
@@ -70,7 +69,7 @@ int Video::init(int width, int height)
     glEnable(GL_DEPTH_TEST);
 
     glClearColor(0, 0.3f, 0.3f, 0);
-    glViewport(0, 0, width, height);
+    resize(screen_width, screen_height);
 
     lprintf(LOG_INFO, "Video started successfully");
     lprintf(
@@ -89,13 +88,6 @@ int Video::init(int width, int height)
         LOG_INFO,
         "^cRenderer:^0\t%s",
         glGetString(GL_RENDERER));
-
-    ProjMat = glm::perspective(
-            45.0f,
-            static_cast<float>(width) /
-            static_cast<float>(height),
-            0.1f,
-            1000.0f);
 
     testentity[0].init("test1", "scripts/test.as");
     testentity[1].init("test2", "scripts/test2.as");

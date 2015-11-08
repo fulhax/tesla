@@ -7,6 +7,7 @@
 #include "script.hpp"
 #include "audio.hpp"
 #include "debugger.hpp"
+#include "config.hpp"
 
 class Engine
 {
@@ -16,7 +17,7 @@ public:
 
     int init();
     void update();
-    static void shutdown();
+    void shutdown();
     float getTime() const;
 
     bool running;
@@ -27,6 +28,7 @@ public:
     Script script;
     ResourceHandler resources;
     Debugger debugger;
+    Config config;
 
     // For AngelScript {
     void addRef()

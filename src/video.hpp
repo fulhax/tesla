@@ -22,7 +22,7 @@ public:
     Video();
     virtual ~Video();
 
-    int init(int width = 1024, int height = 768);
+    int init();
     void update();
     void resize(int width, int height);
 
