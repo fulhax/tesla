@@ -30,7 +30,9 @@ void Notify::watchDir(const char *dirname, bool recursive)
 {
     HANDLE watch = CreateFile(dirname,
                               FILE_LIST_DIRECTORY,
-                              FILE_SHARE_WRITE | FILE_SHARE_READ | FILE_SHARE_DELETE,
+                              FILE_SHARE_WRITE |
+                              FILE_SHARE_READ |
+                              FILE_SHARE_DELETE,
                               nullptr,
                               OPEN_EXISTING,
                               FILE_FLAG_BACKUP_SEMANTICS,
@@ -71,8 +73,14 @@ std::map<std::string, std::string> Notify::checkForChanges()
                 if(strFileNotifyInfo[0].Action == FILE_ACTION_MODIFIED) {
                     char fullpath[FILENAME_MAX] = {0};
                     char filename[FILENAME_MAX] = {0};
-                    wcstombs(filename, strFileNotifyInfo[0].FileName, FILENAME_MAX);
-                    snprintf(fullpath, FILENAME_MAX, "%s/%s", dir.dir_name.c_str(), filename);
+                    wcstombs(filename,
+                             strFileNotifyInfo[0].FileName,
+                             FILENAME_MAX
+                            );
+                    snprintf(fullpath, FILENAME_MAX, "%s/%s",
+                             dir.dir_name.c_str(),
+                             filename
+                            );
 
                     for(char &l : fullpath) {
                         if(l == '\\') {
