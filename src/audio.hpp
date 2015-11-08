@@ -9,9 +9,6 @@
 
 #include "camera.hpp"
 
-// TODO(c0r73x): reserve one source for music
-#define MAX_SOURCES 32
-
 class Audio
 {
 public:
@@ -26,7 +23,9 @@ private:
     ALCdevice *device;
     ALCcontext *context;
 
-    uint32_t sources[MAX_SOURCES];
+    // TODO(c0r73x): reserve one source for music
+    uint8_t max_sources;
+    uint32_t *sources;
 };
 
 #endif // AUDIO_HPP_

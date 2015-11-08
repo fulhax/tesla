@@ -8,13 +8,18 @@ Audio::Audio()
 {
     device = nullptr;
     context = nullptr;
-    memset(sources, 0, MAX_SOURCES);
+    sources = nullptr;
+    max_sources = 0;
 }
 
 Audio::~Audio()
 {
-    alDeleteSources(MAX_SOURCES, sources);
+    alDeleteSources(max_sources, sources);
     lprintf(LOG_INFO, "Shutting down audio");
+
+    if(sources) {
+        delete [] sources;
+    }
 
     if(context) {
         alcDestroyContext(context);
@@ -46,7 +51,9 @@ int Audio::init()
         return 1;
     }
 
-    alGenSources(MAX_SOURCES, sources);
+    max_sources = engine.config.getInt("audio.max_sources", 32);
+    sources = new uint32_t[max_sources];
+    alGenSources(max_sources, sources);
 
     lprintf(LOG_INFO, "Audio started successfully");
 
@@ -72,11 +79,11 @@ void Audio::update(Camera *camera)
 
 bool Audio::isPlaying(uint32_t source)
 {
-    if(!device || !context) {
+    if(!device || !context || !sources) {
         return false;
     }
 
-    if(source > MAX_SOURCES) {
+    if(source > max_sources) {
         return false;
     }
 
@@ -98,11 +105,11 @@ int Audio::play(const char *filename, glm::vec3 position)
         int curr_source = -1;
         int state;
 
-        for(auto source : sources) {
-            alGetSourcei(source, AL_SOURCE_STATE, &state);
+        for(uint8_t i = 0; i < max_sources; i++) {
+            alGetSourcei(sources[i], AL_SOURCE_STATE, &state);
 
             if(state != AL_PLAYING) {
-                curr_source = source;
+                curr_source = sources[i];
                 break;
             }
         }

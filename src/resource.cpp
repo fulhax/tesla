@@ -20,6 +20,9 @@
 // SoundResource
 #include "resources/ogg.hpp"
 
+// FontResource
+#include "resources/freetype.hpp"
+
 ResourceHandler::ResourceHandler()
 {
     memset(datapath, 0, FILENAME_MAX);
@@ -38,7 +41,7 @@ ResourceHandler::~ResourceHandler()
     resources.clear();
 }
 
-Resource *ResourceHandler::getByType(const char *ext)
+Resource *ResourceHandler::getByType(const char *ext, void *data)
 {
     Resource *res = nullptr;
 
@@ -63,6 +66,11 @@ Resource *ResourceHandler::getByType(const char *ext)
         res = new AS_Resource;
     } else if(strcmp("ogg", ext) == 0) {
         res = new OGG_Resource;
+    } else if(
+        strcmp("ttf", ext) == 0 ||
+        strcmp("otf", ext) == 0
+    ) {
+        res = new FT_Resource(data);
     } else {
         lprintf(LOG_ERROR, "Unrecognized file format ^g%s^0", ext);
     }
@@ -98,12 +106,18 @@ void ResourceHandler::update()
     auto check = notify.checkForChanges();
 
     for(auto changes : check) {
+        bool change = false;
         auto res = resources.find(changes.first);
 
-        if(res != resources.end()) {
+        while(res != resources.end()) {
             lprintf(LOG_INFO, "Unloading ^g\"%s\"^0.", changes.first.c_str());
             delete res->second;
             resources.erase(res);
+            res = resources.find(changes.first);
+            change = true;
+        }
+
+        if(change) {
             getResource(changes.first.c_str());
         }
     }
@@ -129,8 +143,29 @@ SoundResource *ResourceHandler::getSound(const char *filename)
     return reinterpret_cast<SoundResource *>(getResource(filename));
 }
 
-ShaderResource *ResourceHandler::getShader(Shader *parent,
-        const char *filename)
+FontResource *ResourceHandler::getFont(const char *filename)
+{
+    char real_filename[FILENAME_MAX];
+    snprintf(real_filename, FILENAME_MAX, "%s", filename);
+
+    char *size = 0;
+    strtok_r(real_filename, ":", &size);
+
+    int fontsize = atoi(size);
+
+    if(fontsize == 0) {
+        lprintf(LOG_WARNING, "No fontsize specified for ^g\"%s\"^0", filename);
+        return 0;
+    }
+
+    return reinterpret_cast<FontResource *>(
+        getResource(real_filename, &fontsize)
+    );
+}
+
+ShaderResource *ResourceHandler::getShader(
+    Shader *parent,
+    const char *filename)
 {
     ShaderResource *s = reinterpret_cast<ShaderResource *>(getResource(filename));
 
@@ -141,7 +176,7 @@ ShaderResource *ResourceHandler::getShader(Shader *parent,
     return s;
 }
 
-Resource *ResourceHandler::getResource(const char *filename)
+Resource *ResourceHandler::getResource(const char *filename, void* data)
 {
     auto res = resources.find(filename);
 
@@ -168,7 +203,7 @@ Resource *ResourceHandler::getResource(const char *filename)
     const char *ext = strrchr(filename, '.') + 1;
 
     if(ext) {
-        Resource *res = getByType(ext);
+        Resource *res = getByType(ext, data);
 
         if(res) {
             if(res->load(fullpath)) {

@@ -128,7 +128,7 @@ public:
 
     ModelResource()
     {
-        bounding_box.min = bounding_box.max = glm::vec3(0,0,0);
+        bounding_box.min = bounding_box.max = glm::vec3(0, 0, 0);
 
         num_tris = 0;
         glGenBuffers(1, &vertex_buffer);
@@ -162,6 +162,36 @@ public:
     }
 };
 
+class FontResource : public Resource
+{
+public:
+    uint32_t id;
+    uint32_t fontsize;
+
+    explicit FontResource(void *data)
+    {
+        id = -1;
+
+        if(data != 0) {
+            fontsize = *reinterpret_cast<uint32_t *>(data);
+        } else {
+            fontsize = 0;
+        }
+
+        glGenTextures(1, &id);
+    }
+    FontResource() 
+    {
+        id = -1;
+        fontsize = 0;
+        glGenTextures(1, &id);
+    }
+    ~FontResource()
+    {
+        glDeleteTextures(1, &id);
+    }
+};
+
 class ResourceHandler
 {
 public:
@@ -176,6 +206,7 @@ public:
     ShaderResource *getShader(Shader *parent, const char *filename);
     ScriptResource *getScript(const char *filename);
     SoundResource *getSound(const char *filename);
+    FontResource *getFont(const char *filename);
 
     char datapath[FILENAME_MAX];
     char enginepath[FILENAME_MAX];
@@ -184,8 +215,8 @@ private:
 
     std::map<std::string, Resource *> resources;
 
-    Resource *getResource(const char *filename);
-    Resource *getByType(const char *ext);
+    Resource *getResource(const char *filename, void *data = 0);
+    Resource *getByType(const char *ext, void *data);
 };
 
 #endif // RESOURCE_HPP_

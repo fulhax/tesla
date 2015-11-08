@@ -4,6 +4,8 @@
 #include <angelscript.h>
 #include <string>
 
+#define MAX_CONTEXTS 8
+
 class ScriptResource;
 
 class Script
@@ -17,7 +19,7 @@ public:
 
     asIScriptEngine *core;
 private:
-    asIScriptContext *ctx;
+    asIScriptContext *ctx[MAX_CONTEXTS];
 
     void registerObjects();
     static void MessageCallback(const asSMessageInfo *msg, void *param);

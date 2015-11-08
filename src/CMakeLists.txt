@@ -23,6 +23,7 @@ list(APPEND SOURCE_FILES
     "./resources/glsl.cpp"
     "./resources/as.cpp"
     "./resources/ogg.cpp"
+    "./resources/freetype.cpp"
     "../externals/fast_obj_loader/fast_obj_loader.cpp"
     "../externals/as_scriptbuilder/scriptbuilder.cpp"
     "../externals/as_scriptstdstring/scriptstdstring.cpp"
@@ -50,6 +51,7 @@ else()
         "./linux/notify.cpp"
         )
     list(APPEND INCLUDE_DIRS
+        "/usr/include/freetype2"
         "./linux"
         )
 endif()
@@ -118,4 +120,5 @@ target_link_libraries(${PROJECT_NAME}
     ${SDL2_LIBRARIES}
     ${PNG_LIBRARIES}
     angelscript.a
+    freetype
     )

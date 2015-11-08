@@ -11,16 +11,18 @@
 
 Script::Script()
 {
-    ctx = nullptr;
     core = nullptr;
+    memset(ctx, 0, sizeof(asIScriptContext) * MAX_CONTEXTS);
 }
 
 Script::~Script()
 {
     lprintf(LOG_INFO, "Shutting down AngelScript");
 
-    if(ctx) {
-        ctx->Unprepare();
+    for(int i = 0; i < MAX_CONTEXTS; i++) {
+        if(ctx[i]) {
+            ctx[i]->Unprepare();
+        }
     }
 
     if(core) {
@@ -128,7 +130,9 @@ int Script::init()
     RegisterStdString(core);
     registerObjects();
 
-    ctx = core->CreateContext();
+    for(int i = 0; i < MAX_CONTEXTS; ++i) {
+        ctx[i] = core->CreateContext();
+    }
 
     lprintf(LOG_INFO, "AngelScript started successfully");
 
@@ -151,25 +155,37 @@ void Script::run(ScriptResource *script, const char *func, void *arg)
         return;
     }
 
-    ctx->Prepare(f);
-    ctx->SetArgObject(0, arg);
-    ctx->Execute();
-
-    // TODO(c0r73x): Mer contexts, loopa inte!
-
-    int r = 0;
+    int curr = 0;
+    bool found = false;
 
     do {
-        r = ctx->GetState();
+        found = false;
 
-        if(r == asEXECUTION_ERROR) {
-            lprintf(
-                LOG_WARNING,
-                "Script failed ^g\"%s\"^0",
-                ctx->GetExceptionString());
-            break;
+        for(curr = 0; curr < MAX_CONTEXTS; curr++) {
+            int r = ctx[curr]->GetState();
+
+            if(r == asEXECUTION_ERROR) {
+                lprintf(
+                    LOG_WARNING,
+                    "Script failed ^g\"%s\"^0",
+                    ctx[curr]->GetExceptionString());
+
+                found = true;
+                break;
+            } else if(r == asEXECUTION_FINISHED ||
+                      r == asEXECUTION_UNINITIALIZED) {
+
+                found = true;
+                break;
+            }
         }
-    } while(r != asEXECUTION_FINISHED);
+    } while(!found);
+
+    if(curr != MAX_CONTEXTS) {
+        ctx[curr]->Prepare(f);
+        ctx[curr]->SetArgObject(0, arg);
+        ctx[curr]->Execute();
+    }
 }
 
 void Script::MessageCallback(const asSMessageInfo *msg, void *param)
@@ -182,6 +198,11 @@ void Script::MessageCallback(const asSMessageInfo *msg, void *param)
         type = LOG_INFO;
     }
 
-    lprintf(type, "^b%s^0 (^y%d^0,^y%d^0): %s",
-            msg->section, msg->row, msg->col, msg->message);
+    lprintf(
+        type,
+        "^b%s^0 (^y%d^0,^y%d^0): %s",
+        msg->section,
+        msg->row,
+        msg->col,
+        msg->message);
 }
