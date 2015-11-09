@@ -51,7 +51,6 @@ else()
         "./linux/notify.cpp"
         )
     list(APPEND INCLUDE_DIRS
-        "/usr/include/freetype2"
         "./linux"
         )
 endif()
@@ -71,12 +70,14 @@ endif()
 
 makelistabs("${INCLUDE_DIRS}" INCLUDE_DIRS)
 makelistabs("${LIBRARY_DIRS}" LIBRARY_DIRS)
+
 include_directories(${INCLUDE_DIRS})
+link_directories(${LIBRARY_DIRS})
 
 find_package(OpenGL REQUIRED)
 
 include_directories(${OPENGL_INCLUDE_DIR})
-link_directories(${OPENGL_LIBRARY_DIRS} ${LIBRARY_DIRS})
+link_directories(${OPENGL_LIBRARY_DIRS})
 add_definitions(${OPENGL_DEFINITIONS})
 
 find_package(glm REQUIRED)
@@ -87,12 +88,17 @@ include_directories(${PNG_INCLUDE_DIRS})
 
 INCLUDE(FindPkgConfig)
 PKG_SEARCH_MODULE(SDL2 REQUIRED sdl2)
-include_directories(${SDL2_INCLUDE_DIR})
-link_directories(${SDL2_LIBRARY_DIRS} ${LIBRARY_DIRS})
+include_directories(${SDL2_INCLUDE_DIRS})
+link_directories(${SDL2_LIBRARY_DIRS})
 add_definitions(${SDL2_DEFINITIONS})
 
 PKG_SEARCH_MODULE(OPENAL REQUIRED openal)
 PKG_SEARCH_MODULE(VORBISFILE REQUIRED vorbisfile)
+
+PKG_SEARCH_MODULE(FREETYPE2 REQUIRED freetype2)
+include_directories(${FREETYPE2_INCLUDE_DIRS})
+link_directories(${FREETYPE2_LIBRARY_DIRS})
+add_definitions(${FREETYPE2_DEFINITIONS})
 
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 
@@ -120,5 +126,14 @@ target_link_libraries(${PROJECT_NAME}
     ${SDL2_LIBRARIES}
     ${PNG_LIBRARIES}
     angelscript.a
-    freetype
+    ${FREETYPE2_LIBRARIES}
     )
+
+get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
+foreach(dir ${dirs})
+    message(STATUS "include dir='${dir}'")
+endforeach()
+get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY LINK_DIRECTORIES)
+foreach(dir ${dirs})
+    message(STATUS "lib dir='${dir}'")
+endforeach()
