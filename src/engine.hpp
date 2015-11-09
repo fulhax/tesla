@@ -17,7 +17,7 @@ public:
 
     int init();
     void update();
-    void shutdown();
+    void shutdown() const;
     float getTime() const;
 
     bool running;

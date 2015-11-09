@@ -23,7 +23,7 @@ class Entity
 
     int ref_count;
 
-    int cullCheck(const glm::mat4 &ModelMat, ModelResource *m);
+    static int cullCheck(const glm::mat4 &ModelMat, ModelResource *m);
 public:
     Entity();
     virtual ~Entity();

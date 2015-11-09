@@ -39,8 +39,8 @@ class FT_Resource : public FontResource
 
     uint32_t max_height;
 
-    int next_p2(int a);
-    void fillTextureData(uint32_t ch, unsigned char *texture_data);
+    static int next_p2(int a);
+    void fillTextureData(uint32_t ch, unsigned char *texture_data) const;
 public:
     explicit FT_Resource(void *data);
     ~FT_Resource();

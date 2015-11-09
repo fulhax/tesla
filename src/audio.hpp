@@ -16,9 +16,9 @@ public:
     virtual ~Audio();
 
     int init();
-    void update(Camera *camera);
+    void update(Camera *camera) const;
     int play(const char *filename, glm::vec3 position);
-    bool isPlaying(uint32_t source);
+    bool isPlaying(uint32_t source) const;
 private:
     ALCdevice *device;
     ALCcontext *context;

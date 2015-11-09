@@ -60,7 +60,7 @@ int Audio::init()
     return 0;
 }
 
-void Audio::update(Camera *camera)
+void Audio::update(Camera *camera) const
 {
     if(device && context) {
         alListener3f(
@@ -77,7 +77,7 @@ void Audio::update(Camera *camera)
     }
 }
 
-bool Audio::isPlaying(uint32_t source)
+bool Audio::isPlaying(uint32_t source) const
 {
     if(!device || !context || !sources) {
         return false;

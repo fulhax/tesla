@@ -29,7 +29,7 @@ int FT_Resource::next_p2(int a)
     return rval;
 }
 
-void FT_Resource::fillTextureData(uint32_t ch, unsigned char *texture_data)
+void FT_Resource::fillTextureData(uint32_t ch, unsigned char *texture_data) const
 {
     unsigned char *ch_bmp = glyphs[ch].bitmap;
 

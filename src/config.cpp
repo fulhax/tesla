@@ -22,7 +22,15 @@ void Config::readConfig(const char *filename)
             std::string val;
             std::string *current = &key;
 
-            fgets(line, MAX_LINE, f);
+            if(fgets(line, MAX_LINE, f) == nullptr) {
+                lprintf(
+                    LOG_ERROR,
+                    "Unable to read config file ^g\"%s\"^0",
+                    filename);
+
+                fclose(f);
+                return;
+            }
 
             char *tmp = line;
 
@@ -49,7 +57,7 @@ void Config::readConfig(const char *filename)
     }
 }
 
-void Config::saveConfig(const char *filename)
+void Config::saveConfig(const char *filename) const
 {
     FILE *o = fopen(filename, "wb");
     char segment[256] = {0};

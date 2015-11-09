@@ -50,7 +50,7 @@ int Engine::init()
     return 0;
 }
 
-void Engine::shutdown()
+void Engine::shutdown() const
 {
     config.saveConfig("settings.conf");
     SDL_Quit();
