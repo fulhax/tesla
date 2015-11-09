@@ -196,7 +196,7 @@ int FT_Resource::load(const char *filename)
                  MAX_TEXTURE_WIDTH,
                  texture_height,
                  0,
-                 GL_LUMINANCE_ALPHA,
+                 GL_RG,
                  GL_UNSIGNED_BYTE,
                  texture_data);
 

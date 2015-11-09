@@ -95,6 +95,11 @@ add_definitions(${SDL2_DEFINITIONS})
 PKG_SEARCH_MODULE(OPENAL REQUIRED openal)
 PKG_SEARCH_MODULE(VORBISFILE REQUIRED vorbisfile)
 
+PKG_SEARCH_MODULE(HARFBUZZ REQUIRED harfbuzz)
+include_directories(${HARFBUZZ_INCLUDE_DIRS})
+link_directories(${HARFBUZZ_LIBRARY_DIRS})
+add_definitions(${HARFBUZZ_DEFINITIONS})
+
 PKG_SEARCH_MODULE(FREETYPE2 REQUIRED freetype2)
 include_directories(${FREETYPE2_INCLUDE_DIRS})
 link_directories(${FREETYPE2_LIBRARY_DIRS})
@@ -126,6 +131,7 @@ target_link_libraries(${PROJECT_NAME}
     ${SDL2_LIBRARIES}
     ${PNG_LIBRARIES}
     angelscript.a
+    ${HARFBUZZ_LIBRARIES}
     ${FREETYPE2_LIBRARIES}
     )
 
