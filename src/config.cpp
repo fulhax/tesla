@@ -23,13 +23,7 @@ void Config::readConfig(const char *filename)
             std::string *current = &key;
 
             if(fgets(line, MAX_LINE, f) == nullptr) {
-                lprintf(
-                    LOG_ERROR,
-                    "Unable to read config file ^g\"%s\"^0",
-                    filename);
-
-                fclose(f);
-                return;
+                break;
             }
 
             char *tmp = line;
