@@ -34,6 +34,7 @@ list(APPEND INCLUDE_DIRS
     "../externals/fast_obj_loader"
     "../externals/as_scriptbuilder"
     "../externals/as_scriptstdstring"
+    "${CMAKE_CURRENT_BINARY_DIR}/generated"
     )
 
 if(WIN32)
@@ -42,7 +43,7 @@ if(WIN32)
         )
     list(APPEND INCLUDE_DIRS
         "./windows"
-        )
+            )
     list(APPEND LIBRARY_DIRS
         ${CMAKE_FIND_ROOT_PATH}/lib
         )
@@ -105,7 +106,13 @@ include_directories(${FREETYPE2_INCLUDE_DIRS})
 link_directories(${FREETYPE2_LIBRARY_DIRS})
 add_definitions(${FREETYPE2_DEFINITIONS})
 
-add_executable(${PROJECT_NAME} ${SOURCE_FILES})
+add_executable(${PROJECT_NAME}
+    ${SOURCE_FILES}
+    "${CMAKE_CURRENT_BINARY_DIR}/generated/sha256versionfile.cpp"
+    )
+set_source_files_properties(
+    "${CMAKE_CURRENT_BINARY_DIR}/generated/sha256versionfile.cpp"
+    PROPERTIES GENERATED TRUE)
 
 if(WIN32)
     target_link_libraries(${PROJECT_NAME}
@@ -135,11 +142,31 @@ target_link_libraries(${PROJECT_NAME}
     ${FREETYPE2_LIBRARIES}
     )
 
-get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
-foreach(dir ${dirs})
-    message(STATUS "include dir='${dir}'")
-endforeach()
-get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY LINK_DIRECTORIES)
-foreach(dir ${dirs})
-    message(STATUS "lib dir='${dir}'")
-endforeach()
+if(DEBUG_PATHS)
+    get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
+    foreach(dir ${dirs})
+        message(STATUS "include dir='${dir}'")
+    endforeach()
+    get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY LINK_DIRECTORIES)
+    foreach(dir ${dirs})
+        message(STATUS "lib dir='${dir}'")
+    endforeach()
+endif()
+
+set(SHA256FILES
+    "./resources/obj.cpp"
+    "./resources/as.cpp"
+    )
+# this is for including the "version" of the sourcefile
+# in certain resource loaders for example where you cache
+# a binary version of the resource
+
+add_custom_command(
+    OUTPUT generated/sha256versionfile.h
+    OUTPUT generated/sha256versionfile.cpp
+    COMMAND ${CMAKE_COMMAND}
+    -DOUTPUTDIR="${CMAKE_CURRENT_BINARY_DIR}"
+    -DSOURCES="${SHA256FILES}"
+    -P ${CMAKE_CURRENT_SOURCE_DIR}/../cmake/version.cmake
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    DEPENDS ${SHA256FILES})
