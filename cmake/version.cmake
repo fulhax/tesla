@@ -1,11 +1,7 @@
 SEPARATE_ARGUMENTS(SOURCES)
 file(MAKE_DIRECTORY ${OUTPUTDIR}/generated/)
-set(target_h_filename "${OUTPUTDIR}/generated/sha256versionfile.h")
-set(filename_h "${target_h_filename}.txt")
-set(target_cpp_filename "${OUTPUTDIR}/generated/sha256versionfile.cpp")
-set(filename_cpp "${target_cpp_filename}.txt")
-
-
+set(filename_h "${OUTPUTDIR}/generated/sha256versionfile.h")
+set(filename_cpp "${OUTPUTDIR}/generated/sha256versionfile.cpp")
 
 file(WRITE ${filename_h} "#ifndef __SHA256VERSIONFILE_H__\n")
 file(WRITE ${filename_cpp} "#include \"sha256versionfile.h\"\n")
@@ -33,7 +29,3 @@ foreach(VERSIONED_FILE ${SOURCES})
     file(APPEND ${filename_h} "extern ${FILE_VARIABLE};\n")
 endforeach()
 file(APPEND ${filename_h} "#endif")
-
-execute_process(COMMAND ${CMAKE_COMMAND} -E copy_if_different ${filename_h} ${target_h_filename})
-execute_process(COMMAND ${CMAKE_COMMAND} -E copy_if_different ${filename_cpp} ${target_cpp_filename})
-
