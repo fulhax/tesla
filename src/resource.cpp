@@ -10,6 +10,7 @@
 
 // ModelResource
 #include "resources/obj.hpp"
+#include "resources/ogex.hpp"
 
 // ShaderResource
 #include "resources/glsl.hpp"
@@ -51,6 +52,8 @@ Resource *ResourceHandler::getByType(const char *ext, void *data)
         res = new PNG_Resource;
     } else if(strcmp("obj", ext) == 0) {
         res = new OBJ_Resource;
+    } else if(strcmp("ogex", ext) == 0) {
+        res = new OGEX_Resource;
     } else if(
         strcmp("vs", ext) == 0 ||
         strcmp("vert", ext) == 0 ||
@@ -108,6 +111,7 @@ void ResourceHandler::update()
     for(auto changes : check) {
         bool change = false;
         auto res = resources.find(changes.first);
+        lprintf(LOG_INFO, "changed file:%s", changes.first.c_str());
 
         while(res != resources.end()) {
             lprintf(LOG_INFO, "Unloading ^g\"%s\"^0.", changes.first.c_str());
@@ -159,8 +163,8 @@ FontResource *ResourceHandler::getFont(const char *filename)
     }
 
     return reinterpret_cast<FontResource *>(
-        getResource(real_filename, &fontsize)
-    );
+               getResource(real_filename, &fontsize)
+           );
 }
 
 ShaderResource *ResourceHandler::getShader(
@@ -176,7 +180,7 @@ ShaderResource *ResourceHandler::getShader(
     return s;
 }
 
-Resource *ResourceHandler::getResource(const char *filename, void* data)
+Resource *ResourceHandler::getResource(const char *filename, void *data)
 {
     auto res = resources.find(filename);
 
@@ -211,6 +215,8 @@ Resource *ResourceHandler::getResource(const char *filename, void* data)
                 res->failed = false;
                 resources[filename] = res;
                 return res;
+            } else {
+                lprintf(LOG_ERROR, "^g\"%s\"^0 failed to load.", filename);
             }
 
             delete res;

@@ -24,6 +24,7 @@ list(APPEND SOURCE_FILES
     "./resources/as.cpp"
     "./resources/ogg.cpp"
     "./resources/freetype.cpp"
+    "./resources/ogex.cpp"
     "../externals/fast_obj_loader/fast_obj_loader.cpp"
     "../externals/as_scriptbuilder/scriptbuilder.cpp"
     "../externals/as_scriptstdstring/scriptstdstring.cpp"
@@ -106,6 +107,16 @@ include_directories(${FREETYPE2_INCLUDE_DIRS})
 link_directories(${FREETYPE2_LIBRARY_DIRS})
 add_definitions(${FREETYPE2_DEFINITIONS})
 
+PKG_SEARCH_MODULE(OPENDDL REQUIRED openddlparser)
+include_directories(${OPENDDL_INCLUDE_DIRS})
+link_directories(${OPENDDL_LIBRARY_DIRS})
+add_definitions(${OPENDDL_DEFINITIONS})
+
+PKG_SEARCH_MODULE(OPENSSL REQUIRED openssl)
+include_directories(${OPENSSL_INCLUDE_DIRS})
+link_directories(${OPENSSL_LIBRARY_DIRS})
+add_definitions(${OPENSSL_DEFINITIONS})
+
 add_executable(${PROJECT_NAME}
     ${SOURCE_FILES}
     "${CMAKE_CURRENT_BINARY_DIR}/generated/sha256versionfile.cpp"
@@ -140,6 +151,8 @@ target_link_libraries(${PROJECT_NAME}
     angelscript.a
     ${HARFBUZZ_LIBRARIES}
     ${FREETYPE2_LIBRARIES}
+    ${OPENDDL_LIBRARIES}
+    ${OPENSSL_LIBRARIES}
     )
 
 if(DEBUG_PATHS)
@@ -154,8 +167,7 @@ if(DEBUG_PATHS)
 endif()
 
 set(SHA256FILES
-    "./resources/obj.cpp"
-    "./resources/as.cpp"
+    "./resources/ogex.cpp"
     )
 # this is for including the "version" of the sourcefile
 # in certain resource loaders for example where you cache
