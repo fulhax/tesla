@@ -93,19 +93,28 @@ std::map<std::string, std::string> Notify::checkForChanges()
         if(event->mask & IN_CLOSE_WRITE || event->mask & IN_MOVED_TO) {
             char fullpath[FILENAME_MAX];
             char filename[FILENAME_MAX];
+            bool subdir = true;
 
             auto watch = watchers[event->wd];
             const char *path = watch.c_str();
 
             int cmp = strncmp(
-                          watch.c_str(),
+                          path,
                           engine.resources.datapath,
                           strlen(engine.resources.datapath));
 
             if(cmp == 0) {
-                path += strlen(engine.resources.datapath) + 1;
+                if(strlen(path) == strlen(engine.resources.datapath)) {
+                    subdir = false;
+                } else {
+                    path += strlen(engine.resources.datapath) + 1;
+                }
             } else {
-                path += strlen(engine.resources.enginepath) + 1;
+                if(strlen(path) == strlen(engine.resources.enginepath)) {
+                    subdir = false;
+                } else {
+                    path += strlen(engine.resources.enginepath) + 1;
+                }
             }
 
             snprintf(
@@ -115,20 +124,22 @@ std::map<std::string, std::string> Notify::checkForChanges()
                 watch.c_str(),
                 event->name);
 
-            snprintf(
-                filename,
-                FILENAME_MAX,
-                "%s/%s",
-                path,
-                event->name);
+            if(subdir) {
+                snprintf(
+                    filename,
+                    FILENAME_MAX,
+                    "%s/%s",
+                    path,
+                    event->name);
+                output[filename] = fullpath;
+            } else {
+                output[event->name] = fullpath;
+            }
 
-            output[filename] = fullpath;
         }
 
         i += EVENT_SIZE + event->len;
-    }
-
-    while(i < length);
+    } while(i < length);
 
     return output;
 }
