@@ -159,8 +159,8 @@ FontResource *ResourceHandler::getFont(const char *filename)
     }
 
     return reinterpret_cast<FontResource *>(
-        getResource(real_filename, &fontsize)
-    );
+               getResource(real_filename, &fontsize)
+           );
 }
 
 ShaderResource *ResourceHandler::getShader(
@@ -176,7 +176,7 @@ ShaderResource *ResourceHandler::getShader(
     return s;
 }
 
-Resource *ResourceHandler::getResource(const char *filename, void* data)
+Resource *ResourceHandler::getResource(const char *filename, void *data)
 {
     auto res = resources.find(filename);
 

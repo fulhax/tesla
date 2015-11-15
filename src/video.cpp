@@ -101,11 +101,11 @@ void Video::resize(int width, int height)
     glViewport(0, 0, width, height);
 
     ProjMat = glm::perspective(
-            45.0f,
-            static_cast<float>(width) /
-            static_cast<float>(height),
-            0.1f,
-            1000.0f);
+                  45.0f,
+                  static_cast<float>(width) /
+                  static_cast<float>(height),
+                  0.1f,
+                  1000.0f);
 
     screen_width = width;
     screen_height = height;

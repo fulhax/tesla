@@ -32,7 +32,7 @@ void Camera::update(glm::mat4 projMat, glm::mat4 viewMat)
 
     for(int i = 0; i < 6; i++) {
         float len = glm::length(frustum[i].xyz());
-        frustum[i]/=len;
+        frustum[i] /= len;
     }
 }
 
