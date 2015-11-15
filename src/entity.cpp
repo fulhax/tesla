@@ -127,7 +127,7 @@ void Entity::draw(const glm::mat4 &ProjMat, const glm::mat4 &ViewMat)
             return;
         }
 
-        Shader* current = &shader;
+        Shader *current = &shader;
 
         if(!current->use()) {
             current = engine.debugger.useDebugShader();

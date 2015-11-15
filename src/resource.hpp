@@ -180,7 +180,7 @@ public:
 
         glGenTextures(1, &id);
     }
-    FontResource() 
+    FontResource()
     {
         id = -1;
         fontsize = 0;

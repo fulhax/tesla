@@ -24,7 +24,7 @@ public:
     Debugger();
     virtual ~Debugger();
 
-    Shader* useDebugShader();
+    Shader *useDebugShader();
     int init();
 };
 
