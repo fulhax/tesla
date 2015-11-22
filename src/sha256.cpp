@@ -1,8 +1,8 @@
 #include "sha256.hpp"
-
+#include <stdint.h>
 struct sha256
 {
-    unsigned long bits;
+    uint64_t bits;
     unsigned int datalen;
     unsigned char data[64];
     unsigned int hash[8];
