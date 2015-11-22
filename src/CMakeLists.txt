@@ -149,6 +149,10 @@ target_link_libraries(${PROJECT_NAME}
     ${HARFBUZZ_LIBRARIES}
     ${FREETYPE2_LIBRARIES}
     ${OPENDDL_LIBRARIES}
+<<<<<<< HEAD
+=======
+    ${OPENSSL_LIBRARIES}
+>>>>>>> refs/remotes/origin/opengex
     )
 
 if(DEBUG_PATHS)

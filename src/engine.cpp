@@ -94,11 +94,11 @@ void Engine::update()
         }
     }
 
-    static int sound = -1;
+    //static int sound = -1;
 
-    if(!audio.isPlaying(sound)) {
-        sound = audio.play("sound/Example.ogg", glm::vec3(0, 0, 0));
-    }
+    //if(!audio.isPlaying(sound)) {
+    //sound = audio.play("sound/Example.ogg", glm::vec3(0, 0, 0));
+    //}
 
     audio.update(&video.camera);
     video.update();
