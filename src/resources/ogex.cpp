@@ -1,8 +1,10 @@
 #include "ogex.hpp"
-#include "sha256versionfile.h"
-#include <stdio.h>
-#include <openddlparser/OpenDDLParser.h>
 #include "sha256.hpp"
+#include "sha256versionfile.h"
+#include "errorhandler.hpp"
+
+#include <openddlparser/OpenDDLParser.h>
+#include <stdio.h>
 
 OGEX_Resource::OGEX_Resource() {}
 OGEX_Resource::~OGEX_Resource() {}
@@ -10,10 +12,10 @@ OGEX_Resource::~OGEX_Resource() {}
 int OGEX_Resource::load(const char *filename)
 {
     FILE *f = fopen(filename, "rb");
-    fprintf(stdout, " opening file:%s\n", filename);
+    lprintf(LOG_INFO, " opening file:%s\n", filename);
 
     if(!f) {
-        fprintf(stderr, "File not found:%s\n", filename);
+        lprintf(LOG_ERROR, "File not found:%s\n", filename);
         return 0;
     }
 
@@ -23,7 +25,7 @@ int OGEX_Resource::load(const char *filename)
     fseek(f, 0, SEEK_SET);
 
     if(filesize == 0) {
-        fprintf(stderr, "Empty file:%s\n", filename);
+        lprintf(LOG_ERROR, "Empty file:%s\n", filename);
         return 0;
     }
 
@@ -31,7 +33,7 @@ int OGEX_Resource::load(const char *filename)
     memset(buffer, 0, filesize);
 
     if(buffer == nullptr) {
-        fprintf(stderr, "Out of memory while loading:%s\n", filename);
+        lprintf(LOG_ERROR, "Out of memory while loading:%s\n", filename);
         return 0;
     }
 
@@ -50,6 +52,11 @@ int OGEX_Resource::load(const char *filename)
         ODDLParser::DDLNode *root = ddlparser.getRoot();
     }
 
+
     delete[] buffer;
-    return 1;
+
+    if(!success) {
+        lprintf(LOG_ERROR, "something went wrong loading: %s\n", filename);
+    }
+    return success;
 }
