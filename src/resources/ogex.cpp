@@ -5,6 +5,7 @@
 
 #include <openddlparser/OpenDDLParser.h>
 #include <stdio.h>
+#include <math.h> // signbit for pritnsubnodes
 
 OGEX_Resource::OGEX_Resource() {}
 OGEX_Resource::~OGEX_Resource() {}
@@ -21,6 +22,18 @@ void printsubnodes(ODDLParser::DDLNode *node, int level)
         fprintf(stdout, "node:%s", child->getType().c_str());
         if(strlen(child->getName().c_str()) > 0) {
             fprintf(stdout, " name:%s", child->getName().c_str());
+        }
+        ODDLParser::Property *prop = child->getProperties();
+        if(prop != nullptr) {
+            fprintf(stdout, ": property");
+        }
+        while(prop != nullptr) {
+
+            fprintf(stdout, " %s", prop->m_key->m_text.m_buffer);
+            if(prop->m_value->m_type == 12) {
+                fprintf(stdout, ": %s", prop->m_value->getString());
+            }
+            prop = prop->m_next;
         }
         ODDLParser::Value *values = child->getValue();
         fprintf(stdout, "\n");
@@ -41,36 +54,62 @@ void printsubnodes(ODDLParser::DDLNode *node, int level)
                     fprintf(stdout, "%i\n", val);
                     break;
                 }
+                case ODDLParser::Value::ddl_string: {
+                    const char *val = values->getString();
+                    fprintf(stdout, "%s\n", val);
+                    break;
+                }
                 default:
+                    fprintf(stdout, "unhandeled value type\n");
                     break;
             }
             values = values->getNext();
         }
         ODDLParser::DataArrayList *array = child->getDataArrayList();
+        if(array) {
+            size_t arraylen = 0;
+
+            while(array != nullptr) {
+                arraylen += array->m_numItems;
+                array = array->m_next;
+            }
+            for(int j = 0; j <= level; j++) {
+                fprintf(stdout, "    ");
+            }
+            fprintf(stdout, "arraylen:%zu\n", arraylen);
+        }
+        array = child->getDataArrayList();
         while(array != nullptr) {
             ODDLParser::Value *values = array->m_dataList;
+            for(int j = 0; j <= level; j++) {
+                fprintf(stdout, "    ");
+            }
             while(values != nullptr) {
-                for(int j = 0; j <= level; j++) {
-                    fprintf(stdout, "    ");
-                }
                 switch(values->m_type) {
                     case ODDLParser::Value::ddl_none:
                         break;
                     case ODDLParser::Value::ddl_float: {
                         float val = values->getFloat();
-                        fprintf(stdout, "%f\n", val);
+                        if(signbit(val) == false) {
+                            fprintf(stdout, " ", val);
+                        }
+                        fprintf(stdout, "%f ", val);
                         break;
                     }
                     case ODDLParser::Value::ddl_int32: {
                         int val = values->getInt32();
-                        fprintf(stdout, "%i\n", val);
+                        if(val < 10) {
+                            fprintf(stdout, " ", val);
+                        }
+                        fprintf(stdout, "%i ", val);
                         break;
                     }
                     default:
                         break;
                 }
-                values=values->getNext();
+                values = values->getNext();
             }
+            fprintf(stdout, "\n");
             array = array->m_next;
         }
         printsubnodes(child, level + 1);
