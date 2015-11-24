@@ -136,6 +136,73 @@ void printsubnodes(ODDLParser::DDLNode *node, int level)
         printsubnodes(child, level + 1);
     }
 }
+float *OGEX_Resource::load_vertexbuffer(ODDLParser::DDLNode *node)
+{
+    using namespace ODDLParser;
+    float *buffer = nullptr;
+    DataArrayList *array = node->getDataArrayList();
+    if(array) {
+        size_t arraylen = 0;
+
+        while(array != nullptr) {
+            arraylen += array->m_numItems;
+            array = array->m_next;
+        }
+        buffer = new float[arraylen];
+        size_t i = 0;
+        array = node->getDataArrayList();
+        while(array != nullptr) {
+            Value *values = array->m_dataList;
+            while(values != nullptr) {
+                buffer[i] = values->getFloat();
+                i++;
+                values = values->getNext();
+            }
+            array = array->m_next;
+        }
+        fprintf(stdout, "%zu\n", arraylen);
+        numVerts = arraylen; // should always be the same for all attributes
+    }
+    return buffer;
+}
+unsigned int *OGEX_Resource::load_indexbuffer(ODDLParser::DDLNode *node)
+{
+    using namespace ODDLParser;
+    return nullptr;
+
+}
+bool OGEX_Resource::load_GeometryObject(ODDLParser::DDLNode *node)
+{
+
+    using namespace ODDLParser;
+    DDLNode *meshnode = node->getChildNodeList()[0];
+    for(DDLNode *n : meshnode->getChildNodeList()) {
+        fprintf(stdout, "n:%s\n", n->getType().c_str());
+        if(strcmp(n->getType().c_str(), "VertexArray") == 0) {
+            Property *prop = n->getProperties();
+            while(prop != nullptr) {
+                if(strcmp(prop->m_key->m_text.m_buffer, "attrib") == 0) {
+                    if(prop->m_value->m_type == Value::ddl_string) {
+                        const char *attrib = prop->m_value->getString();
+                        if(strcmp(attrib, "position") == 0) {
+                            pos_vb = load_vertexbuffer(n);
+                        } else if(strcmp(attrib, "normal") == 0) {
+                            normal_vb = load_vertexbuffer(n);
+                        } else if(strcmp(attrib, "texcoord") == 0) {
+                            uv_vb = load_vertexbuffer(n);
+                        }
+                    }
+                }
+                prop = prop->m_next;
+            }
+        }
+        if(strcmp(n->getType().c_str(), "IndexArray") == 0) {
+            indices = load_indexbuffer(n);
+        }
+    }
+    return true;
+
+}
 
 int OGEX_Resource::load(const char *filename)
 {
@@ -184,7 +251,7 @@ int OGEX_Resource::load(const char *filename)
 
         if(success) {
             DDLNode *root = ddlparser.getRoot();
-            printsubnodes(root, 0);
+            //printsubnodes(root, 0);
             DDLNode::DllNodeList children = root->getChildNodeList();
             for(size_t i = 0; i < children.size(); i++) {
 
@@ -192,54 +259,25 @@ int OGEX_Resource::load(const char *filename)
                 const char *type = child->getType().c_str();
                 if(strcmp(type, "GeometryObject") == 0) {
                     fprintf(stdout, "geometryObjectFound\n");
-                    for(DDLNode *n :
-                        child->getChildNodeList()[0]->getChildNodeList()) {
-                        fprintf(stdout, "n:%s\n", n->getType().c_str());
-                        if(strcmp(n->getType().c_str(), "VertexArray") == 0) {
-
-                            Property *prop = n->getProperties();
-                            //if(prop != nullptr) {
-                            //fprintf(stdout, ": property");
-                            //}
-                            while(prop != nullptr) {
-                                if(strcmp(prop->m_key->m_text.m_buffer, "attrib") == 0) {
-                                    if(prop->m_value->m_type == Value::ddl_string) {
-                                        const char *attrib = prop->m_value->getString();
-                                        if(strcmp(attrib, "position") == 0) {
-                                            fprintf(stdout, "  position buffer: ");
-                                            DataArrayList *array = n->getDataArrayList();
-                                            if(array) {
-                                                size_t arraylen = 0;
-
-                                                while(array != nullptr) {
-                                                    arraylen += array->m_numItems;
-                                                    array = array->m_next;
-                                                }
-                                                pos_vb = new float[arraylen];
-                                                fprintf(stdout, "%zu\n", arraylen);
-                                            }
-
-                                        } else if(strcmp(attrib, "texcoord") == 0) {
-                                            fprintf(stdout, "  uv buffer\n");
-                                        } else if(strcmp(attrib, "normal") == 0) {
-                                            fprintf(stdout, "  normal buffer\n");
-                                        }
-                                    }
-                                    break; // does not care about any other properties for vertex arrays
-                                }
-                                prop = prop->m_next;
-                            }
-                        }
-                    }
-
-
+                    load_GeometryObject(child);
                     break; // TODO: handle more than one GeometryObject
                 }
-
                 //fprintf(stdout, "node:%s", child->getType().c_str());
             }
-
+            for(unsigned int i = 0; i < numVerts; i += 3) {
+                if(pos_vb) {
+                    fprintf(stdout, "pos: %f %f %f\n", pos_vb[i], pos_vb[i + 1], pos_vb[i + 2]);
+                }
+                if(normal_vb) {
+                    fprintf(stdout, "normal: %f %f %f\n", normal_vb[i], normal_vb[i + 1],
+                            normal_vb[i + 2]);
+                }
+                if(uv_vb) {
+                    fprintf(stdout, "pos: %f %f %f\n", uv_vb[i], uv_vb[i + 1], uv_vb[i + 2]);
+                }
+            }
         }
+
     }
 
     delete[] buffer;
