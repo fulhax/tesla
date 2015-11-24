@@ -215,8 +215,8 @@ int OGEX_Resource::load(const char *filename)
                                                     arraylen += array->m_numItems;
                                                     array = array->m_next;
                                                 }
-                                                pos_vb = new float[arraylen;
-                                                                   fprintf(stdout, "%zu\n", arraylen);
+                                                pos_vb = new float[arraylen];
+                                                fprintf(stdout, "%zu\n", arraylen);
                                             }
 
                                         } else if(strcmp(attrib, "texcoord") == 0) {
