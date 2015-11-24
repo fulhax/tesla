@@ -154,6 +154,7 @@ int OGEX_Resource::load(const char *filename)
 
     if(filesize == 0) {
         lprintf(LOG_ERROR, "Empty file:%s", filename);
+        fclose(f);
         return 0;
     }
 
@@ -161,10 +162,13 @@ int OGEX_Resource::load(const char *filename)
 
     if(buffer == nullptr) {
         lprintf(LOG_ERROR, "Out of memory while loading:%s", filename);
+        fclose(f);
         return 0;
     }
 
     size_t readbytes = fread(buffer, filesize, 1, f);
+    fclose(f);
+
     unsigned char checksum[32] = {0};
 
     calculate_sha256(buffer, readbytes, checksum);
