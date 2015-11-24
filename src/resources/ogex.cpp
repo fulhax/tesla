@@ -7,15 +7,36 @@
 #include <stdio.h>
 #include <math.h> // signbit for pritnsubnodes
 
-OGEX_Resource::OGEX_Resource() {}
-OGEX_Resource::~OGEX_Resource() {}
+OGEX_Resource::OGEX_Resource()
+{
+    indices   = nullptr;
+    normal_vb = nullptr;
+    pos_vb    = nullptr;
+    uv_vb     = nullptr;
+}
+OGEX_Resource::~OGEX_Resource()
+{
+    if(indices) {
+        delete [] indices;
+    }
+    if(normal_vb) {
+        delete [] normal_vb;
+    }
+    if(pos_vb) {
+        delete [] pos_vb;
+    }
+    if(uv_vb) {
+        delete [] uv_vb;
+    }
+}
 
 void printsubnodes(ODDLParser::DDLNode *node, int level)
 {
 
-    ODDLParser::DDLNode::DllNodeList children = node->getChildNodeList();
+    using namespace ODDLParser;
+    DDLNode::DllNodeList children = node->getChildNodeList();
     for(size_t i = 0; i < children.size(); i++) {
-        ODDLParser::DDLNode *child = children[i];
+        DDLNode *child = children[i];
         for(int j = 0; j < level; j++) {
             fprintf(stdout, "    ");
         }
@@ -23,7 +44,7 @@ void printsubnodes(ODDLParser::DDLNode *node, int level)
         if(strlen(child->getName().c_str()) > 0) {
             fprintf(stdout, " name:%s", child->getName().c_str());
         }
-        ODDLParser::Property *prop = child->getProperties();
+        Property *prop = child->getProperties();
         if(prop != nullptr) {
             fprintf(stdout, ": property");
         }
@@ -35,26 +56,26 @@ void printsubnodes(ODDLParser::DDLNode *node, int level)
             }
             prop = prop->m_next;
         }
-        ODDLParser::Value *values = child->getValue();
+        Value *values = child->getValue();
         fprintf(stdout, "\n");
         while(values != nullptr) {
             for(int j = 0; j <= level; j++) {
                 fprintf(stdout, "    ");
             }
             switch(values->m_type) {
-                case ODDLParser::Value::ddl_none:
+                case Value::ddl_none:
                     break;
-                case ODDLParser::Value::ddl_float: {
+                case Value::ddl_float: {
                     float val = values->getFloat();
                     fprintf(stdout, "%f\n", val);
                     break;
                 }
-                case ODDLParser::Value::ddl_int32: {
+                case Value::ddl_int32: {
                     int val = values->getInt32();
                     fprintf(stdout, "%i\n", val);
                     break;
                 }
-                case ODDLParser::Value::ddl_string: {
+                case Value::ddl_string: {
                     const char *val = values->getString();
                     fprintf(stdout, "%s\n", val);
                     break;
@@ -65,7 +86,7 @@ void printsubnodes(ODDLParser::DDLNode *node, int level)
             }
             values = values->getNext();
         }
-        ODDLParser::DataArrayList *array = child->getDataArrayList();
+        DataArrayList *array = child->getDataArrayList();
         if(array) {
             size_t arraylen = 0;
 
@@ -80,26 +101,26 @@ void printsubnodes(ODDLParser::DDLNode *node, int level)
         }
         array = child->getDataArrayList();
         while(array != nullptr) {
-            ODDLParser::Value *values = array->m_dataList;
+            Value *values = array->m_dataList;
             for(int j = 0; j <= level; j++) {
                 fprintf(stdout, "    ");
             }
             while(values != nullptr) {
                 switch(values->m_type) {
-                    case ODDLParser::Value::ddl_none:
+                    case Value::ddl_none:
                         break;
-                    case ODDLParser::Value::ddl_float: {
+                    case Value::ddl_float: {
                         float val = values->getFloat();
                         if(__signbitf(val) == false) {
-                            fprintf(stdout, " ", val);
+                            fprintf(stdout, " ");
                         }
                         fprintf(stdout, "%f ", val);
                         break;
                     }
-                    case ODDLParser::Value::ddl_int32: {
+                    case Value::ddl_int32: {
                         int val = values->getInt32();
                         if(val < 10) {
-                            fprintf(stdout, " ", val);
+                            fprintf(stdout, " ");
                         }
                         fprintf(stdout, "%i ", val);
                         break;
@@ -137,7 +158,6 @@ int OGEX_Resource::load(const char *filename)
     }
 
     char *buffer = new char[filesize];
-    memset(buffer, 0, filesize);
 
     if(buffer == nullptr) {
         lprintf(LOG_ERROR, "Out of memory while loading:%s", filename);
@@ -149,17 +169,74 @@ int OGEX_Resource::load(const char *filename)
 
     calculate_sha256(buffer, readbytes, checksum);
 
-    ODDLParser::OpenDDLParser ddlparser;
-    ddlparser.setBuffer(buffer, filesize);
     bool success = false;
+    {
+        using namespace ODDLParser;
 
-    success = ddlparser.parse();
+        OpenDDLParser ddlparser;
+        ddlparser.setBuffer(buffer, filesize);
 
-    if(success) {
-        ODDLParser::DDLNode *root = ddlparser.getRoot();
-        printsubnodes(root, 0);
+        success = ddlparser.parse();
+
+        if(success) {
+            DDLNode *root = ddlparser.getRoot();
+            printsubnodes(root, 0);
+            DDLNode::DllNodeList children = root->getChildNodeList();
+            for(size_t i = 0; i < children.size(); i++) {
+
+                DDLNode *child = children[i];
+                const char *type = child->getType().c_str();
+                if(strcmp(type, "GeometryObject") == 0) {
+                    fprintf(stdout, "geometryObjectFound\n");
+                    for(DDLNode *n :
+                        child->getChildNodeList()[0]->getChildNodeList()) {
+                        fprintf(stdout, "n:%s\n", n->getType().c_str());
+                        if(strcmp(n->getType().c_str(), "VertexArray") == 0) {
+
+                            Property *prop = n->getProperties();
+                            //if(prop != nullptr) {
+                            //fprintf(stdout, ": property");
+                            //}
+                            while(prop != nullptr) {
+                                if(strcmp(prop->m_key->m_text.m_buffer, "attrib") == 0) {
+                                    if(prop->m_value->m_type == Value::ddl_string) {
+                                        const char *attrib = prop->m_value->getString();
+                                        if(strcmp(attrib, "position") == 0) {
+                                            fprintf(stdout, "  position buffer: ");
+                                            DataArrayList *array = n->getDataArrayList();
+                                            if(array) {
+                                                size_t arraylen = 0;
+
+                                                while(array != nullptr) {
+                                                    arraylen += array->m_numItems;
+                                                    array = array->m_next;
+                                                }
+                                                pos_vb = new float[arraylen;
+                                                                   fprintf(stdout, "%zu\n", arraylen);
+                                            }
+
+                                        } else if(strcmp(attrib, "texcoord") == 0) {
+                                            fprintf(stdout, "  uv buffer\n");
+                                        } else if(strcmp(attrib, "normal") == 0) {
+                                            fprintf(stdout, "  normal buffer\n");
+                                        }
+                                    }
+                                    break; // does not care about any other properties for vertex arrays
+                                }
+                                prop = prop->m_next;
+                            }
+                        }
+                    }
+
+
+                    break; // TODO: handle more than one GeometryObject
+                }
+
+                //fprintf(stdout, "node:%s", child->getType().c_str());
+            }
+
+        }
     }
-
 
     delete[] buffer;
 
