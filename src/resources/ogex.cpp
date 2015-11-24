@@ -90,7 +90,7 @@ void printsubnodes(ODDLParser::DDLNode *node, int level)
                         break;
                     case ODDLParser::Value::ddl_float: {
                         float val = values->getFloat();
-                        if(signbit(val) == false) {
+                        if(__signbitf(val) == false) {
                             fprintf(stdout, " ", val);
                         }
                         fprintf(stdout, "%f ", val);
