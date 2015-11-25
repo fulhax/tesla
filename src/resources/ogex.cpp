@@ -136,7 +136,7 @@ void printsubnodes(ODDLParser::DDLNode *node, int level)
                     }
                     case Value::ddl_unsigned_int32: {
                         unsigned int val = values->getUnsignedInt32();
-                        fprintf(stdout, "uint32 %i ", val);
+                        fprintf(stdout, "uint32 %u ", val);
                         if(val < 10) {
                             fprintf(stdout, " ");
                         }
@@ -162,7 +162,6 @@ float *OGEX_Resource::load_vertexbuffer(ODDLParser::DDLNode *node)
         size_t arraylen = array->size() * array->m_numItems;
         buffer = new float[arraylen];
         size_t i = 0;
-        array = node->getDataArrayList();
         while(array != nullptr) {
             Value *values = array->m_dataList;
             if(values->m_type != Value::ddl_float) {
@@ -191,7 +190,6 @@ unsigned int *OGEX_Resource::load_indexbuffer(ODDLParser::DDLNode *node)
 
         buffer = new unsigned int[arraylen];
         size_t i = 0;
-        array = node->getDataArrayList();
         while(array != nullptr) {
             Value *values = array->m_dataList;
             if(values->m_type != Value::ddl_unsigned_int32) {
