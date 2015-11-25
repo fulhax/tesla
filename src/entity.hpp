@@ -30,6 +30,7 @@ public:
 
     void init(const char *name, const char *script);
     void draw(const glm::mat4 &Projection, const glm::mat4 &View);
+    void update();
 
     Shader shader;
 

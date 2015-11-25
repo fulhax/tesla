@@ -89,10 +89,6 @@ int Video::init()
         "^cRenderer:^0\t%s",
         glGetString(GL_RENDERER));
 
-    testentity[0].init("test1", "scripts/test.as");
-    testentity[1].init("test2", "scripts/test2.as");
-    testentity[2].init("test3", "scripts/test3.as");
-
     return 0;
 }
 
@@ -142,9 +138,9 @@ void Video::update()
 
     camera.update(ProjMat, ViewMat);
 
-    testentity[0].draw(ProjMat, ViewMat);
-    testentity[1].draw(ProjMat, ViewMat);
-    testentity[2].draw(ProjMat, ViewMat);
+    engine.testentity[0].draw(ProjMat, ViewMat);
+    engine.testentity[1].draw(ProjMat, ViewMat);
+    engine.testentity[2].draw(ProjMat, ViewMat);
 
     SDL_GL_SwapWindow(window);
 }

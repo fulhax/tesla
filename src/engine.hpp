@@ -9,6 +9,8 @@
 #include "debugger.hpp"
 #include "config.hpp"
 
+#define EngineTick 0.032f // 1 tick = 32ms
+
 class Engine
 {
 public:
@@ -42,7 +44,11 @@ public:
         }
     }
     // }
+
+    Entity testentity[3];
 private:
+    void handleEvents();
+
     uint64_t oldtime;
     float time;
     int ref_count;

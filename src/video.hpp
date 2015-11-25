@@ -38,8 +38,6 @@ private:
 
     int screen_width;
     int screen_height;
-
-    Entity testentity[3];
 };
 
 #endif // VIDEO_HPP_

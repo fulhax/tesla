@@ -18,7 +18,7 @@ Engine::~Engine()
 
 float Engine::getTime() const
 {
-    return time;
+    return EngineTick;
 }
 
 int Engine::init()
@@ -47,6 +47,10 @@ int Engine::init()
 
     debugger.init();
 
+    testentity[0].init("test1", "scripts/test.as");
+    testentity[1].init("test2", "scripts/test2.as");
+    testentity[2].init("test3", "scripts/test3.as");
+
     return 0;
 }
 
@@ -56,25 +60,8 @@ void Engine::shutdown() const
     SDL_Quit();
 }
 
-void Engine::update()
+void Engine::handleEvents()
 {
-    uint64_t ctime = SDL_GetPerformanceCounter();
-    uint64_t freq = SDL_GetPerformanceFrequency();
-
-    time = static_cast<double>(ctime - oldtime) / static_cast<double>(freq);
-    oldtime = ctime;
-
-    static float timer = 0;
-
-    if(timer >= 1.f) {
-        //printf("FPS %d\n", fps);
-        fps = 0;
-        timer = time;
-    } else {
-        timer += time;
-        fps += 1;
-    }
-
     SDL_Event event;
 
     while(SDL_PollEvent(&event)) {
@@ -93,14 +80,49 @@ void Engine::update()
                 break;
         }
     }
+}
 
-    //static int sound = -1;
+void Engine::update()
+{
+    uint64_t ctime = SDL_GetPerformanceCounter();
+    uint64_t freq = SDL_GetPerformanceFrequency();
 
-    //if(!audio.isPlaying(sound)) {
-    //sound = audio.play("sound/Example.ogg", glm::vec3(0, 0, 0));
-    //}
+    time = static_cast<double>(ctime - oldtime) /
+           static_cast<double>(freq);
 
-    audio.update(&video.camera);
+    oldtime = ctime;
+    static float fpstimer = 0;
+    static float mtime = time;
+
+    if(fpstimer >= 1.f) {
+        printf("FPS %d\n", fps);
+        fps = 0;
+        fpstimer = time;
+    } else {
+        fpstimer += time;
+        fps += 1;
+    }
+
     video.update();
-    resources.update();
+
+    mtime += time;
+
+    while(mtime >= EngineTick) {
+        mtime -= EngineTick;
+
+        handleEvents();
+        resources.update();
+
+        // static int sound = -1;
+        //
+        // if(!audio.isPlaying(sound)) {
+        //     sound = audio.play("sound/Example.ogg", glm::vec3(0, 0, 0));
+        // }
+
+        audio.update(&video.camera);
+
+        testentity[0].update();
+        testentity[1].update();
+        testentity[2].update();
+    }
 }

@@ -98,15 +98,17 @@ int Entity::cullCheck(const glm::mat4 &ModelMat, ModelResource *m)
     return 1;
 }
 
-void Entity::draw(const glm::mat4 &ProjMat, const glm::mat4 &ViewMat)
+void Entity::update()
 {
-
     ScriptResource *s = engine.resources.getScript(script);
 
     if(s) {
         engine.script.run(s, "void update(Entity@ self)", this);
     }
+}
 
+void Entity::draw(const glm::mat4 &ProjMat, const glm::mat4 &ViewMat)
+{
     if(!strlen(model) || textures.empty()) {
         return;
     }
