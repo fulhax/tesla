@@ -9,12 +9,15 @@
 
 OGEX_Resource::OGEX_Resource()
 {
-    indices   = nullptr;
-    normal_vb = nullptr;
-    pos_vb    = nullptr;
-    uv_vb     = nullptr;
-    numFaces  = 0;
-    numVerts  = 0;
+    indices     = nullptr;
+    pos_vb      = nullptr;
+    normal_vb   = nullptr;
+    binormal_vb = nullptr;
+    tangent_vb  = nullptr;
+    color_vb    = nullptr;
+    uv_vb       = nullptr;
+    numFaces    = 0;
+    numVerts    = 0;
 }
 OGEX_Resource::~OGEX_Resource()
 {
@@ -23,6 +26,15 @@ OGEX_Resource::~OGEX_Resource()
     }
     if(normal_vb) {
         delete [] normal_vb;
+    }
+    if(binormal_vb) {
+        delete [] binormal_vb;
+    }
+    if(tangent_vb) {
+        delete [] tangent_vb;
+    }
+    if(color_vb) {
+        delete [] color_vb;
     }
     if(pos_vb) {
         delete [] pos_vb;
@@ -237,6 +249,21 @@ bool OGEX_Resource::load_GeometryObject(ODDLParser::DDLNode *node)
                         } else if(strcmp(attrib, "texcoord") == 0) {
                             uv_vb = load_vertexbuffer(n);
                             if(uv_vb == nullptr) {
+                                return false;
+                            }
+                        } else if(strcmp(attrib, "tangent") == 0) {
+                            tangent_vb = load_vertexbuffer(n);
+                            if(tangent_vb == nullptr) {
+                                return false;
+                            }
+                        } else if(strcmp(attrib, "binormal") == 0) {
+                            binormal_vb = load_vertexbuffer(n);
+                            if(binormal_vb == nullptr) {
+                                return false;
+                            }
+                        } else if(strcmp(attrib, "color") == 0) {
+                            color_vb = load_vertexbuffer(n);
+                            if(color_vb == nullptr) {
                                 return false;
                             }
                         }
