@@ -397,33 +397,6 @@ int OGEX_Resource::load(const char *filename)
                     break; // TODO: handle more than one GeometryObject
                 }
             }
-
-            for(unsigned int i = 0; i < numVerts; i += 3) {
-                if(pos_vb) {
-                    fprintf(stdout, "pos: %f %f %f\n", pos_vb[i], pos_vb[i + 1], pos_vb[i + 2]);
-                }
-            }
-
-            for(unsigned int i = 0; i < numVerts; i += 3) {
-                if(normal_vb) {
-                    fprintf(stdout, "normal: %f %f %f\n", normal_vb[i], normal_vb[i + 1],
-                            normal_vb[i + 2]);
-                }
-            }
-
-            for(unsigned int i = 0; i < numVerts; i += 3) {
-                if(uv_vb) {
-                    fprintf(stdout, "uv: %f %f %f\n", uv_vb[i], uv_vb[i + 1], uv_vb[i + 2]);
-                }
-            }
-
-            for(unsigned int i = 0; i < numFaces; i += 3) {
-                if(indices) {
-                    fprintf(stdout, "index: %u %u %u\n", indices[i], indices[i + 1],
-                            indices[i + 2]);
-                }
-
-            }
         }
 
     }
