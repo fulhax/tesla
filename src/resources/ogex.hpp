@@ -1,7 +1,11 @@
 #ifndef __OGEX_HPP__
 #define __OGEX_HPP__
 
+#ifdef NOENGINE // for my test code without access to opengl or a c++11 compiler TODO: remove when done
+class ModelResource {};
+#else
 #include "../resource.hpp"
+#endif
 
 namespace ODDLParser
 {

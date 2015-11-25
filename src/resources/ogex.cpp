@@ -13,6 +13,8 @@ OGEX_Resource::OGEX_Resource()
     normal_vb = nullptr;
     pos_vb    = nullptr;
     uv_vb     = nullptr;
+    numFaces  = 0;
+    numVerts  = 0;
 }
 OGEX_Resource::~OGEX_Resource()
 {
@@ -119,10 +121,18 @@ void printsubnodes(ODDLParser::DDLNode *node, int level)
                     }
                     case Value::ddl_int32: {
                         int val = values->getInt32();
+                        fprintf(stdout, "int32 %i ", val);
                         if(val < 10) {
                             fprintf(stdout, " ");
                         }
-                        fprintf(stdout, "%i ", val);
+                        break;
+                    }
+                    case Value::ddl_unsigned_int32: {
+                        unsigned int val = values->getUnsignedInt32();
+                        fprintf(stdout, "uint32 %i ", val);
+                        if(val < 10) {
+                            fprintf(stdout, " ");
+                        }
                         break;
                     }
                     default:
@@ -153,6 +163,11 @@ float *OGEX_Resource::load_vertexbuffer(ODDLParser::DDLNode *node)
         array = node->getDataArrayList();
         while(array != nullptr) {
             Value *values = array->m_dataList;
+            if(values->m_type != Value::ddl_float) {
+                lprintf(LOG_ERROR, "wrong datatype for VertexArray");
+                delete [] buffer;
+                return 0;
+            }
             while(values != nullptr) {
                 buffer[i] = values->getFloat();
                 i++;
@@ -160,7 +175,6 @@ float *OGEX_Resource::load_vertexbuffer(ODDLParser::DDLNode *node)
             }
             array = array->m_next;
         }
-        fprintf(stdout, "%zu\n", arraylen);
         numVerts = arraylen; // should always be the same for all attributes
     }
     return buffer;
@@ -168,8 +182,35 @@ float *OGEX_Resource::load_vertexbuffer(ODDLParser::DDLNode *node)
 unsigned int *OGEX_Resource::load_indexbuffer(ODDLParser::DDLNode *node)
 {
     using namespace ODDLParser;
-    return nullptr;
+    unsigned int *buffer = nullptr;
+    DataArrayList *array = node->getDataArrayList();
+    if(array) {
+        size_t arraylen = 0;
 
+        while(array != nullptr) {
+            arraylen += array->m_numItems;
+            array = array->m_next;
+        }
+        buffer = new unsigned int[arraylen];
+        size_t i = 0;
+        array = node->getDataArrayList();
+        while(array != nullptr) {
+            Value *values = array->m_dataList;
+            if(values->m_type != Value::ddl_unsigned_int32) {
+                lprintf(LOG_ERROR, "wrong datatype for Index buffer");
+                delete [] buffer;
+                return 0;
+            }
+            while(values != nullptr) {
+                buffer[i] = values->getUnsignedInt32();
+                i++;
+                values = values->getNext();
+            }
+            array = array->m_next;
+        }
+        numFaces = arraylen; // should always be the same for all attributes
+    }
+    return buffer;
 }
 bool OGEX_Resource::load_GeometryObject(ODDLParser::DDLNode *node)
 {
@@ -177,7 +218,6 @@ bool OGEX_Resource::load_GeometryObject(ODDLParser::DDLNode *node)
     using namespace ODDLParser;
     DDLNode *meshnode = node->getChildNodeList()[0];
     for(DDLNode *n : meshnode->getChildNodeList()) {
-        fprintf(stdout, "n:%s\n", n->getType().c_str());
         if(strcmp(n->getType().c_str(), "VertexArray") == 0) {
             Property *prop = n->getProperties();
             while(prop != nullptr) {
@@ -186,10 +226,19 @@ bool OGEX_Resource::load_GeometryObject(ODDLParser::DDLNode *node)
                         const char *attrib = prop->m_value->getString();
                         if(strcmp(attrib, "position") == 0) {
                             pos_vb = load_vertexbuffer(n);
+                            if(pos_vb == nullptr) {
+                                return false;
+                            }
                         } else if(strcmp(attrib, "normal") == 0) {
                             normal_vb = load_vertexbuffer(n);
+                            if(normal_vb == nullptr) {
+                                return false;
+                            }
                         } else if(strcmp(attrib, "texcoord") == 0) {
                             uv_vb = load_vertexbuffer(n);
+                            if(uv_vb == nullptr) {
+                                return false;
+                            }
                         }
                     }
                 }
@@ -198,6 +247,9 @@ bool OGEX_Resource::load_GeometryObject(ODDLParser::DDLNode *node)
         }
         if(strcmp(n->getType().c_str(), "IndexArray") == 0) {
             indices = load_indexbuffer(n);
+            if(!indices) {
+                return false;
+            }
         }
     }
     return true;
@@ -258,23 +310,32 @@ int OGEX_Resource::load(const char *filename)
                 DDLNode *child = children[i];
                 const char *type = child->getType().c_str();
                 if(strcmp(type, "GeometryObject") == 0) {
-                    fprintf(stdout, "geometryObjectFound\n");
-                    load_GeometryObject(child);
+                    success = load_GeometryObject(child);
                     break; // TODO: handle more than one GeometryObject
                 }
-                //fprintf(stdout, "node:%s", child->getType().c_str());
             }
             for(unsigned int i = 0; i < numVerts; i += 3) {
                 if(pos_vb) {
                     fprintf(stdout, "pos: %f %f %f\n", pos_vb[i], pos_vb[i + 1], pos_vb[i + 2]);
                 }
+            }
+            for(unsigned int i = 0; i < numVerts; i += 3) {
                 if(normal_vb) {
                     fprintf(stdout, "normal: %f %f %f\n", normal_vb[i], normal_vb[i + 1],
                             normal_vb[i + 2]);
                 }
+            }
+            for(unsigned int i = 0; i < numVerts; i += 3) {
                 if(uv_vb) {
                     fprintf(stdout, "pos: %f %f %f\n", uv_vb[i], uv_vb[i + 1], uv_vb[i + 2]);
                 }
+            }
+            for(unsigned int i = 0; i < numFaces; i += 3) {
+                if(indices) {
+                    fprintf(stdout, "index: %u %u %u\n", indices[i], indices[i + 1],
+                            indices[i + 2]);
+                }
+
             }
         }
 
