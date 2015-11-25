@@ -122,27 +122,39 @@ public:
 
     void updateBoundingBox(glm::vec3 vertex);
 
-    uint32_t vertex_buffer;
     uint32_t indices_buffer;
+
+    uint32_t vertex_buffer;
     uint32_t uv_buffer;
     uint32_t normals_buffer;
+    uint32_t binormals_buffer;
+    uint32_t tangent_buffer;
+    uint32_t color_buffer;
 
     ModelResource()
     {
         bounding_box.min = bounding_box.max = glm::vec3(0, 0, 0);
 
         num_tris = 0;
-        glGenBuffers(1, &vertex_buffer);
         glGenBuffers(1, &indices_buffer);
+
+        glGenBuffers(1, &vertex_buffer);
         glGenBuffers(1, &uv_buffer);
         glGenBuffers(1, &normals_buffer);
+        glGenBuffers(1, &tangent_buffer);
+        glGenBuffers(1, &binormals_buffer);
+        glGenBuffers(1, &color_buffer);
     }
     ~ModelResource()
     {
-        glDeleteBuffers(1, &vertex_buffer);
         glDeleteBuffers(1, &indices_buffer);
+
+        glDeleteBuffers(1, &vertex_buffer);
         glDeleteBuffers(1, &uv_buffer);
         glDeleteBuffers(1, &normals_buffer);
+        glDeleteBuffers(1, &tangent_buffer);
+        glDeleteBuffers(1, &binormals_buffer);
+        glDeleteBuffers(1, &color_buffer);
     }
 };
 
