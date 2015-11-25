@@ -1,13 +1,8 @@
 #ifndef VIDEO_HPP_
 #define VIDEO_HPP_
-#ifdef _WIN32
-#include <GL/gl3w.h>
-#endif
+#include "opengl.hpp"
 
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_opengl.h>
-
-#include <GL/glu.h>
 
 #include "shader.hpp"
 #include "entity.hpp"

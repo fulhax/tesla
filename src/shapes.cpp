@@ -1,7 +1,7 @@
 #include "shapes.hpp"
 
 #include <memory.h>
-#include <SDL2/SDL_opengl.h>
+#include "opengl.hpp"
 
 #include "errorhandler.hpp"
 
