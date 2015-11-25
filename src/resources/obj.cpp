@@ -1,4 +1,7 @@
 #include "obj.hpp"
+#include <fast_obj_loader.h>
+
+#include <glm/glm.hpp>
 
 OBJ_Resource::OBJ_Resource()
 {

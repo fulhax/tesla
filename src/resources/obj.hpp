@@ -1,9 +1,7 @@
 #ifndef OBJ_HPP_
 #define OBJ_HPP_
 
-#include <fast_obj_loader.h>
-
-#include <glm/glm.hpp>
+class obj;
 
 #include "../resource.hpp"
 
