@@ -31,6 +31,7 @@ private:
     bool load_GeometryObject(ODDLParser::DDLNode *node);
     float *load_vertexbuffer(ODDLParser::DDLNode *node);
     unsigned int *load_indexbuffer(ODDLParser::DDLNode *node);
+    void SetupGL();
 };
 
 #endif //__OGEX_HPP__

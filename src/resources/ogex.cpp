@@ -207,6 +207,7 @@ float *OGEX_Resource::load_vertexbuffer(ODDLParser::DDLNode *node)
         size_t arraylen = array->size() * array->m_numItems;
         buffer = new float[arraylen];
         size_t i = 0;
+        numVerts = array->size(); // should always be the same for all attributes
 
         while(array != nullptr) {
             Value *values = array->m_dataList;
@@ -225,8 +226,6 @@ float *OGEX_Resource::load_vertexbuffer(ODDLParser::DDLNode *node)
 
             array = array->m_next;
         }
-
-        numVerts = arraylen; // should always be the same for all attributes
     }
 
     return buffer;
@@ -414,7 +413,7 @@ int OGEX_Resource::load(const char *filename)
 
             for(unsigned int i = 0; i < numVerts; i += 3) {
                 if(uv_vb) {
-                    fprintf(stdout, "pos: %f %f %f\n", uv_vb[i], uv_vb[i + 1], uv_vb[i + 2]);
+                    fprintf(stdout, "uv: %f %f %f\n", uv_vb[i], uv_vb[i + 1], uv_vb[i + 2]);
                 }
             }
 
@@ -433,7 +432,51 @@ int OGEX_Resource::load(const char *filename)
 
     if(!success) {
         lprintf(LOG_ERROR, "something went wrong loading: %s", filename);
+    } else {
+        SetupGL();
     }
 
     return success;
+}
+
+void OGEX_Resource::SetupGL()
+{
+
+    num_tris = numFaces;
+
+    if(indices) {
+        glBindBuffer(GL_ARRAY_BUFFER, indices_buffer);
+        glBufferData(
+            GL_ARRAY_BUFFER,
+            num_tris * sizeof(unsigned int) * 3,
+            indices,
+            GL_STATIC_DRAW);
+    }
+
+    if(pos_vb) {
+        glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
+        glBufferData(
+            GL_ARRAY_BUFFER,
+            numVerts * sizeof(float) * 3,
+            pos_vb,
+            GL_STATIC_DRAW);
+    }
+
+    if(normal_vb) {
+        glBindBuffer(GL_ARRAY_BUFFER, normals_buffer);
+        glBufferData(
+            GL_ARRAY_BUFFER,
+            numVerts * sizeof(float) * 3,
+            normal_vb,
+            GL_STATIC_DRAW);
+    }
+
+    if(uv_vb) {
+        glBindBuffer(GL_ARRAY_BUFFER, uv_buffer);
+        glBufferData(
+            GL_ARRAY_BUFFER,
+            numVerts * sizeof(float) * 3,
+            uv_vb,
+            GL_STATIC_DRAW);
+    }
 }
