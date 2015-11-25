@@ -22,6 +22,7 @@
 #include "errorhandler.hpp"
 #include "shader.hpp"
 #include "script.hpp"
+#include "ui.hpp"
 
 class Resource
 {
@@ -167,6 +168,8 @@ class FontResource : public Resource
 public:
     uint32_t id;
     uint32_t fontsize;
+
+    virtual TextData* print(const char *format, va_list args) = 0;
 
     explicit FontResource(void *data)
     {

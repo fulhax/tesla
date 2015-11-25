@@ -154,7 +154,6 @@ void Entity::draw(const glm::mat4 &ProjMat, const glm::mat4 &ViewMat)
             }
         }
 
-
         current->bindAttribLocation(0, "in_Position");
         current->bindAttribLocation(1, "in_TexCoord");
         current->bindAttribLocation(2, "in_Normal");

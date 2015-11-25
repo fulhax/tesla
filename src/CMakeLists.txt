@@ -17,6 +17,8 @@ list(APPEND SOURCE_FILES
     "./camera.cpp"
     "./config.cpp"
     "./debugger.cpp"
+    "./shapes.cpp"
+    "./ui.cpp"
     "./resources/tga.cpp"
     "./resources/png.cpp"
     "./resources/obj.cpp"

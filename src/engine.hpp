@@ -25,6 +25,7 @@ public:
     bool running;
     int fps;
 
+    Ui ui;
     Audio audio;
     Video video;
     Script script;

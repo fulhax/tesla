@@ -93,9 +93,10 @@ void Engine::update()
     oldtime = ctime;
     static float fpstimer = 0;
     static float mtime = time;
+    static int outfps = 0;
 
     if(fpstimer >= 1.f) {
-        printf("FPS %d\n", fps);
+        outfps = fps;
         fps = 0;
         fpstimer = time;
     } else {
@@ -104,6 +105,8 @@ void Engine::update()
     }
 
     video.update();
+    ui.print(10, 10, "FPS: %d", outfps);
+    video.swap();
 
     mtime += time;
 

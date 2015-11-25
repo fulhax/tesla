@@ -3,6 +3,8 @@
 
 #include <glm/glm.hpp>
 
+#include <vector>
+
 #include "../resource.hpp"
 
 #define NUMBER_OF_CHARS 512
@@ -45,6 +47,7 @@ public:
     explicit FT_Resource(void *data);
     ~FT_Resource();
 
+    TextData* print(const char *format, va_list args);
     int load(const char *filename);
 };
 

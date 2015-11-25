@@ -9,6 +9,8 @@
 #include FT_OUTLINE_H
 #include FT_TRIGONOMETRY_H
 
+#include <vector>
+
 FT_Resource::FT_Resource(void *data) : FontResource(data)
 {
     max_height = 0;
@@ -193,7 +195,7 @@ int FT_Resource::load(const char *filename)
 
     glTexImage2D(GL_TEXTURE_2D,
                  0,
-                 GL_RGBA,
+                 GL_RG,
                  MAX_TEXTURE_WIDTH,
                  texture_height,
                  0,
@@ -207,4 +209,37 @@ int FT_Resource::load(const char *filename)
     FT_Done_FreeType(library);
 
     return 1;
+}
+
+TextData *FT_Resource::print(const char *format, va_list args)
+{
+    TextData *output = new TextData;
+
+    // TODO(c0r73x): dont use static max length.
+    char buffer[1024] = {0};
+    vsprintf(buffer, format, args);
+
+    int len = strlen(buffer);
+    int advance = 0;
+
+    for(int c = 0; c < len; c++) {
+        int bc = static_cast<int>(buffer[c]);
+
+        advance += glyphs[bc].advance;
+        for(int i = 0; i < 4; i++) {
+            glm::vec2 pos =
+                glm::vec2(
+                    glyphs[bc].left + advance + glyphs[bc].v[i].x,
+                    glyphs[bc].v[i].y + (max_height - glyphs[bc].top));
+
+            output->verts.push_back(pos);
+            output->uvs.push_back(
+                glm::vec2(
+                    glyphs[bc].uv[i].x,
+                    glyphs[bc].uv[i].y
+                ));
+        }
+    }
+
+    return output;
 }

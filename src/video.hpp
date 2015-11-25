@@ -18,26 +18,29 @@
 
 class Video
 {
+    static void checkOpenGLErrors();
+
+    int screen_width;
+    int screen_height;
+
+    Entity testentity[3];
 public:
     Video();
     virtual ~Video();
 
+    glm::mat4 ProjMat;
+    glm::mat4 OrthoMat;
+
     int init();
     void update();
     void resize(int width, int height);
+    void swap();
 
     SDL_Renderer *renderer;
     SDL_Window *window;
     SDL_GLContext context;
 
     Camera camera;
-private:
-    glm::mat4 ProjMat;
-
-    static void checkOpenGLErrors();
-
-    int screen_width;
-    int screen_height;
 };
 
 #endif // VIDEO_HPP_

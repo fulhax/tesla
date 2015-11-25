@@ -103,6 +103,14 @@ void Video::resize(int width, int height)
                   0.1f,
                   1000.0f);
 
+    OrthoMat = glm::ortho(
+                   0.f,
+                   static_cast<float>(width),
+                   static_cast<float>(height),
+                   0.f,
+                   -1.0f,
+                   1.f);
+
     screen_width = width;
     screen_height = height;
 }
@@ -141,7 +149,10 @@ void Video::update()
     engine.testentity[0].draw(ProjMat, ViewMat);
     engine.testentity[1].draw(ProjMat, ViewMat);
     engine.testentity[2].draw(ProjMat, ViewMat);
+}
 
+void Video::swap()
+{
     SDL_GL_SwapWindow(window);
 }
 
