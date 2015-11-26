@@ -175,7 +175,7 @@ class FontResource : public Resource
 public:
     uint32_t id;
 
-    virtual TextData* print(const char *format, va_list args) = 0;
+    virtual TextData* print(const std::string &in) = 0;
 
     FontResource()
     {

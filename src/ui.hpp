@@ -4,6 +4,9 @@
 #include <glm/glm.hpp>
 
 #include <vector>
+#include <string>
+
+#include "script.hpp"
 
 struct TextData
 {
@@ -11,14 +14,14 @@ struct TextData
     std::vector<glm::vec2> uvs;
 };
 
-class Ui
+class Ui : public ASClass
 {
     glm::mat4 OrthoMat;
 public:
     Ui();
     virtual ~Ui();
 
-    void print(int x, int y, const char *format, ...);
+    void print(int x, int y, const std::string &in);
     void update();
 };
 

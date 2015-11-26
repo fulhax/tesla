@@ -127,7 +127,6 @@ void ResourceHandler::update()
         std::vector<std::string> files;
 
         while(res != resources.end()) {
-            printf("checking %s\n", res->first.c_str());
             int partial = strncmp(res->first.c_str(),
                                   changes.first.c_str(),
                                   changes.first.length());

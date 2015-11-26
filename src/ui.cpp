@@ -19,7 +19,7 @@ void Ui::update()
 {
 }
 
-void Ui::print(int x, int y, const char *format, ...)
+void Ui::print(int x, int y, const std::string &in)
 {
     static uint32_t vertex_buffer = 0;
     static uint32_t uv_buffer = 0;
@@ -51,10 +51,7 @@ void Ui::print(int x, int y, const char *format, ...)
                 glGenBuffers(1, &uv_buffer);
             }
 
-            va_list args;
-            va_start(args, format);
-            TextData *text = font->print(format, args);
-            va_end(args);
+            TextData *text = font->print(in);
 
             shader.setUniform("in_UiPos", glm::vec2(x, y));
             shader.setUniform("in_OrthoMatrix", engine.video.OrthoMat);

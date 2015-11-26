@@ -8,7 +8,6 @@ Engine::Engine()
     oldtime = SDL_GetPerformanceCounter();
     time = 0;
     fps = 0;
-    ref_count = 1;
 }
 
 Engine::~Engine()
@@ -19,6 +18,11 @@ Engine::~Engine()
 float Engine::getTime() const
 {
     return EngineTick;
+}
+
+int Engine::getFPS() const
+{
+    return fps;
 }
 
 int Engine::init()
@@ -46,6 +50,15 @@ int Engine::init()
     }
 
     debugger.init();
+
+    ScriptResource *s = engine.resources.getScript("main.as");
+
+    if(s) {
+        script.run(s, "void init()");
+    } else {
+        lprintf(LOG_WARNING, "Main script not found, shutting down.");
+        running = false;
+    }
 
     testentity[0].init("test1", "scripts/test.as");
     testentity[1].init("test2", "scripts/test2.as");
@@ -84,6 +97,8 @@ void Engine::handleEvents()
 
 void Engine::update()
 {
+    ScriptResource *s = engine.resources.getScript("main.as");
+
     uint64_t ctime = SDL_GetPerformanceCounter();
     uint64_t freq = SDL_GetPerformanceFrequency();
 
@@ -93,28 +108,28 @@ void Engine::update()
     oldtime = ctime;
     static float fpstimer = 0;
     static float mtime = time;
-    static int outfps = 0;
 
     if(fpstimer >= 1.f) {
-        outfps = fps;
-        fps = 0;
+        fps = countfps;
+        countfps = 0;
         fpstimer = time;
     } else {
         fpstimer += time;
-        fps += 1;
+        countfps += 1;
     }
 
     video.update();
-    ui.print(10, 10, "FPS: %d", outfps);
-    video.swap();
+    resources.update();
+    audio.update(&video.camera);
 
     mtime += time;
+
+    script.run(s, "void draw()");
 
     while(mtime >= EngineTick) {
         mtime -= EngineTick;
 
         handleEvents();
-        resources.update();
 
         // static int sound = -1;
         //
@@ -122,10 +137,12 @@ void Engine::update()
         //     sound = audio.play("sound/Example.ogg", glm::vec3(0, 0, 0));
         // }
 
-        audio.update(&video.camera);
-
         testentity[0].update();
         testentity[1].update();
         testentity[2].update();
+
+        script.run(s, "void update()");
     }
+
+    video.swap();
 }

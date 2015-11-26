@@ -4,6 +4,7 @@
 #include <glm/glm.hpp>
 
 #include <vector>
+#include <string>
 
 #include "../resource.hpp"
 
@@ -47,7 +48,7 @@ public:
     FT_Resource();
     ~FT_Resource();
 
-    TextData* print(const char *format, va_list args);
+    TextData *print(const std::string &in);
     int load(const char *filename);
 };
 

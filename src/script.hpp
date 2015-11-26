@@ -8,6 +8,28 @@
 
 class ScriptResource;
 
+class ASClass
+{
+    int ref_count;
+public:
+    ASClass()
+    {
+        ref_count = 1;
+    }
+    virtual ~ASClass() {}
+
+    void addRef()
+    {
+        ref_count++;
+    }
+    void releaseRef()
+    {
+        if(--ref_count == 0) {
+            delete this;
+        }
+    }
+};
+
 class Script
 {
 public:

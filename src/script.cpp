@@ -42,6 +42,26 @@ void Script::registerObjects()
         asFUNCTION(Script::print),
         asCALL_CDECL);
 
+    core->RegisterObjectType("Ui", 0, asOBJ_REF);
+    core->RegisterGlobalProperty("Ui ui", &engine.ui);
+    core->RegisterObjectBehaviour(
+        "Ui",
+        asBEHAVE_ADDREF,
+        "void f()",
+        asMETHOD(Ui, addRef),
+        asCALL_THISCALL);
+    core->RegisterObjectBehaviour(
+        "Ui",
+        asBEHAVE_RELEASE,
+        "void f()",
+        asMETHOD(Ui, releaseRef),
+        asCALL_THISCALL);
+    core->RegisterObjectMethod(
+        "Ui",
+        "void print(int x, int y, const string &in)",
+        asMETHOD(Ui, print),
+        asCALL_THISCALL);
+
     core->RegisterObjectType("Engine", 0, asOBJ_REF);
     core->RegisterGlobalProperty("Engine engine", &engine);
     core->RegisterObjectBehaviour(
@@ -60,6 +80,11 @@ void Script::registerObjects()
         "Engine",
         "float getTime()",
         asMETHOD(Engine, getTime),
+        asCALL_THISCALL);
+    core->RegisterObjectMethod(
+        "Engine",
+        "int getFPS()",
+        asMETHOD(Engine, getFPS),
         asCALL_THISCALL);
 
     core->RegisterObjectType("Entity", 0, asOBJ_REF);
@@ -141,6 +166,12 @@ int Script::init()
 
 void Script::run(ScriptResource *script, const char *func, void *arg)
 {
+    if(!script) {
+        lprintf(LOG_WARNING, "No script loaded!");
+        script->failed = true;
+        return;
+    }
+
     if(!script->module) {
         lprintf(LOG_WARNING, "No script loaded!");
         script->failed = true;
@@ -183,7 +214,11 @@ void Script::run(ScriptResource *script, const char *func, void *arg)
 
     if(curr != MAX_CONTEXTS) {
         ctx[curr]->Prepare(f);
-        ctx[curr]->SetArgObject(0, arg);
+
+        if(arg) {
+            ctx[curr]->SetArgObject(0, arg);
+        }
+
         ctx[curr]->Execute();
     }
 }

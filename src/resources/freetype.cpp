@@ -9,6 +9,7 @@
 #include FT_OUTLINE_H
 #include FT_TRIGONOMETRY_H
 
+#include <string>
 #include <vector>
 
 FT_Resource::FT_Resource()
@@ -205,12 +206,12 @@ int FT_Resource::load(const char *filename)
 
     glBindTexture(GL_TEXTURE_2D, id);
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
     glTexImage2D(GL_TEXTURE_2D,
                  0,
-                 GL_RG,
+                 GL_RGBA,
                  MAX_TEXTURE_WIDTH,
                  texture_height,
                  0,
@@ -226,13 +227,11 @@ int FT_Resource::load(const char *filename)
     return 1;
 }
 
-TextData *FT_Resource::print(const char *format, va_list args)
+TextData *FT_Resource::print(const std::string &in)
 {
     TextData *output = new TextData;
 
-    // TODO(c0r73x): dont use static max length.
-    char buffer[1024] = {0};
-    vsprintf(buffer, format, args);
+    const char *buffer = in.c_str();
 
     int len = strlen(buffer);
     int advance = 0;
@@ -241,6 +240,7 @@ TextData *FT_Resource::print(const char *format, va_list args)
         int bc = static_cast<int>(buffer[c]);
 
         advance += glyphs[bc].advance;
+
         for(int i = 0; i < 4; i++) {
             glm::vec2 pos =
                 glm::vec2(

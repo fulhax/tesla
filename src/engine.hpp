@@ -11,7 +11,7 @@
 
 #define EngineTick 0.032f // 1 tick = 32ms
 
-class Engine
+class Engine : public ASClass
 {
 public:
     Engine();
@@ -21,9 +21,9 @@ public:
     void update();
     void shutdown() const;
     float getTime() const;
+    int getFPS() const;
 
     bool running;
-    int fps;
 
     Ui ui;
     Audio audio;
@@ -33,26 +33,14 @@ public:
     Debugger debugger;
     Config config;
 
-    // For AngelScript {
-    void addRef()
-    {
-        ref_count++;
-    }
-    void releaseRef()
-    {
-        if(--ref_count == 0) {
-            delete this;
-        }
-    }
-    // }
-
     Entity testentity[3];
 private:
     void handleEvents();
 
     uint64_t oldtime;
     float time;
-    int ref_count;
+    int countfps;
+    int fps;
 };
 
 extern Engine engine;
