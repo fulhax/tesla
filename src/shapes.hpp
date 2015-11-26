@@ -21,8 +21,8 @@ class Shape
     mpi *mpi_cache;
     int getMiddlePoint(int p1, int p2);
     void mpiCacheAdd(int key, int tri);
-    int mpiCacheGet(int key);
-    void mpiCacheClear();
+    int mpiCacheGet(int key) const;
+    void mpiCacheClear() const;
 public:
     struct tri {
         unsigned int i[3];
@@ -32,7 +32,12 @@ public:
             i[1] = b;
             i[2] = c;
         }
-        tri() {}
+        tri() 
+        {
+            i[0] = 0;
+            i[1] = 0;
+            i[2] = 0;
+        }
     };
 
     tri *tris;
@@ -64,7 +69,7 @@ public:
         generate(1, 1);
     };
     void generate(int x, int y);
-    void subdivide(int recursion_level);
+    void subdivide(int recursion_level) static;
 
     Plane()
     {
@@ -87,7 +92,7 @@ public:
         generate(true, true, true, true, true, true);
     };
     void generate(bool xn, bool xp, bool yn, bool yp, bool zn, bool zp);
-    void subdivide(int recursion_level);
+    void subdivide(int recursion_level) static;
 
     Cube()
     {

@@ -166,9 +166,7 @@ int Script::init()
 
 void Script::run(ScriptResource *script, const char *func, void *arg)
 {
-    if(!script) {
-        lprintf(LOG_WARNING, "No script loaded!");
-        script->failed = true;
+    if(script == nullptr) {
         return;
     }
 

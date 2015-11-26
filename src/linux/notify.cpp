@@ -92,7 +92,6 @@ std::map<std::string, std::string> Notify::checkForChanges()
 
         if(event->mask & IN_CLOSE_WRITE || event->mask & IN_MOVED_TO) {
             char fullpath[FILENAME_MAX];
-            char filename[FILENAME_MAX];
             bool subdir = true;
 
             auto watch = watchers[event->wd];
@@ -125,6 +124,8 @@ std::map<std::string, std::string> Notify::checkForChanges()
                 event->name);
 
             if(subdir) {
+                char filename[FILENAME_MAX];
+
                 snprintf(
                     filename,
                     FILENAME_MAX,

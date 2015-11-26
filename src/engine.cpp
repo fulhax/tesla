@@ -8,6 +8,7 @@ Engine::Engine()
     oldtime = SDL_GetPerformanceCounter();
     time = 0;
     fps = 0;
+    countfps = 0;
 }
 
 Engine::~Engine()
@@ -15,7 +16,7 @@ Engine::~Engine()
 
 }
 
-float Engine::getTime() const
+float Engine::getTime() static
 {
     return EngineTick;
 }

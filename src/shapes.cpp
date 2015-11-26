@@ -67,7 +67,7 @@ void Shape::mpiCacheAdd(int key, int tri)
     }
 }
 
-int Shape::mpiCacheGet(int key)
+int Shape::mpiCacheGet(int key) const
 {
     if(mpi_cache) {
         for(mpi *curr = mpi_cache; curr; curr = curr->next) {
@@ -80,7 +80,7 @@ int Shape::mpiCacheGet(int key)
     return 0;
 }
 
-void Shape::mpiCacheClear()
+void Shape::mpiCacheClear() const
 {
     mpi *curr = mpi_cache;
 
@@ -228,7 +228,7 @@ void IsoSphere::generate()
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void Plane::subdivide(int recursion_level)
+void Plane::subdivide(int recursion_level) static
 {
     lprintf(LOG_WARNING, "Planes cannot be subdivided\n");
 }
@@ -265,7 +265,7 @@ void Plane::generate(int x, int y)
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void Cube::subdivide(int recursion_level)
+void Cube::subdivide(int recursion_level) static
 {
     lprintf(LOG_WARNING, "Cubes cannot be subdivided\n");
 }

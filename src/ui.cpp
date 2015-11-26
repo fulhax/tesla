@@ -15,11 +15,11 @@ Ui::~Ui()
 {
 }
 
-void Ui::update()
+void Ui::update() static
 {
 }
 
-void Ui::print(int x, int y, const std::string &in)
+void Ui::print(int x, int y, const std::string &in) static
 {
     static uint32_t vertex_buffer = 0;
     static uint32_t uv_buffer = 0;

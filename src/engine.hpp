@@ -20,7 +20,7 @@ public:
     int init();
     void update();
     void shutdown() const;
-    float getTime() const;
+    float getTime() static;
     int getFPS() const;
 
     bool running;

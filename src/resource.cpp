@@ -188,7 +188,7 @@ ShaderResource *ResourceHandler::getShader(
     return s;
 }
 
-bool ResourceHandler::fileExists(const char *filename)
+bool ResourceHandler::fileExists(const char *filename) static
 {
     char real_filename[FILENAME_MAX];
     snprintf(real_filename, FILENAME_MAX, "%s", filename);
