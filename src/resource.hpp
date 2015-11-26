@@ -174,26 +174,12 @@ class FontResource : public Resource
 {
 public:
     uint32_t id;
-    uint32_t fontsize;
 
     virtual TextData* print(const char *format, va_list args) = 0;
 
-    explicit FontResource(void *data)
-    {
-        id = -1;
-
-        if(data != 0) {
-            fontsize = *reinterpret_cast<uint32_t *>(data);
-        } else {
-            fontsize = 0;
-        }
-
-        glGenTextures(1, &id);
-    }
     FontResource()
     {
         id = -1;
-        fontsize = 0;
         glGenTextures(1, &id);
     }
     ~FontResource()
@@ -224,9 +210,9 @@ private:
     Notify notify;
 
     std::map<std::string, Resource *> resources;
-
-    Resource *getResource(const char *filename, void *data = 0);
-    Resource *getByType(const char *ext, void *data);
+    Resource *getResource(const char *filename);
+    Resource *getByType(const char *ext);
+    bool fileExists(const char *filename);
 };
 
 #endif // RESOURCE_HPP_

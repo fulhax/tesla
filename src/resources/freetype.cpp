@@ -11,7 +11,7 @@
 
 #include <vector>
 
-FT_Resource::FT_Resource(void *data) : FontResource(data)
+FT_Resource::FT_Resource()
 {
     max_height = 0;
 }
@@ -53,6 +53,21 @@ void FT_Resource::fillTextureData(uint32_t ch,
 
 int FT_Resource::load(const char *filename)
 {
+    char real_filename[FILENAME_MAX];
+    snprintf(real_filename, FILENAME_MAX, "%s", filename);
+
+    char *size = 0;
+    strtok_r(real_filename, ":", &size);
+
+    if(size) {
+        max_height = atoi(size);
+    }
+
+    if(max_height == 0) {
+        lprintf(LOG_WARNING, "No fontsize specified for ^g\"%s\"^0.", filename);
+        return 0;
+    }
+
     FT_Library library;
 
     if(FT_Init_FreeType(&library) != 0) {
@@ -62,15 +77,15 @@ int FT_Resource::load(const char *filename)
 
     FT_Face face;
 
-    if(FT_New_Face(library, filename, 0, &face)) {
+    if(FT_New_Face(library, real_filename, 0, &face)) {
 
         lprintf(
             LOG_WARNING,
             "Failed to load fontfile ^g\"%s\"^0",
-            filename);
+            real_filename);
     }
 
-    FT_Set_Char_Size(face, fontsize << 6, fontsize << 6, 96, 96);
+    FT_Set_Char_Size(face, max_height << 6, max_height << 6, 96, 96);
 
     int max_width = 0;
     int max_rows = 0;

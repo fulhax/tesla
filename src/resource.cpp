@@ -1,6 +1,8 @@
 #include "resource.hpp"
 
 #include <algorithm>
+#include <string>
+#include <vector>
 
 #include "engine.hpp"
 
@@ -42,9 +44,14 @@ ResourceHandler::~ResourceHandler()
     resources.clear();
 }
 
-Resource *ResourceHandler::getByType(const char *ext, void *data)
+Resource *ResourceHandler::getByType(const char *ext)
 {
     Resource *res = nullptr;
+    char *post = const_cast<char *>(strrchr(ext, ':'));
+
+    if(post) {
+        post[0] = 0;
+    }
 
     if(strcmp("tga", ext) == 0) {
         res = new TGA_Resource;
@@ -73,9 +80,13 @@ Resource *ResourceHandler::getByType(const char *ext, void *data)
         strcmp("ttf", ext) == 0 ||
         strcmp("otf", ext) == 0
     ) {
-        res = new FT_Resource(data);
+        res = new FT_Resource;
     } else {
         lprintf(LOG_ERROR, "Unrecognized file format ^g%s^0", ext);
+    }
+
+    if(post) {
+        post[0] = ':';
     }
 
     return res;
@@ -86,6 +97,7 @@ int ResourceHandler::init()
     snprintf(
         datapath,
         FILENAME_MAX,
+        "%s",
         engine.config.getString(
             "resource.datapath",
             "./data"
@@ -94,6 +106,7 @@ int ResourceHandler::init()
     snprintf(
         enginepath,
         FILENAME_MAX,
+        "%s",
         engine.config.getString(
             "resource.enginepath",
             "./engine"
@@ -109,20 +122,31 @@ void ResourceHandler::update()
     auto check = notify.checkForChanges();
 
     for(auto changes : check) {
-        bool change = false;
-        auto res = resources.find(changes.first);
-        lprintf(LOG_INFO, "changed file:%s", changes.first.c_str());
+        auto res = resources.lower_bound(changes.first);
+
+        std::vector<std::string> files;
 
         while(res != resources.end()) {
-            lprintf(LOG_INFO, "Unloading ^g\"%s\"^0.", changes.first.c_str());
-            delete res->second;
-            resources.erase(res);
-            res = resources.find(changes.first);
-            change = true;
+            printf("checking %s\n", res->first.c_str());
+            int partial = strncmp(res->first.c_str(),
+                                  changes.first.c_str(),
+                                  changes.first.length());
+
+            if(partial == 0) {
+                lprintf(LOG_INFO, "Unloading ^g\"%s\"^0.", res->first.c_str());
+                delete res->second;
+                files.push_back(res->first);
+                resources.erase(res);
+                res = resources.lower_bound(changes.first);
+            } else {
+                ++res;
+            }
         }
 
-        if(change) {
-            getResource(changes.first.c_str());
+        if(files.size() > 0) {
+            for(auto file : files) {
+                getResource(file.c_str());
+            }
         }
     }
 }
@@ -149,22 +173,7 @@ SoundResource *ResourceHandler::getSound(const char *filename)
 
 FontResource *ResourceHandler::getFont(const char *filename)
 {
-    char real_filename[FILENAME_MAX];
-    snprintf(real_filename, FILENAME_MAX, "%s", filename);
-
-    char *size = 0;
-    strtok_r(real_filename, ":", &size);
-
-    int fontsize = atoi(size);
-
-    if(fontsize == 0) {
-        lprintf(LOG_WARNING, "No fontsize specified for ^g\"%s\"^0", filename);
-        return 0;
-    }
-
-    return reinterpret_cast<FontResource *>(
-               getResource(real_filename, &fontsize)
-           );
+    return reinterpret_cast<FontResource *>(getResource(filename));
 }
 
 ShaderResource *ResourceHandler::getShader(
@@ -180,7 +189,22 @@ ShaderResource *ResourceHandler::getShader(
     return s;
 }
 
-Resource *ResourceHandler::getResource(const char *filename, void *data)
+bool ResourceHandler::fileExists(const char *filename)
+{
+    char real_filename[FILENAME_MAX];
+    snprintf(real_filename, FILENAME_MAX, "%s", filename);
+
+    char *size = 0;
+    strtok_r(real_filename, ":", &size);
+
+    if(access(real_filename, F_OK) < 0) {
+        return 0;
+    }
+
+    return 1;
+}
+
+Resource *ResourceHandler::getResource(const char *filename)
 {
     auto res = resources.find(filename);
 
@@ -195,19 +219,19 @@ Resource *ResourceHandler::getResource(const char *filename, void *data)
     char fullpath[FILENAME_MAX];
     snprintf(fullpath, FILENAME_MAX, "%s/%s", datapath, filename);
 
-    if(access(fullpath, F_OK) < 0) {
+    if(!fileExists(fullpath)) {
         snprintf(fullpath, FILENAME_MAX, "%s/%s", enginepath, filename);
 
-        if(access(fullpath, F_OK) < 0) {
+        if(!fileExists(fullpath)) {
             lprintf(LOG_WARNING, "File not found ^g\"%s\"^0!", filename);
             return nullptr;
         }
     }
 
-    const char *ext = strrchr(filename, '.') + 1;
+    const char *ext = strrchr(fullpath, '.') + 1;
 
     if(ext) {
-        Resource *res = getByType(ext, data);
+        Resource *res = getByType(ext);
 
         if(res) {
             if(res->load(fullpath)) {
@@ -215,14 +239,13 @@ Resource *ResourceHandler::getResource(const char *filename, void *data)
                 res->failed = false;
                 resources[filename] = res;
                 return res;
-            } else {
-                lprintf(LOG_ERROR, "^g\"%s\"^0 failed to load.", filename);
             }
 
+            lprintf(LOG_ERROR, "^g\"%s\"^0 failed to load.", filename);
             delete res;
         }
 
-        resources[filename] = new Resource();
+        resources[filename] = new Resource;
         return nullptr;
     }
 

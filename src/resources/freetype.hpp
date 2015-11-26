@@ -44,7 +44,7 @@ class FT_Resource : public FontResource
     static int next_p2(int a);
     void fillTextureData(uint32_t ch, unsigned char *texture_data) const;
 public:
-    explicit FT_Resource(void *data);
+    FT_Resource();
     ~FT_Resource();
 
     TextData* print(const char *format, va_list args);
