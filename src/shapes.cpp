@@ -228,7 +228,7 @@ void IsoSphere::generate()
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void Plane::subdivide(int recursion_level) static
+void Plane::subdivide(int recursion_level)
 {
     lprintf(LOG_WARNING, "Planes cannot be subdivided\n");
 }
@@ -265,7 +265,7 @@ void Plane::generate(int x, int y)
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void Cube::subdivide(int recursion_level) static
+void Cube::subdivide(int recursion_level)
 {
     lprintf(LOG_WARNING, "Cubes cannot be subdivided\n");
 }

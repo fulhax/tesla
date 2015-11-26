@@ -69,7 +69,7 @@ public:
         generate(1, 1);
     };
     void generate(int x, int y);
-    void subdivide(int recursion_level) static;
+    static void subdivide(int recursion_level);
 
     Plane()
     {
@@ -92,7 +92,7 @@ public:
         generate(true, true, true, true, true, true);
     };
     void generate(bool xn, bool xp, bool yn, bool yp, bool zn, bool zp);
-    void subdivide(int recursion_level) static;
+    static void subdivide(int recursion_level);
 
     Cube()
     {

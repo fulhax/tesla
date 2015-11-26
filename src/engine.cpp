@@ -16,7 +16,7 @@ Engine::~Engine()
 
 }
 
-float Engine::getTime() static
+float Engine::getTime()
 {
     return EngineTick;
 }

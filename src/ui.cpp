@@ -4,6 +4,7 @@
 #include <glm/gtx/euler_angles.hpp>
 
 #include <vector>
+#include <string>
 
 #include "engine.hpp"
 
@@ -15,11 +16,11 @@ Ui::~Ui()
 {
 }
 
-void Ui::update() static
+void Ui::update()
 {
 }
 
-void Ui::print(int x, int y, const std::string &in) static
+void Ui::print(int x, int y, const std::string &in)
 {
     static uint32_t vertex_buffer = 0;
     static uint32_t uv_buffer = 0;

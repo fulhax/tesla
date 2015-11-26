@@ -212,7 +212,7 @@ private:
     std::map<std::string, Resource *> resources;
     Resource *getResource(const char *filename);
     Resource *getByType(const char *ext);
-    bool fileExists(const char *filename) static;
+    static bool fileExists(const char *filename);
 };
 
 #endif // RESOURCE_HPP_

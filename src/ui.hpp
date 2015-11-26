@@ -21,8 +21,8 @@ public:
     Ui();
     virtual ~Ui();
 
-    void print(int x, int y, const std::string &in) static;
-    void update() static;
+    void print(int x, int y, const std::string &in);
+    static void update();
 };
 
 #endif // UI_HPP_
