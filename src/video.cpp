@@ -142,13 +142,9 @@ void Video::update()
     glm::mat4 CamTransMat = glm::translate(glm::mat4(1.0f), camera.pos);
 
     glm::mat4 CamMat = CamTransMat * CamRotMat;
-    glm::mat4 ViewMat = glm::inverse(CamMat);
+    ViewMat = glm::inverse(CamMat);
 
     camera.update(ProjMat, ViewMat);
-
-    engine.testentity[0].draw(ProjMat, ViewMat);
-    engine.testentity[1].draw(ProjMat, ViewMat);
-    engine.testentity[2].draw(ProjMat, ViewMat);
 }
 
 void Video::swap()

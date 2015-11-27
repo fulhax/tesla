@@ -1,16 +1,15 @@
 #include "entity.hpp"
 
-#include <string>
 #include <glm/gtc/matrix_transform.hpp>
+
+#include <string>
 
 #include "engine.hpp"
 
-Entity::Entity()
+Entity::Entity(EntityType* type)
 {
+    this->type = type;
     memset(model, 0, FILENAME_MAX);
-    memset(script, 0, FILENAME_MAX);
-
-    memset(name, 0, MAX_NAMELEN);
 
     ref_count = 1;
 
@@ -54,19 +53,25 @@ void Entity::setTexture(const std::string &inname, const std::string &infile)
     //snprintf(texture, FILENAME_MAX, "%s", in.c_str());
 }
 
-void Entity::init(const char *name, const char *script)
+void Entity::spawn(glm::vec3 pos)
 {
-    snprintf(this->name, MAX_NAMELEN, "%s", name);
-    snprintf(this->script, FILENAME_MAX, "%s", script);
+    if(type == nullptr) {
+        lprintf(LOG_WARNING, "Trying to spawn uninitialized entity!");
+        return;
+    }
 
-    lprintf(LOG_INFO, "Entity ^m\"%s\"^0 initialized", name);
+    this->pos = pos;
 
-    ScriptResource *s = engine.resources.getScript(script);
+    lprintf(LOG_INFO, "Spawning Entity ^m\"%s\"^0", type->name.c_str());
+    ScriptResource *s = engine.resources.getScript(type->script.c_str());
 
     if(s) {
         engine.script.run(s, "void init(Entity@ self)", this);
     } else {
-        lprintf(LOG_WARNING, "Entity ^m\"%s\"^0 no script found!", name);
+        lprintf(
+            LOG_WARNING,
+            "Entity ^m\"%s\"^0 no script found!",
+            type->name.c_str());
     }
 }
 
@@ -100,7 +105,12 @@ int Entity::cullCheck(const glm::mat4 &ModelMat, ModelResource *m)
 
 void Entity::update()
 {
-    ScriptResource *s = engine.resources.getScript(script);
+    if(type == nullptr) {
+        lprintf(LOG_WARNING, "Trying to update uninitialized entity!");
+        return;
+    }
+
+    ScriptResource *s = engine.resources.getScript(type->script.c_str());
 
     if(s) {
         engine.script.run(s, "void update(Entity@ self)", this);

@@ -8,7 +8,7 @@
 
 class ScriptResource;
 
-class ASClass
+template<typename T> class ASClass
 {
     int ref_count;
 public:
@@ -27,6 +27,10 @@ public:
         if(--ref_count == 0) {
             delete this;
         }
+    }
+    static T *factory()
+    {
+        return new T();
     }
 };
 

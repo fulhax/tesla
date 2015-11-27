@@ -17,14 +17,13 @@ class Video
 
     int screen_width;
     int screen_height;
-
-    Entity testentity[3];
 public:
     Video();
     virtual ~Video();
 
     glm::mat4 ProjMat;
     glm::mat4 OrthoMat;
+    glm::mat4 ViewMat;
 
     int init();
     void update();

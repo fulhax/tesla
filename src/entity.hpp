@@ -8,14 +8,21 @@
 #include "shader.hpp"
 #include "script.hpp"
 
-#define MAX_NAMELEN 64
+struct EntityType {
+    std::string name;
+    std::string script;
 
-class Entity
+    EntityType() {}
+    EntityType(std::string name, std::string script)
+        : name(name), script(script) {}
+};
+
+class Entity : public ASClass<Entity>
 {
     std::map<std::string, std::string> textures;
     char model[FILENAME_MAX];
-    char script[FILENAME_MAX];
-    char name[MAX_NAMELEN];
+
+    EntityType *type;
 
     glm::vec3 pos;
     glm::vec3 rot;
@@ -25,10 +32,11 @@ class Entity
 
     static int cullCheck(const glm::mat4 &ModelMat, ModelResource *m);
 public:
-    Entity();
+    explicit Entity(EntityType *type);
+    Entity() : Entity(nullptr) {}
     virtual ~Entity();
 
-    void init(const char *name, const char *script);
+    void spawn(glm::vec3 pos);
     void draw(const glm::mat4 &Projection, const glm::mat4 &View);
     void update();
 
@@ -41,23 +49,6 @@ public:
     void setModel(const std::string &in);
     void setTexture(const std::string &inname, const std::string &infile);
     void attachShader(const std::string &infile);
-
-    // For AngelScript {
-    void addRef()
-    {
-        ref_count++;
-    }
-    void releaseRef()
-    {
-        if(--ref_count == 0) {
-            delete this;
-        }
-    }
-    static Entity *factory()
-    {
-        return new Entity();
-    }
-    // }
 };
 
 #endif // ENTITY_HPP_

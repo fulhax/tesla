@@ -1,5 +1,7 @@
 #include "engine.hpp"
 
+#include <string>
+
 Engine engine;
 
 Engine::Engine()
@@ -24,6 +26,29 @@ float Engine::getTime()
 int Engine::getFPS() const
 {
     return fps;
+}
+
+void Engine::createEntityType(const std::string &name,
+                              const std::string &script)
+{
+    entityTypes[name] = EntityType(name, script);
+}
+
+int Engine::spawnEntity(const std::string &name, float x, float y, float z)
+{
+    glm::vec3 pos = glm::vec3(x,y,z);
+    auto type = entityTypes.find(name);
+
+    if(type == entityTypes.end()) {
+        lprintf(LOG_WARNING, "Unknown entity type ^g\"%s\"^0", name.c_str());
+        return -1;
+    }
+
+    Entity* e = new Entity(&type->second);
+    e->spawn(pos);
+
+    entities.push_back(e);
+    return entities.size() - 1;
 }
 
 int Engine::init()
@@ -61,15 +86,17 @@ int Engine::init()
         running = false;
     }
 
-    testentity[0].init("test1", "scripts/test.as");
-    testentity[1].init("test2", "scripts/test2.as");
-    testentity[2].init("test3", "scripts/test3.as");
-
     return 0;
 }
 
-void Engine::shutdown() const
+void Engine::shutdown()
 {
+    for(auto e : entities) {
+        delete e;
+    }
+    entities.clear();
+    entityTypes.clear();
+
     config.saveConfig("settings.conf");
     SDL_Quit();
 }
@@ -127,6 +154,10 @@ void Engine::update()
 
     script.run(s, "void draw()");
 
+    for(auto e : entities) {
+        e->draw(video.ProjMat, video.ViewMat);
+    }
+
     while(mtime >= EngineTick) {
         mtime -= EngineTick;
 
@@ -138,11 +169,11 @@ void Engine::update()
         //     sound = audio.play("sound/Example.ogg", glm::vec3(0, 0, 0));
         // }
 
-        testentity[0].update();
-        testentity[1].update();
-        testentity[2].update();
-
         script.run(s, "void update()");
+
+        for(auto e : entities) {
+            e->update();
+        }
     }
 
     video.swap();

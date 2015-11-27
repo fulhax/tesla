@@ -1,6 +1,10 @@
 #ifndef ENGINE_HPP_
 #define ENGINE_HPP_
 
+#include <vector>
+#include <string>
+#include <map>
+
 #include "errorhandler.hpp"
 #include "video.hpp"
 #include "resource.hpp"
@@ -8,10 +12,11 @@
 #include "audio.hpp"
 #include "debugger.hpp"
 #include "config.hpp"
+#include "entity.hpp"
 
 #define EngineTick 0.032f // 1 tick = 32ms
 
-class Engine : public ASClass
+class Engine : public ASClass<Engine>
 {
 public:
     Engine();
@@ -19,9 +24,14 @@ public:
 
     int init();
     void update();
-    void shutdown() const;
+    void shutdown();
     float getTime();
     int getFPS() const;
+
+    void createEntityType(const std::string &name,
+                          const std::string &script);
+
+    int spawnEntity(const std::string &name, float x, float y, float z);
 
     bool running;
 
@@ -32,9 +42,9 @@ public:
     ResourceHandler resources;
     Debugger debugger;
     Config config;
-
-    Entity testentity[3];
 private:
+    std::vector<Entity*> entities;
+    std::map<std::string, EntityType> entityTypes;
     void handleEvents();
 
     uint64_t oldtime;

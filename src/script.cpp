@@ -42,6 +42,22 @@ void Script::registerObjects()
         asFUNCTION(Script::print),
         asCALL_CDECL);
 
+    // TODO(c0r73x): We need glm in scripts!
+    // core->RegisterObjectType(
+    //     "vec3",
+    //     sizeof(glm::vec3),
+    //     asOBJ_VALUE|asOBJ_POD  | asGetTypeTraits<glm::vec3>());
+    //
+    // core->RegisterObjectMethod(
+    //     "vec3",
+    //     "vec3& opAssign(const vec3 &in)",
+    //     asMETHODPR(
+    //         glm::vec3,
+    //         operator=,
+    //         (const glm::vec3&),
+    //         glm::vec3&),
+    //     asCALL_THISCALL);
+
     core->RegisterObjectType("Ui", 0, asOBJ_REF);
     core->RegisterGlobalProperty("Ui ui", &engine.ui);
     core->RegisterObjectBehaviour(
@@ -85,6 +101,16 @@ void Script::registerObjects()
         "Engine",
         "int getFPS()",
         asMETHOD(Engine, getFPS),
+        asCALL_THISCALL);
+    core->RegisterObjectMethod(
+        "Engine",
+        "void createEntityType(string &in, string &in)",
+        asMETHOD(Engine, createEntityType),
+        asCALL_THISCALL);
+    core->RegisterObjectMethod(
+        "Engine",
+        "void spawnEntity(string &in, float x, float y, float z)",
+        asMETHOD(Engine, spawnEntity),
         asCALL_THISCALL);
 
     core->RegisterObjectType("Entity", 0, asOBJ_REF);
