@@ -25,13 +25,13 @@ public:
     int init();
     void update();
     void shutdown();
-    float getTime();
+    float getTick();
     int getFPS() const;
 
     void createEntityType(const std::string &name,
                           const std::string &script);
 
-    int spawnEntity(const std::string &name, float x, float y, float z);
+    int spawnEntity(const std::string &name, const glm::vec3 &pos);
 
     bool running;
 

@@ -18,7 +18,7 @@ Engine::~Engine()
 
 }
 
-float Engine::getTime()
+float Engine::getTick()
 {
     return EngineTick;
 }
@@ -34,9 +34,8 @@ void Engine::createEntityType(const std::string &name,
     entityTypes[name] = EntityType(name, script);
 }
 
-int Engine::spawnEntity(const std::string &name, float x, float y, float z)
+int Engine::spawnEntity(const std::string &name, const glm::vec3 &pos)
 {
-    glm::vec3 pos = glm::vec3(x,y,z);
     auto type = entityTypes.find(name);
 
     if(type == entityTypes.end()) {

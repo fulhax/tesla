@@ -8,6 +8,17 @@
 
 class ScriptResource;
 
+
+template<typename T> void asConstructor(void *mem)
+{
+    new(mem) T();
+}
+
+template<typename T> void asDestructor(void *mem)
+{
+    static_cast<T *>(mem)->~T();
+}
+
 template<typename T> class ASClass
 {
     int ref_count;

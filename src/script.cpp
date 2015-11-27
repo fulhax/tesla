@@ -35,6 +35,16 @@ void Script::print(const std::string &in)
     lprintf(LOG_SCRIPT, in.c_str());
 }
 
+void asVec3Construct(float x, float y, float z, void* mem)
+{
+    new(mem) glm::vec3(x,y,z);
+}
+
+void asVec2Construct(float x, float y, void* mem)
+{
+    new(mem) glm::vec2(x,y);
+}
+
 void Script::registerObjects()
 {
     core->RegisterGlobalFunction(
@@ -42,21 +52,89 @@ void Script::registerObjects()
         asFUNCTION(Script::print),
         asCALL_CDECL);
 
-    // TODO(c0r73x): We need glm in scripts!
-    // core->RegisterObjectType(
-    //     "vec3",
-    //     sizeof(glm::vec3),
-    //     asOBJ_VALUE|asOBJ_POD  | asGetTypeTraits<glm::vec3>());
-    //
-    // core->RegisterObjectMethod(
-    //     "vec3",
-    //     "vec3& opAssign(const vec3 &in)",
-    //     asMETHODPR(
-    //         glm::vec3,
-    //         operator=,
-    //         (const glm::vec3&),
-    //         glm::vec3&),
-    //     asCALL_THISCALL);
+    core->RegisterObjectType(
+        "vec3",
+        sizeof(glm::vec3),
+        asOBJ_VALUE | asGetTypeTraits<glm::vec3>());
+    core->RegisterObjectBehaviour(
+        "vec3",
+        asBEHAVE_CONSTRUCT,
+        "void f()",
+        asFUNCTION(asConstructor<glm::vec3>),
+        asCALL_CDECL_OBJLAST);
+    core->RegisterObjectBehaviour(
+        "vec3",
+        asBEHAVE_CONSTRUCT,
+        "void f(float x, float y, float z)",
+        asFUNCTION(asVec3Construct),
+        asCALL_CDECL_OBJLAST);
+    core->RegisterObjectBehaviour(
+        "vec3",
+        asBEHAVE_DESTRUCT,
+        "void f()",
+        asFUNCTION(asDestructor<glm::vec3>),
+        asCALL_CDECL_OBJLAST);
+    core->RegisterObjectProperty(
+        "vec3",
+        "float x",
+        asOFFSET(glm::vec3, x));
+    core->RegisterObjectProperty(
+        "vec3",
+        "float y",
+        asOFFSET(glm::vec3, y));
+    core->RegisterObjectProperty(
+        "vec3",
+        "float z",
+        asOFFSET(glm::vec3, z));
+    core->RegisterObjectMethod(
+        "vec3",
+        "vec3& opAssign(const vec3 &in)",
+        asMETHODPR(
+            glm::vec3,
+            operator=,
+            (const glm::vec3&),
+            glm::vec3&),
+        asCALL_THISCALL);
+
+    core->RegisterObjectType(
+        "vec2",
+        sizeof(glm::vec2),
+        asOBJ_VALUE | asGetTypeTraits<glm::vec2>());
+    core->RegisterObjectBehaviour(
+        "vec2",
+        asBEHAVE_CONSTRUCT,
+        "void f()",
+        asFUNCTION(asConstructor<glm::vec2>),
+        asCALL_CDECL_OBJLAST);
+    core->RegisterObjectBehaviour(
+        "vec2",
+        asBEHAVE_CONSTRUCT,
+        "void f(float x, float y)",
+        asFUNCTION(asVec2Construct),
+        asCALL_CDECL_OBJLAST);
+    core->RegisterObjectBehaviour(
+        "vec2",
+        asBEHAVE_DESTRUCT,
+        "void f()",
+        asFUNCTION(asDestructor<glm::vec2>),
+        asCALL_CDECL_OBJLAST);
+    core->RegisterObjectProperty(
+        "vec2",
+        "float x",
+        asOFFSET(glm::vec2, x));
+    core->RegisterObjectProperty(
+        "vec2",
+        "float y",
+        asOFFSET(glm::vec2, y));
+    core->RegisterObjectMethod(
+        "vec2",
+        "vec2& opAssign(const vec2 &in)",
+        asMETHODPR(
+            glm::vec2,
+            operator=,
+            (const glm::vec2&),
+            glm::vec2&),
+        asCALL_THISCALL);
 
     core->RegisterObjectType("Ui", 0, asOBJ_REF);
     core->RegisterGlobalProperty("Ui ui", &engine.ui);
@@ -74,7 +152,7 @@ void Script::registerObjects()
         asCALL_THISCALL);
     core->RegisterObjectMethod(
         "Ui",
-        "void print(int x, int y, const string &in)",
+        "void print(vec2 &in, const string &in)",
         asMETHOD(Ui, print),
         asCALL_THISCALL);
 
@@ -94,8 +172,8 @@ void Script::registerObjects()
         asCALL_THISCALL);
     core->RegisterObjectMethod(
         "Engine",
-        "float getTime()",
-        asMETHOD(Engine, getTime),
+        "float getTick()",
+        asMETHOD(Engine, getTick),
         asCALL_THISCALL);
     core->RegisterObjectMethod(
         "Engine",
@@ -109,7 +187,7 @@ void Script::registerObjects()
         asCALL_THISCALL);
     core->RegisterObjectMethod(
         "Engine",
-        "void spawnEntity(string &in, float x, float y, float z)",
+        "void spawnEntity(string &in, vec3 &in)",
         asMETHOD(Engine, spawnEntity),
         asCALL_THISCALL);
 
@@ -132,21 +210,18 @@ void Script::registerObjects()
         "void f()",
         asMETHOD(Entity, releaseRef),
         asCALL_THISCALL);
-    core->RegisterObjectMethod(
+    core->RegisterObjectProperty(
         "Entity",
-        "void setPos(float x, float y, float z)",
-        asMETHOD(Entity, setPos),
-        asCALL_THISCALL);
-    core->RegisterObjectMethod(
+        "vec3 pos",
+        asOFFSET(Entity, pos));
+    core->RegisterObjectProperty(
         "Entity",
-        "void setRot(float x, float y, float z)",
-        asMETHOD(Entity, setRot),
-        asCALL_THISCALL);
-    core->RegisterObjectMethod(
+        "vec3 rot",
+        asOFFSET(Entity, rot));
+    core->RegisterObjectProperty(
         "Entity",
-        "void setScale(float size)",
-        asMETHOD(Entity, setScale),
-        asCALL_THISCALL);
+        "float scale",
+        asOFFSET(Entity, scale));
     core->RegisterObjectMethod(
         "Entity",
         "void setModel(const string &in)",

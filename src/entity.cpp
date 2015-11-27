@@ -15,26 +15,11 @@ Entity::Entity(EntityType* type)
 
     pos = glm::vec3(0, 0, 0);
     rot = glm::vec3(0, 0, 0);
-    size = 1.0f;
+    scale = 1.0f;
 }
 
 Entity::~Entity()
 {
-}
-
-void Entity::setScale(float size)
-{
-    this->size = size;
-}
-
-void Entity::setRot(float x, float y, float z)
-{
-    rot = glm::vec3(x, y, z);
-}
-
-void Entity::setPos(float x, float y, float z)
-{
-    pos = glm::vec3(x, y, z);
 }
 
 void Entity::setModel(const std::string &in)
@@ -126,12 +111,26 @@ void Entity::draw(const glm::mat4 &ProjMat, const glm::mat4 &ViewMat)
     ModelResource *m = engine.resources.getModel(model);
 
     if(m) {
-        glm::mat4 Scale = glm::scale(glm::mat4(1.0f), glm::vec3(size, size, size));
+        glm::mat4 Scale = glm::scale(
+            glm::mat4(1.0f),
+            glm::vec3(scale, scale, scale));
+
         glm::mat4 Pos = glm::translate(glm::mat4(1.0f), pos);
 
-        glm::mat4 RotX = glm::rotate(glm::mat4(1.0f), rot.x, glm::vec3(1, 0, 0));
-        glm::mat4 RotY = glm::rotate(glm::mat4(1.0f), rot.y, glm::vec3(0, 1, 0));
-        glm::mat4 RotZ = glm::rotate(glm::mat4(1.0f), rot.z, glm::vec3(0, 0, 1));
+        glm::mat4 RotX = glm::rotate(
+            glm::mat4(1.0f),
+            rot.x,
+            glm::vec3(1, 0, 0));
+
+        glm::mat4 RotY = glm::rotate(
+            glm::mat4(1.0f),
+            rot.y,
+            glm::vec3(0, 1, 0));
+
+        glm::mat4 RotZ = glm::rotate(
+            glm::mat4(1.0f),
+            rot.z,
+            glm::vec3(0, 0, 1));
 
         glm::mat4 ModelMat = Pos * Scale *  RotX * RotY * RotZ;
 
