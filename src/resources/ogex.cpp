@@ -442,14 +442,46 @@ void OGEX_Resource::SetupGL()
             numVerts * sizeof(float) * 3,
             normal_vb,
             GL_STATIC_DRAW);
+        has_normals_buffer = true;
+    }
+
+    if(tangent_vb) {
+        glBindBuffer(GL_ARRAY_BUFFER, tangent_buffer);
+        glBufferData(
+            GL_ARRAY_BUFFER,
+            numVerts * sizeof(float) * 3,
+            tangent_vb,
+            GL_STATIC_DRAW);
+        has_tangent_buffer = true;
+    }
+
+    if(binormal_vb) {
+        glBindBuffer(GL_ARRAY_BUFFER, binormals_buffer);
+        glBufferData(
+            GL_ARRAY_BUFFER,
+            numVerts * sizeof(float) * 3,
+            binormal_vb,
+            GL_STATIC_DRAW);
+        has_binormals_buffer = true;
+    }
+
+    if(color_vb) {
+        glBindBuffer(GL_ARRAY_BUFFER, color_buffer);
+        glBufferData(
+            GL_ARRAY_BUFFER,
+            numVerts * sizeof(float) * 3,
+            color_vb,
+            GL_STATIC_DRAW);
+        has_color_buffer = true;
     }
 
     if(uv_vb) {
         glBindBuffer(GL_ARRAY_BUFFER, uv_buffer);
         glBufferData(
             GL_ARRAY_BUFFER,
-            numVerts * sizeof(float) * 3,
+            numVerts * sizeof(float) * 2,
             uv_vb,
             GL_STATIC_DRAW);
+        has_uv_buffer = true;
     }
 }

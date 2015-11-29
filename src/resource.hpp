@@ -126,6 +126,12 @@ public:
     uint32_t tangent_buffer;
     uint32_t color_buffer;
 
+    bool has_uv_buffer;
+    bool has_normals_buffer;
+    bool has_binormals_buffer;
+    bool has_tangent_buffer;
+    bool has_color_buffer;
+
     ModelResource()
     {
         bounding_box.min = bounding_box.max = glm::vec3(0, 0, 0);
@@ -139,6 +145,11 @@ public:
         glGenBuffers(1, &tangent_buffer);
         glGenBuffers(1, &binormals_buffer);
         glGenBuffers(1, &color_buffer);
+        has_uv_buffer        = false;
+        has_normals_buffer   = false;
+        has_binormals_buffer = false;
+        has_tangent_buffer   = false;
+        has_color_buffer     = false;
     }
     ~ModelResource()
     {
@@ -175,7 +186,7 @@ class FontResource : public Resource
 public:
     uint32_t id;
 
-    virtual TextData* print(const std::string &in) = 0;
+    virtual TextData *print(const std::string &in) = 0;
 
     FontResource()
     {

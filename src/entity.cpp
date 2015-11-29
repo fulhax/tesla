@@ -6,7 +6,7 @@
 
 #include "engine.hpp"
 
-Entity::Entity(EntityType* type)
+Entity::Entity(EntityType *type)
 {
     this->type = type;
     memset(model, 0, FILENAME_MAX);
@@ -112,25 +112,25 @@ void Entity::draw(const glm::mat4 &ProjMat, const glm::mat4 &ViewMat)
 
     if(m) {
         glm::mat4 Scale = glm::scale(
-            glm::mat4(1.0f),
-            glm::vec3(scale, scale, scale));
+                              glm::mat4(1.0f),
+                              glm::vec3(scale, scale, scale));
 
         glm::mat4 Pos = glm::translate(glm::mat4(1.0f), pos);
 
         glm::mat4 RotX = glm::rotate(
-            glm::mat4(1.0f),
-            rot.x,
-            glm::vec3(1, 0, 0));
+                             glm::mat4(1.0f),
+                             rot.x,
+                             glm::vec3(1, 0, 0));
 
         glm::mat4 RotY = glm::rotate(
-            glm::mat4(1.0f),
-            rot.y,
-            glm::vec3(0, 1, 0));
+                             glm::mat4(1.0f),
+                             rot.y,
+                             glm::vec3(0, 1, 0));
 
         glm::mat4 RotZ = glm::rotate(
-            glm::mat4(1.0f),
-            rot.z,
-            glm::vec3(0, 0, 1));
+                             glm::mat4(1.0f),
+                             rot.z,
+                             glm::vec3(0, 0, 1));
 
         glm::mat4 ModelMat = Pos * Scale *  RotX * RotY * RotZ;
 
@@ -164,8 +164,26 @@ void Entity::draw(const glm::mat4 &ProjMat, const glm::mat4 &ViewMat)
         }
 
         current->bindAttribLocation(0, "in_Position");
-        current->bindAttribLocation(1, "in_TexCoord");
-        current->bindAttribLocation(2, "in_Normal");
+
+        if(m->has_uv_buffer) {
+            current->bindAttribLocation(1, "in_TexCoord");
+        }
+
+        if(m->has_normals_buffer) {
+            current->bindAttribLocation(2, "in_Normal");
+        }
+
+        if(m->has_tangent_buffer) {
+            current->bindAttribLocation(3, "in_Tangent");
+        }
+
+        if(m->has_binormals_buffer) {
+            current->bindAttribLocation(4, "in_Binormal");
+        }
+
+        if(m->has_color_buffer) {
+            current->bindAttribLocation(5, "in_Color");
+        }
 
         current->setUniform("in_ModelMatrix", ModelMat);
         current->setUniform("in_ProjMatrix", ProjMat);
@@ -182,27 +200,70 @@ void Entity::draw(const glm::mat4 &ProjMat, const glm::mat4 &ViewMat)
 
         glEnableVertexAttribArray(0);
 
-        glBindBuffer(GL_ARRAY_BUFFER, m->uv_buffer);
-        glVertexAttribPointer(
-            1,
-            2,
-            GL_FLOAT,
-            GL_FALSE,
-            sizeof(glm::vec2),
-            nullptr);
+        if(m->has_uv_buffer) {
+            glBindBuffer(GL_ARRAY_BUFFER, m->uv_buffer);
+            glVertexAttribPointer(
+                1,
+                2,
+                GL_FLOAT,
+                GL_FALSE,
+                sizeof(glm::vec2),
+                nullptr);
 
-        glEnableVertexAttribArray(1);
+            glEnableVertexAttribArray(1);
+        }
 
-        glBindBuffer(GL_ARRAY_BUFFER, m->normals_buffer);
-        glVertexAttribPointer(
-            2,
-            3,
-            GL_FLOAT,
-            GL_FALSE,
-            sizeof(glm::vec3),
-            nullptr);
+        if(m->has_normals_buffer) {
+            glBindBuffer(GL_ARRAY_BUFFER, m->normals_buffer);
+            glVertexAttribPointer(
+                2,
+                3,
+                GL_FLOAT,
+                GL_FALSE,
+                sizeof(glm::vec3),
+                nullptr);
 
-        glEnableVertexAttribArray(2);
+            glEnableVertexAttribArray(2);
+        }
+
+        if(m->has_tangent_buffer) {
+            glBindBuffer(GL_ARRAY_BUFFER, m->tangent_buffer);
+            glVertexAttribPointer(
+                2,
+                3,
+                GL_FLOAT,
+                GL_FALSE,
+                sizeof(glm::vec3),
+                nullptr);
+
+            glEnableVertexAttribArray(3);
+        }
+
+        if(m->has_binormals_buffer) {
+            glBindBuffer(GL_ARRAY_BUFFER, m->binormals_buffer);
+            glVertexAttribPointer(
+                2,
+                3,
+                GL_FLOAT,
+                GL_FALSE,
+                sizeof(glm::vec3),
+                nullptr);
+
+            glEnableVertexAttribArray(4);
+        }
+
+        if(m->has_color_buffer) {
+            glBindBuffer(GL_ARRAY_BUFFER, m->color_buffer);
+            glVertexAttribPointer(
+                2,
+                3,
+                GL_FLOAT,
+                GL_FALSE,
+                sizeof(glm::vec3),
+                nullptr);
+
+            glEnableVertexAttribArray(5);
+        }
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m->indices_buffer);
         glDrawElements(
@@ -215,8 +276,26 @@ void Entity::draw(const glm::mat4 &ProjMat, const glm::mat4 &ViewMat)
         glBindBuffer(GL_ARRAY_BUFFER, 0);
 
         glDisableVertexAttribArray(0);
-        glDisableVertexAttribArray(1);
-        glDisableVertexAttribArray(2);
+
+        if(m->has_uv_buffer) {
+            glDisableVertexAttribArray(1);
+        }
+
+        if(m->has_normals_buffer) {
+            glDisableVertexAttribArray(2);
+        }
+
+        if(m->has_tangent_buffer) {
+            glDisableVertexAttribArray(3);
+        }
+
+        if(m->has_binormals_buffer) {
+            glDisableVertexAttribArray(4);
+        }
+
+        if(m->has_color_buffer) {
+            glDisableVertexAttribArray(5);
+        }
 
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         glEnable(GL_CULL_FACE);

@@ -35,6 +35,10 @@ int OBJ_Resource::load(const char *filename)
     obj *tmpObj = loadObj(filename);
 
     if(tmpObj) {
+
+        has_uv_buffer = tmpObj->uvs != nullptr;
+        has_normals_buffer = tmpObj->normals != nullptr;
+
         data = ObjMakeUniqueFullVerts(tmpObj);
         delete tmpObj;
 
@@ -61,7 +65,6 @@ int OBJ_Resource::load(const char *filename)
             data->numnormals * sizeof(vec3),
             data->normals,
             GL_STATIC_DRAW);
-
         glBindBuffer(GL_ARRAY_BUFFER, uv_buffer);
         glBufferData(
             GL_ARRAY_BUFFER,
