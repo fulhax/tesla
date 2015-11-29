@@ -20,7 +20,7 @@ void Ui::update()
 {
 }
 
-void Ui::print(glm::vec2 pos, const std::string &in)
+void Ui::print(int x, int y, const std::string &in)
 {
     static uint32_t vertex_buffer = 0;
     static uint32_t uv_buffer = 0;
@@ -54,7 +54,7 @@ void Ui::print(glm::vec2 pos, const std::string &in)
 
             TextData *text = font->print(in);
 
-            shader.setUniform("in_UiPos", pos);
+            shader.setUniform("in_UiPos", glm::vec2(x, y));
             shader.setUniform("in_OrthoMatrix", engine.video.OrthoMat);
 
             glActiveTexture(GL_TEXTURE0);

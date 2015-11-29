@@ -152,7 +152,7 @@ void Script::registerObjects()
         asCALL_THISCALL);
     core->RegisterObjectMethod(
         "Ui",
-        "void print(vec2 &in, const string &in)",
+        "void print(int x, int y, const string &in)",
         asMETHOD(Ui, print),
         asCALL_THISCALL);
 
