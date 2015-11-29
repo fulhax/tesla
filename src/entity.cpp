@@ -229,7 +229,7 @@ void Entity::draw(const glm::mat4 &ProjMat, const glm::mat4 &ViewMat)
         if(m->has_tangent_buffer) {
             glBindBuffer(GL_ARRAY_BUFFER, m->tangent_buffer);
             glVertexAttribPointer(
-                2,
+                3,
                 3,
                 GL_FLOAT,
                 GL_FALSE,
@@ -242,7 +242,7 @@ void Entity::draw(const glm::mat4 &ProjMat, const glm::mat4 &ViewMat)
         if(m->has_binormals_buffer) {
             glBindBuffer(GL_ARRAY_BUFFER, m->binormals_buffer);
             glVertexAttribPointer(
-                2,
+                4,
                 3,
                 GL_FLOAT,
                 GL_FALSE,
@@ -255,7 +255,7 @@ void Entity::draw(const glm::mat4 &ProjMat, const glm::mat4 &ViewMat)
         if(m->has_color_buffer) {
             glBindBuffer(GL_ARRAY_BUFFER, m->color_buffer);
             glVertexAttribPointer(
-                2,
+                5,
                 3,
                 GL_FLOAT,
                 GL_FALSE,
