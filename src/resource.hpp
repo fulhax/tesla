@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <notify.hpp>
+#include "notify.hpp"
 
 #include <map>
 #include <vector>
