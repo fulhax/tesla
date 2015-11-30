@@ -549,7 +549,7 @@ void OGEX_Resource::writeObj(const char *filename)
                 normalpart[0] = 0;
             }
 
-            fprintf(f, "%s%s%s", pospart, uvpart, normalpart);
+            fprintf(f, "%s%s%s ", pospart, uvpart, normalpart);
 
         }
 
