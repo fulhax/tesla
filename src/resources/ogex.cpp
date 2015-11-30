@@ -260,7 +260,7 @@ unsigned int *OGEX_Resource::load_indexbuffer(ODDLParser::DDLNode *node)
             array = array->m_next;
         }
 
-        numFaces = arraylen; // should always be the same for all attributes
+        numFaces = arraylen / 3; // should always be the same for all attributes
     }
 
     return buffer;
@@ -416,6 +416,7 @@ int OGEX_Resource::load(const char *filename)
 void OGEX_Resource::SetupGL()
 {
 
+    #ifndef NOENGINE // for my test code without access to opengl or a c++11 compiler TODO: remove when done
     num_tris = numFaces;
 
     if(indices) {
@@ -485,6 +486,8 @@ void OGEX_Resource::SetupGL()
             GL_STATIC_DRAW);
         has_uv_buffer = true;
     }
+
+    #endif
 }
 
 void OGEX_Resource::writeObj(const char *filename)
@@ -497,6 +500,8 @@ void OGEX_Resource::writeObj(const char *filename)
     if(!f) {
         return;
     }
+
+    fprintf(f, "#numFaces:%i\n", numFaces);
 
     if(pos_vb) {
         for(size_t i = 0; i < numVerts; i++) {
