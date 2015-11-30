@@ -406,8 +406,8 @@ int OGEX_Resource::load(const char *filename)
     if(!success) {
         lprintf(LOG_ERROR, "something went wrong loading: %s", filename);
     } else {
-        SetupGL();
         writeObj(filename);
+        SetupGL();
     }
 
     return success;
