@@ -223,6 +223,7 @@ Resource *ResourceHandler::getResource(const char *filename)
 
         if(!fileExists(fullpath)) {
             lprintf(LOG_WARNING, "File not found ^g\"%s\"^0!", filename);
+            resources[filename] = new Resource;
             return nullptr;
         }
     }
