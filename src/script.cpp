@@ -153,6 +153,11 @@ void Script::registerObjects()
     core->RegisterObjectMethod(
         "Ui",
         "void print(int x, int y, const string &in)",
+        asMETHOD(Ui, printDef),
+        asCALL_THISCALL);
+    core->RegisterObjectMethod(
+        "Ui",
+        "void print(const string &in, int x, int y, const string &in)",
         asMETHOD(Ui, print),
         asCALL_THISCALL);
 

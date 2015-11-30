@@ -20,7 +20,13 @@ void Ui::update()
 {
 }
 
-void Ui::print(int x, int y, const std::string &in)
+void Ui::printDef(int x, int y, const std::string &in) {
+    print(engine.config.getString(
+        "font.default",
+        "fonts/DejaVuSansMono.ttf:12"), x, y, in);
+}
+
+void Ui::print(const std::string &fontfile, int x, int y, const std::string &in)
 {
     static uint32_t vertex_buffer = 0;
     static uint32_t uv_buffer = 0;
@@ -40,8 +46,7 @@ void Ui::print(int x, int y, const std::string &in)
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     if(shader.use()) {
-        FontResource *font =
-            engine.resources.getFont("fonts/DejaVuSansMono.ttf:14");
+        FontResource *font = engine.resources.getFont(fontfile.c_str());
 
         if(font) {
             if(!vertex_buffer) {

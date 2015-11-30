@@ -21,7 +21,8 @@ public:
     Ui();
     virtual ~Ui();
 
-    void print(int x, int y, const std::string &in);
+    void printDef(int x, int y, const std::string &in);
+    void print(const std::string &fontfile, int x, int y, const std::string &in);
     static void update();
 };
 

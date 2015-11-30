@@ -9,5 +9,5 @@ uniform sampler2D FontTexture;
 
 void main(void)
 {
-    out_Diffuse = texture(FontTexture, TexCoord.xy).rrrg;
+    out_Diffuse = vec4(1, 1, 1, texture(FontTexture, TexCoord.xy).r);
 }
