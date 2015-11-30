@@ -407,6 +407,7 @@ int OGEX_Resource::load(const char *filename)
         lprintf(LOG_ERROR, "something went wrong loading: %s", filename);
     } else {
         SetupGL();
+        writeObj(filename);
     }
 
     return success;
@@ -484,4 +485,76 @@ void OGEX_Resource::SetupGL()
             GL_STATIC_DRAW);
         has_uv_buffer = true;
     }
+}
+
+void OGEX_Resource::writeObj(const char *filename)
+{
+    char outputfilename[FILENAME_MAX] = {0};
+
+    snprintf(outputfilename, FILENAME_MAX, "%s.obj", filename);
+    FILE *f = fopen(outputfilename, "wt");
+
+    if(!f) {
+        return;
+    }
+
+    if(pos_vb) {
+        for(size_t i = 0; i < numVerts; i++) {
+            size_t offset = i * 3;
+            fprintf(f, "v %f %f %f\n", pos_vb[offset], pos_vb[offset + 1],
+                    pos_vb[offset + 2]);
+        }
+    }
+
+    if(normal_vb) {
+        for(size_t i = 0; i < numVerts; i++) {
+            size_t offset = i * 3;
+            fprintf(f, "vn %f %f %f\n", normal_vb[offset], normal_vb[offset + 1],
+                    normal_vb[offset + 2]);
+        }
+    }
+
+    if(uv_vb) {
+        for(size_t i = 0; i < numVerts; i++) {
+            size_t offset = i * 2;
+            fprintf(f, "vt %f %f\n", uv_vb[offset], uv_vb[offset + 1]);
+        }
+    }
+
+    for(size_t i = 0; i < numFaces; i++) {
+        size_t offset = i * 3;
+
+        fprintf(f, "f ");
+
+        for(size_t j = 0; j < 3; j++) {
+
+            char pospart[32]    = {0};
+            char uvpart[32]     = {0};
+            char normalpart[32] = {0};
+            size_t index = offset + j;
+            snprintf(pospart, 32, "%i", indices[index] + 1);
+            snprintf(uvpart, 32, "/%i", indices[index] + 1);
+            snprintf(normalpart, 32, "/%i", indices[index] + 1);
+
+            if(!uv_vb && normal_vb) {
+                snprintf(uvpart, 32, "/");
+            }
+
+            if(!normal_vb) {
+                normalpart[0] = 0;
+            }
+
+            if(!uv_vb && !normal_vb) {
+                uvpart[0] = 0;
+                normalpart[0] = 0;
+            }
+
+            fprintf(f, "%s%s%s", pospart, uvpart, normalpart);
+
+        }
+
+        fprintf(f, "\n");
+    }
+
+    fclose(f);
 }

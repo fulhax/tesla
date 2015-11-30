@@ -32,6 +32,7 @@ private:
     float *load_vertexbuffer(ODDLParser::DDLNode *node);
     unsigned int *load_indexbuffer(ODDLParser::DDLNode *node);
     void SetupGL();
+    void writeObj(const char *filename); // for debugging porposes
 };
 
 #endif //__OGEX_HPP__
