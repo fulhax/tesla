@@ -86,7 +86,7 @@ int FT_Resource::load(const char *filename)
             real_filename);
     }
 
-    FT_Set_Char_Size(face, max_height << 6, max_height << 6, 96, 96);
+    FT_Set_Char_Size(face, 0, max_height << 6, 96, 96);
 
     int max_width = 0;
     int max_rows = 0;
@@ -95,7 +95,7 @@ int FT_Resource::load(const char *filename)
         if(FT_Load_Glyph(
                 face,
                 FT_Get_Char_Index(face, ch),
-                FT_LOAD_NO_HINTING)) {
+                FT_LOAD_RENDER)) {
 
             lprintf(LOG_WARNING, "Unable to load glyph ^r\"%c\"^0", ch);
             return 0;
@@ -211,7 +211,7 @@ int FT_Resource::load(const char *filename)
 
     glTexImage2D(GL_TEXTURE_2D,
                  0,
-                 GL_RGBA,
+                 GL_RG,
                  MAX_TEXTURE_WIDTH,
                  texture_height,
                  0,
