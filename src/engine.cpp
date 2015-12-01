@@ -28,9 +28,11 @@ float Engine::getTick()
 float Engine::getMS() const
 {
     float sum = 0;
+
     for(int i = 0; i < NUM_MSFRAMES; i++) {
         sum += msframe[i];
     }
+
     sum /= NUM_MSFRAMES;
 
     return (ceil(sum * 10.f) / 10.f);
@@ -165,11 +167,13 @@ void Engine::update()
 
     mtime += time;
 
-    script.run(s, "void draw()");
 
     for(auto e : entities) {
         e->draw(video.ProjMat, video.ViewMat);
     }
+
+    script.run(s, "void draw()");
+    ui.update();
 
     while(mtime >= EngineTick) {
         mtime -= EngineTick;
@@ -197,5 +201,5 @@ void Engine::update()
     msframe[currframe] = static_cast<double>((ctime - oldtime) * 1000) /
                          static_cast<double>(freq);
 
-    currframe = (++currframe) % NUM_MSFRAMES;
+    currframe = (currframe + 1) % NUM_MSFRAMES;
 }

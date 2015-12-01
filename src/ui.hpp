@@ -8,8 +8,7 @@
 
 #include "script.hpp"
 
-struct TextData
-{
+struct TextData {
     std::vector<glm::vec2> verts;
     std::vector<glm::vec2> uvs;
 };
@@ -21,9 +20,13 @@ public:
     Ui();
     virtual ~Ui();
 
+    void startClip(glm::vec4 rect);
+    void drawRect(glm::vec4 rect, glm::vec3 color);
+    void endClip();
+
     void printDef(int x, int y, const std::string &in);
     void print(const std::string &fontfile, int x, int y, const std::string &in);
-    static void update();
+    void update();
 };
 
 #endif // UI_HPP_

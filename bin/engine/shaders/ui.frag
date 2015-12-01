@@ -2,12 +2,11 @@
 
 in vec4 Position;
 in vec2 TexCoord;
+in vec4 Color;
 
 out vec4 out_Diffuse;
 
-uniform sampler2D FontTexture;
-
 void main(void)
 {
-    out_Diffuse = vec4(1, 1, 1, texture(FontTexture, TexCoord.xy).r);
+    out_Diffuse = vec4(Color);
 }
