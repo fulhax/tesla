@@ -14,9 +14,6 @@
 class Video
 {
     static void checkOpenGLErrors();
-
-    int screen_width;
-    int screen_height;
 public:
     Video();
     virtual ~Video();
@@ -33,6 +30,9 @@ public:
     SDL_Renderer *renderer;
     SDL_Window *window;
     SDL_GLContext context;
+
+    int screen_width;
+    int screen_height;
 
     Camera camera;
 };

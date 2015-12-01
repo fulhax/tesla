@@ -235,9 +235,17 @@ void Plane::subdivide(int recursion_level)
 
 void Plane::generate(int x, int y)
 {
-    glGenBuffers(1, &vertex_buffer);
-    glGenBuffers(1, &indices_buffer);
-    glGenBuffers(1, &uv_buffer);
+    if(vertex_buffer != 0) {
+        glGenBuffers(1, &vertex_buffer);
+    }
+
+    if(indices_buffer != 0) {
+        glGenBuffers(1, &indices_buffer);
+    }
+
+    if(uv_buffer != 0) {
+        glGenBuffers(1, &uv_buffer);
+    }
 
     uvs[0] = glm::vec2(1, 0);
     uvs[1] = glm::vec2(1, 1);
@@ -253,10 +261,10 @@ void Plane::generate(int x, int y)
     tris[1] = tri(0, 2, 3);
 
     glBindBuffer(GL_ARRAY_BUFFER, uv_buffer);
-    glBufferData(GL_ARRAY_BUFFER, num_vert * 12, uvs, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, num_vert * 12, uvs, GL_DYNAMIC_DRAW);
 
     glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
-    glBufferData(GL_ARRAY_BUFFER, num_vert * 12, verts, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, num_vert * 12, verts, GL_DYNAMIC_DRAW);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices_buffer);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, num_tris * 12, tris, GL_STATIC_DRAW);
