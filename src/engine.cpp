@@ -11,6 +11,8 @@ Engine::Engine()
     time = 0;
     fps = 0;
     countfps = 0;
+    memset(msframe, 0, NUM_MSFRAMES * sizeof(float));
+    currframe = 0;
 }
 
 Engine::~Engine()
@@ -21,6 +23,17 @@ Engine::~Engine()
 float Engine::getTick()
 {
     return EngineTick;
+}
+
+float Engine::getMS() const
+{
+    float sum = 0;
+    for(int i = 0; i < NUM_MSFRAMES; i++) {
+        sum += msframe[i];
+    }
+    sum /= NUM_MSFRAMES;
+
+    return (ceil(sum * 10.f) / 10.f);
 }
 
 int Engine::getFPS() const
@@ -43,7 +56,7 @@ int Engine::spawnEntity(const std::string &name, const glm::vec3 &pos)
         return -1;
     }
 
-    Entity* e = new Entity(&type->second);
+    Entity *e = new Entity(&type->second);
     e->spawn(pos);
 
     entities.push_back(e);
@@ -93,6 +106,7 @@ void Engine::shutdown()
     for(auto e : entities) {
         delete e;
     }
+
     entities.clear();
     entityTypes.clear();
 
@@ -176,4 +190,12 @@ void Engine::update()
     }
 
     video.swap();
+
+    ctime = SDL_GetPerformanceCounter();
+    freq = SDL_GetPerformanceFrequency();
+
+    msframe[currframe] = static_cast<double>((ctime - oldtime) * 1000) /
+                         static_cast<double>(freq);
+
+    currframe = (++currframe) % NUM_MSFRAMES;
 }

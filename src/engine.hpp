@@ -15,6 +15,7 @@
 #include "entity.hpp"
 
 #define EngineTick 0.032f // 1 tick = 32ms
+#define NUM_MSFRAMES 100
 
 class Engine : public ASClass<Engine>
 {
@@ -27,6 +28,7 @@ public:
     void shutdown();
     float getTick();
     int getFPS() const;
+    float getMS() const;
 
     void createEntityType(const std::string &name,
                           const std::string &script);
@@ -49,6 +51,8 @@ private:
 
     uint64_t oldtime;
     float time;
+    float msframe[NUM_MSFRAMES];
+    int currframe;
     int countfps;
     int fps;
 };

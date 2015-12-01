@@ -187,6 +187,11 @@ void Script::registerObjects()
         asCALL_THISCALL);
     core->RegisterObjectMethod(
         "Engine",
+        "float getMS()",
+        asMETHOD(Engine, getMS),
+        asCALL_THISCALL);
+    core->RegisterObjectMethod(
+        "Engine",
         "void createEntityType(string &in, string &in)",
         asMETHOD(Engine, createEntityType),
         asCALL_THISCALL);
