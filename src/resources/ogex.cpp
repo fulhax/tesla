@@ -226,6 +226,30 @@ float *OGEX_Resource::load_vertexbuffer(ODDLParser::DDLNode *node)
 
             array = array->m_next;
         }
+    } else {
+        Value *values = node->getValue();
+
+        if(values) {
+            if(values->m_type == Value::ddl_float) {
+                size_t len = 0;
+
+                while(values != nullptr) {
+                    len++;
+                    values = values->getNext();
+                }
+
+                buffer = new float[len];
+                values = node->getValue();
+
+                size_t i = 0;
+
+                while(values != nullptr) {
+                    buffer[i] = values->getFloat();
+                    i++;
+                    values = values->getNext();
+                }
+            }
+        }
     }
 
     return buffer;
@@ -304,7 +328,7 @@ bool OGEX_Resource::load_GeometryObject(ODDLParser::DDLNode *node)
                             if(tangent_vb == nullptr) {
                                 return false;
                             }
-                        } else if(strcmp(attrib, "binormal") == 0) {
+                        } else if(strcmp(attrib, "binormalsign") == 0) {
                             binormal_vb = load_vertexbuffer(n);
 
                             if(binormal_vb == nullptr) {
@@ -461,7 +485,7 @@ void OGEX_Resource::SetupGL()
         glBindBuffer(GL_ARRAY_BUFFER, binormals_buffer);
         glBufferData(
             GL_ARRAY_BUFFER,
-            numVerts * sizeof(float) * 3,
+            numVerts * sizeof(float),
             binormal_vb,
             GL_STATIC_DRAW);
         has_binormals_buffer = true;
