@@ -20,8 +20,8 @@ public:
     Ui();
     virtual ~Ui();
 
-    void startClip(glm::vec4 rect);
-    void drawRect(glm::vec4 rect, glm::vec3 color);
+    void drawRect(int x, int y, int w, int h, glm::vec3 color);
+    void startClip(int x, int y, int w, int h);
     void endClip();
 
     void printDef(int x, int y, const std::string &in);
