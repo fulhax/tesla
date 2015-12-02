@@ -6,15 +6,15 @@ struct shader_file_extension {
 };
 
 struct shader_file_extension extensions[] = {
-    {".vs", GL_VERTEX_SHADER},
-    {".vert", GL_VERTEX_SHADER},
-    {".gs", GL_GEOMETRY_SHADER},
-    {".geom", GL_GEOMETRY_SHADER},
-    {".tcs", GL_TESS_CONTROL_SHADER},
-    {".tes", GL_TESS_EVALUATION_SHADER},
-    {".fs", GL_FRAGMENT_SHADER},
-    {".frag", GL_FRAGMENT_SHADER}
-};
+    { ".vs"   , GL_VERTEX_SHADER          } ,
+    { ".vert" , GL_VERTEX_SHADER          } ,
+    { ".gs"   , GL_GEOMETRY_SHADER        } ,
+    { ".geom" , GL_GEOMETRY_SHADER        } ,
+    { ".tcs"  , GL_TESS_CONTROL_SHADER    } ,
+    { ".tes"  , GL_TESS_EVALUATION_SHADER } ,
+    { ".fs"   , GL_FRAGMENT_SHADER        } ,
+    { ".frag" , GL_FRAGMENT_SHADER        }
+} ;
 
 GLSL_Resource::GLSL_Resource()
 {
