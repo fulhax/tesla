@@ -21,8 +21,8 @@ void Ui::update()
     glm::vec4 test = glm::vec4(0, 100, 100, 100);
     drawRect(test, glm::vec3(1, 0, 0));
 
-    startClip(glm::vec4(50,150,100,100));
-        drawRect(test, glm::vec3(0, 1, 0));
+    startClip(glm::vec4(50, 150, 100, 100));
+    drawRect(test, glm::vec3(0, 1, 0));
     endClip();
 }
 

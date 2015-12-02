@@ -35,14 +35,14 @@ void Script::print(const std::string &in)
     lprintf(LOG_SCRIPT, in.c_str());
 }
 
-void asVec3Construct(float x, float y, float z, void* mem)
+void asVec3Construct(float x, float y, float z, void *mem)
 {
-    new(mem) glm::vec3(x,y,z);
+    new(mem) glm::vec3(x, y, z);
 }
 
-void asVec2Construct(float x, float y, void* mem)
+void asVec2Construct(float x, float y, void *mem)
 {
-    new(mem) glm::vec2(x,y);
+    new(mem) glm::vec2(x, y);
 }
 
 void Script::registerObjects()
@@ -92,8 +92,8 @@ void Script::registerObjects()
         asMETHODPR(
             glm::vec3,
             operator=,
-            (const glm::vec3&),
-            glm::vec3&),
+            (const glm::vec3 &),
+            glm::vec3 &),
         asCALL_THISCALL);
 
     core->RegisterObjectType(
@@ -132,8 +132,8 @@ void Script::registerObjects()
         asMETHODPR(
             glm::vec2,
             operator=,
-            (const glm::vec2&),
-            glm::vec2&),
+            (const glm::vec2 &),
+            glm::vec2 &),
         asCALL_THISCALL);
 
     core->RegisterObjectType("Ui", 0, asOBJ_REF);

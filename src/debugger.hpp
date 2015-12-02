@@ -12,8 +12,8 @@ class Debugger
     Cube debugCube;
 
     Shader shader;
-    ModelResource* model;
-    TextureResource* texture;
+    ModelResource *model;
+    TextureResource *texture;
 public:
     Debugger();
     virtual ~Debugger();

@@ -45,7 +45,7 @@ public:
     Debugger debugger;
     Config config;
 private:
-    std::vector<Entity*> entities;
+    std::vector<Entity *> entities;
     std::map<std::string, EntityType> entityTypes;
     void handleEvents();
 
