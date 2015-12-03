@@ -18,22 +18,17 @@ Ui::~Ui()
 
 void Ui::update()
 {
-    glm::vec4 test = glm::vec4(0, 100, 100, 100);
-    drawRect(test, glm::vec3(1, 0, 0));
+    drawRect(0, 100, 100, 100, glm::vec3(1, 0, 0));
 
-    startClip(glm::vec4(50, 150, 100, 100));
-    drawRect(test, glm::vec3(0, 1, 0));
+    startClip(50, 150, 100, 100);
+    drawRect(0, 100, 100, 100, glm::vec3(0, 1, 0));
     endClip();
 }
 
-void Ui::startClip(glm::vec4 rect)
+void Ui::startClip(int x, int y, int w, int h)
 {
     glEnable(GL_SCISSOR_TEST);
-    glScissor(
-        rect.x,
-        (engine.video.screen_height - rect.y) - rect.w,
-        rect.z,
-        rect.w);
+    glScissor(x, (engine.video.screen_height - y) - h, w, h);
 }
 
 void Ui::endClip()
@@ -41,10 +36,13 @@ void Ui::endClip()
     glDisable(GL_SCISSOR_TEST);
 }
 
-void Ui::drawRect(glm::vec4 rect, glm::vec3 color)
+void Ui::drawRect(int x, int y, int w, int h, glm::vec3 color)
 {
     Plane plane;
-    plane.generate(rect.z / 2, rect.w / 2);
+    float halfh = h * 0.5f;
+    float halfw = w * 0.5f;
+
+    plane.generate(halfh, halfw);
 
     static Shader shader;
     static bool first = true;
@@ -61,10 +59,7 @@ void Ui::drawRect(glm::vec4 rect, glm::vec3 color)
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     if(shader.use()) {
-        shader.setUniform(
-            "in_UiPos",
-            glm::vec2(rect.x + rect.z / 2, rect.y + rect.w / 2));
-
+        shader.setUniform("in_UiPos", glm::vec2(x + halfw, y + halfh));
         shader.setUniform("in_Color", glm::vec4(color, 1));
         shader.setUniform("in_OrthoMatrix", engine.video.OrthoMat);
 
