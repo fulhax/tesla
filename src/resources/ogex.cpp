@@ -382,13 +382,15 @@ int OGEX_Resource::load(const char *filename)
         return 0;
     }
 
-    char *buffer = new char[filesize];
+    char *buffer = new char[filesize + 1];
 
     if(buffer == nullptr) {
         lprintf(LOG_ERROR, "Out of memory while loading:%s", filename);
         fclose(f);
         return 0;
     }
+
+    buffer[filesize] = 0;
 
     size_t readbytes = fread(buffer, filesize, 1, f);
     fclose(f);
