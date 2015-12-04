@@ -527,7 +527,7 @@ void OGEX_Resource::writeObj(const char *filename)
         return;
     }
 
-    fprintf(f, "#numFaces:%i\n", numFaces);
+    fprintf(f, "#numFaces:%u\n", numFaces);
 
     if(pos_vb) {
         for(size_t i = 0; i < numVerts; i++) {
@@ -563,9 +563,9 @@ void OGEX_Resource::writeObj(const char *filename)
             char uvpart[32]     = {0};
             char normalpart[32] = {0};
             size_t index = offset + j;
-            snprintf(pospart, 32, "%i", indices[index] + 1);
-            snprintf(uvpart, 32, "/%i", indices[index] + 1);
-            snprintf(normalpart, 32, "/%i", indices[index] + 1);
+            snprintf(pospart, 32, "%u", indices[index] + 1);
+            snprintf(uvpart, 32, "/%u", indices[index] + 1);
+            snprintf(normalpart, 32, "/%u", indices[index] + 1);
 
             if(!uv_vb && normal_vb) {
                 snprintf(uvpart, 32, "/");
