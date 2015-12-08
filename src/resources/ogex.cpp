@@ -127,13 +127,12 @@ void printsubnodes(ODDLParser::DDLNode *node, int level)
         DataArrayList *array = child->getDataArrayList();
 
         if(array) {
-            size_t arraylen = array->size() * array->m_numItems;
 
             for(int j = 0; j <= level; j++) {
                 fprintf(stdout, "    ");
             }
 
-            fprintf(stdout, "arraylen:%zu\n", arraylen);
+            fprintf(stdout, "arraylen:%zu\n", array->size() * array->m_numItems);
         }
 
         array = child->getDataArrayList();
@@ -231,14 +230,8 @@ float *OGEX_Resource::load_vertexbuffer(ODDLParser::DDLNode *node)
 
         if(values) {
             if(values->m_type == Value::ddl_float) {
-                size_t len = 0;
 
-                while(values != nullptr) {
-                    len++;
-                    values = values->getNext();
-                }
-
-                buffer = new float[len];
+                buffer = new float[values->size()];
                 values = node->getValue();
 
                 size_t i = 0;
