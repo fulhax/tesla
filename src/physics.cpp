@@ -115,11 +115,16 @@ btRigidBody *Physics::createMesh(ModelResource *m,
         hullshape->addPoint(points[i]);
     }
 
+    btVector3 localInertia(0,0,0);
+    if(mass > 0.f) {
+        hullshape->calculateLocalInertia(mass, localInertia);
+    }
+
     btRigidBody::btRigidBodyConstructionInfo info(
         mass,
         motionstate,
         hullshape,
-        btVector3(0, 0, 0));
+        localInertia);
 
     btRigidBody *body = new btRigidBody(info);
     dynamics_world->addRigidBody(body);
