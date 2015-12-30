@@ -132,8 +132,14 @@ public:
     bool has_tangent_buffer;
     bool has_color_buffer;
 
+    float *verts;
+    uint32_t *indices;
+
     ModelResource()
     {
+        verts = 0;
+        indices = 0;
+
         bounding_box.min = bounding_box.max = glm::vec3(0, 0, 0);
 
         num_tris = 0;
@@ -153,6 +159,14 @@ public:
     }
     ~ModelResource()
     {
+        if(verts != 0) {
+            delete [] verts;
+        }
+
+        if(indices != 0) {
+            delete [] indices;
+        }
+
         glDeleteBuffers(1, &indices_buffer);
 
         glDeleteBuffers(1, &vertex_buffer);

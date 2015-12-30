@@ -21,13 +21,11 @@ public:
 private:
     unsigned int numVerts;
     unsigned int numFaces;
-    float *pos_vb;
     float *color_vb;
     float *normal_vb;
     float *binormal_vb;
     float *tangent_vb;
     float *uv_vb;
-    unsigned int *indices;
     bool load_GeometryObject(ODDLParser::DDLNode *node);
     float *load_vertexbuffer(ODDLParser::DDLNode *node);
     unsigned int *load_indexbuffer(ODDLParser::DDLNode *node);

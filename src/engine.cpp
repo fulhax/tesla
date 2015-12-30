@@ -49,7 +49,8 @@ void Engine::createEntityType(const std::string &name,
     entityTypes[name] = EntityType(name, script);
 }
 
-int Engine::spawnEntity(const std::string &name, const glm::vec3 &pos)
+int Engine::spawnEntity(const std::string &name, const glm::vec3 &pos,
+                        const glm::vec3 &rot)
 {
     auto type = entityTypes.find(name);
 
@@ -59,7 +60,7 @@ int Engine::spawnEntity(const std::string &name, const glm::vec3 &pos)
     }
 
     Entity *e = new Entity(&type->second);
-    e->spawn(pos);
+    e->spawn(pos, rot);
 
     entities.push_back(e);
     return entities.size() - 1;
@@ -78,6 +79,7 @@ int Engine::init()
 
     resources.init();
     audio.init();
+    physics.init();
 
     if(script.init() != 0) {
         running = false;
@@ -161,6 +163,7 @@ void Engine::update()
         countfps += 1;
     }
 
+    physics.update();
     video.update();
     resources.update();
     audio.update(&video.camera);

@@ -10,7 +10,7 @@
 OGEX_Resource::OGEX_Resource()
 {
     indices     = nullptr;
-    pos_vb      = nullptr;
+    verts      = nullptr;
     normal_vb   = nullptr;
     binormal_vb = nullptr;
     tangent_vb  = nullptr;
@@ -21,10 +21,6 @@ OGEX_Resource::OGEX_Resource()
 }
 OGEX_Resource::~OGEX_Resource()
 {
-    if(indices) {
-        delete [] indices;
-    }
-
     if(normal_vb) {
         delete [] normal_vb;
     }
@@ -39,10 +35,6 @@ OGEX_Resource::~OGEX_Resource()
 
     if(color_vb) {
         delete [] color_vb;
-    }
-
-    if(pos_vb) {
-        delete [] pos_vb;
     }
 
     if(uv_vb) {
@@ -298,9 +290,9 @@ bool OGEX_Resource::load_GeometryObject(ODDLParser::DDLNode *node)
                         const char *attrib = prop->m_value->getString();
 
                         if(strcmp(attrib, "position") == 0) {
-                            pos_vb = load_vertexbuffer(n);
+                            verts = load_vertexbuffer(n);
 
-                            if(pos_vb == nullptr) {
+                            if(verts == nullptr) {
                                 return false;
                             }
                         } else if(strcmp(attrib, "normal") == 0) {
@@ -447,12 +439,12 @@ void OGEX_Resource::SetupGL()
             GL_STATIC_DRAW);
     }
 
-    if(pos_vb) {
+    if(verts) {
         glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
         glBufferData(
             GL_ARRAY_BUFFER,
             numVerts * sizeof(float) * 3,
-            pos_vb,
+            verts,
             GL_STATIC_DRAW);
     }
 
@@ -522,11 +514,11 @@ void OGEX_Resource::writeObj(const char *filename)
 
     fprintf(f, "#numFaces:%u\n", numFaces);
 
-    if(pos_vb) {
+    if(verts) {
         for(size_t i = 0; i < numVerts; i++) {
             size_t offset = i * 3;
-            fprintf(f, "v %f %f %f\n", pos_vb[offset], pos_vb[offset + 1],
-                    pos_vb[offset + 2]);
+            fprintf(f, "v %f %f %f\n", verts[offset], verts[offset + 1],
+                    verts[offset + 2]);
         }
     }
 

@@ -32,6 +32,26 @@ int Debugger::init()
         model->updateBoundingBox(debugCube.verts[i]);
     }
 
+    model->verts = new float[debugCube.num_vert * 3];
+    unsigned int j = 0;
+    for(int i = 0; i < debugCube.num_vert * 3; i += 3) {
+        model->verts[i] =  debugCube.verts[j].x;
+        model->verts[i + 1] = debugCube.verts[j].y;
+        model->verts[i + 2] = debugCube.verts[j].z;
+
+        j++;
+    }
+
+    model->indices = new uint32_t[debugCube.num_tris * 3];
+    j = 0;
+    for(int i = 0; i < debugCube.num_tris * 3; i += 3) {
+        model->indices[i] =  debugCube.tris[j].i[0];
+        model->indices[i + 1] = debugCube.tris[j].i[1];
+        model->indices[i + 2] = debugCube.tris[j].i[2];
+
+        j++;
+    }
+
     glBindBuffer(GL_ARRAY_BUFFER, model->uv_buffer);
     glBufferData(
         GL_ARRAY_BUFFER,

@@ -197,7 +197,7 @@ void Script::registerObjects()
         asCALL_THISCALL);
     core->RegisterObjectMethod(
         "Engine",
-        "void spawnEntity(string &in, vec3 &in)",
+        "void spawnEntity(string &in, vec3 &in, vec3 &in = vec3(0,0,0))",
         asMETHOD(Engine, spawnEntity),
         asCALL_THISCALL);
 
@@ -220,14 +220,6 @@ void Script::registerObjects()
         "void f()",
         asMETHOD(Entity, releaseRef),
         asCALL_THISCALL);
-    core->RegisterObjectProperty(
-        "Entity",
-        "vec3 pos",
-        asOFFSET(Entity, pos));
-    core->RegisterObjectProperty(
-        "Entity",
-        "vec3 rot",
-        asOFFSET(Entity, rot));
     core->RegisterObjectProperty(
         "Entity",
         "float scale",

@@ -4,6 +4,7 @@
 #include <string>
 #include <map>
 
+#include "physics.hpp"
 #include "resource.hpp"
 #include "shader.hpp"
 #include "script.hpp"
@@ -24,20 +25,22 @@ class Entity : public ASClass<Entity>
 
     EntityType *type;
 
-
     int ref_count;
 
     static int cullCheck(const glm::mat4 &ModelMat, ModelResource *m);
+    glm::mat4 getModelMatrix();
 public:
-    glm::vec3 pos;
-    glm::vec3 rot;
+    struct {
+        btRigidBody *body;
+    } physics;
+
     float scale;
 
     explicit Entity(EntityType *type);
     Entity() : Entity(nullptr) {}
     virtual ~Entity();
 
-    void spawn(glm::vec3 pos);
+    void spawn(glm::vec3 pos, glm::vec3 rot);
     void draw(const glm::mat4 &Projection, const glm::mat4 &View);
     void update();
 

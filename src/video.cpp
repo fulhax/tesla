@@ -130,7 +130,7 @@ void Video::update()
     checkOpenGLErrors();
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    camera.pos = glm::vec3(0, 0, 5);
+    camera.pos = glm::vec3(0, 0, 20);
 
 
     glm::mat4 CamRotMat =

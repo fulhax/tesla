@@ -18,6 +18,7 @@ list(APPEND SOURCE_FILES
     "./config.cpp"
     "./debugger.cpp"
     "./shapes.cpp"
+    "./physics.cpp"
     "./ui.cpp"
     "./sha256.cpp"
     "./resources/tga.cpp"
@@ -85,6 +86,12 @@ include_directories(${OPENGL_INCLUDE_DIR})
 link_directories(${OPENGL_LIBRARY_DIRS})
 add_definitions(${OPENGL_DEFINITIONS})
 
+find_package(Bullet REQUIRED)
+
+include_directories(${BULLET_INCLUDE_DIR})
+link_directories(${BULLET_LIBRARY_DIRS})
+add_definitions(${BULLET_DEFINITIONS})
+
 find_package(glm REQUIRED)
 include_directories(${GLM_INCLUDE_DIRS})
 
@@ -151,6 +158,7 @@ target_link_libraries(${PROJECT_NAME}
     ${HARFBUZZ_LIBRARIES}
     ${FREETYPE2_LIBRARIES}
     ${OPENDDL_LIBRARIES}
+    ${BULLET_LIBRARIES}
     )
 
 if(DEBUG_PATHS)

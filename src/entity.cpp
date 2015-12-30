@@ -1,6 +1,9 @@
 #include "entity.hpp"
 
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/quaternion.hpp>
+#include <glm/gtx/euler_angles.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include <string>
 
@@ -12,10 +15,9 @@ Entity::Entity(EntityType *type)
     memset(model, 0, FILENAME_MAX);
 
     ref_count = 1;
-
-    pos = glm::vec3(0, 0, 0);
-    rot = glm::vec3(0, 0, 0);
     scale = 1.0f;
+
+    physics.body = 0;
 }
 
 Entity::~Entity()
@@ -38,14 +40,12 @@ void Entity::setTexture(const std::string &inname, const std::string &infile)
     //snprintf(texture, FILENAME_MAX, "%s", in.c_str());
 }
 
-void Entity::spawn(glm::vec3 pos)
+void Entity::spawn(glm::vec3 pos, glm::vec3 rot)
 {
     if(type == nullptr) {
         lprintf(LOG_WARNING, "Trying to spawn uninitialized entity!");
         return;
     }
-
-    this->pos = pos;
 
     lprintf(LOG_INFO, "Spawning Entity ^m\"%s\"^0", type->name.c_str());
     ScriptResource *s = engine.resources.getScript(type->script.c_str());
@@ -58,6 +58,19 @@ void Entity::spawn(glm::vec3 pos)
             "Entity ^m\"%s\"^0 no script found!",
             type->name.c_str());
     }
+
+    ModelResource *m = engine.resources.getModel(model);
+
+    if(m == nullptr) {
+        m = engine.debugger.useDebugModel();
+    }
+
+    physics.body = engine.physics.createMesh(
+                       m,
+                       pos,
+                       glm::quat(rot),
+                       glm::vec3(scale, scale, scale),
+                       1);
 }
 
 int Entity::cullCheck(const glm::mat4 &ModelMat, ModelResource *m)
@@ -102,34 +115,23 @@ void Entity::update()
     }
 }
 
+glm::mat4 Entity::getModelMatrix()
+{
+    btTransform transform = physics.body->getCenterOfMassTransform();
+
+    glm::mat4 ModelMat = glm::mat4(1.0);
+    transform.getOpenGLMatrix(glm::value_ptr(ModelMat));
+
+    return ModelMat;
+}
+
 void Entity::draw(const glm::mat4 &ProjMat, const glm::mat4 &ViewMat)
 {
     if(!strlen(model) || textures.empty()) {
         return;
     }
 
-    glm::mat4 Scale = glm::scale(
-                          glm::mat4(1.0f),
-                          glm::vec3(scale, scale, scale));
-
-    glm::mat4 Pos = glm::translate(glm::mat4(1.0f), pos);
-
-    glm::mat4 RotX = glm::rotate(
-                         glm::mat4(1.0f),
-                         rot.x,
-                         glm::vec3(1, 0, 0));
-
-    glm::mat4 RotY = glm::rotate(
-                         glm::mat4(1.0f),
-                         rot.y,
-                         glm::vec3(0, 1, 0));
-
-    glm::mat4 RotZ = glm::rotate(
-                         glm::mat4(1.0f),
-                         rot.z,
-                         glm::vec3(0, 0, 1));
-
-    glm::mat4 ModelMat = Pos * Scale *  RotX * RotY * RotZ;
+    glm::mat4 ModelMat = getModelMatrix();
 
     ModelResource *m = engine.resources.getModel(model);
 

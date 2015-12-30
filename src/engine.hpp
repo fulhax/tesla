@@ -13,6 +13,7 @@
 #include "debugger.hpp"
 #include "config.hpp"
 #include "entity.hpp"
+#include "physics.hpp"
 
 #define EngineTick 0.032f // 1 tick = 32ms
 #define NUM_MSFRAMES 100
@@ -33,7 +34,8 @@ public:
     void createEntityType(const std::string &name,
                           const std::string &script);
 
-    int spawnEntity(const std::string &name, const glm::vec3 &pos);
+    int spawnEntity(const std::string &name, const glm::vec3 &pos,
+                    const glm::vec3 &rot);
 
     bool running;
 
@@ -44,6 +46,7 @@ public:
     ResourceHandler resources;
     Debugger debugger;
     Config config;
+    Physics physics;
 private:
     std::vector<Entity *> entities;
     std::map<std::string, EntityType> entityTypes;
