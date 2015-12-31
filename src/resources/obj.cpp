@@ -43,6 +43,7 @@ int OBJ_Resource::load(const char *filename)
             j++;
         }
 
+        num_verts = data->numverts;
         num_tris = data->numfaces;
 
         glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);

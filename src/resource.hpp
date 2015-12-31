@@ -109,6 +109,7 @@ class ModelResource : public Resource
 {
 public:
     int num_tris;
+    int num_verts;
 
     struct {
         glm::vec3 max;
@@ -143,6 +144,8 @@ public:
         bounding_box.min = bounding_box.max = glm::vec3(0, 0, 0);
 
         num_tris = 0;
+        num_verts = 0;
+
         glGenBuffers(1, &indices_buffer);
 
         glGenBuffers(1, &vertex_buffer);

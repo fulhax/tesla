@@ -429,6 +429,7 @@ void OGEX_Resource::SetupGL()
 
     #ifndef NOENGINE // for my test code without access to opengl or a c++11 compiler TODO: remove when done
     num_tris = numFaces;
+    num_verts = numVerts;
 
     if(indices) {
         glBindBuffer(GL_ARRAY_BUFFER, indices_buffer);

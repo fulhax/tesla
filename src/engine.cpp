@@ -163,7 +163,6 @@ void Engine::update()
         countfps += 1;
     }
 
-    physics.update();
     video.update();
     resources.update();
     audio.update(&video.camera);
@@ -196,6 +195,7 @@ void Engine::update()
         }
     }
 
+    physics.update();
     video.swap();
 
     ctime = SDL_GetPerformanceCounter();
