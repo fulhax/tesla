@@ -193,9 +193,10 @@ void Engine::update()
         for(auto e : entities) {
             e->update();
         }
+
+        physics.update();
     }
 
-    physics.update();
     video.swap();
 
     ctime = SDL_GetPerformanceCounter();

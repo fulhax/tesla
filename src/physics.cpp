@@ -277,6 +277,6 @@ btRigidBody *Physics::createBox(glm::vec3 position,
 
 void Physics::update()
 {
-    dynamics_world->stepSimulation(engine.getMS() * 0.001f, 7);
+    dynamics_world->stepSimulation(engine.getTick(), 0);
     //dynamics_world->debugDrawWorld();
 }

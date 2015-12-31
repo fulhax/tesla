@@ -15,7 +15,7 @@
 #include "entity.hpp"
 #include "physics.hpp"
 
-#define EngineTick 0.032f // 1 tick = 32ms
+#define EngineTick 1.f/30.f
 #define NUM_MSFRAMES 100
 
 class Engine : public ASClass<Engine>
