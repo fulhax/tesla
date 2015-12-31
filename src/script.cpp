@@ -231,6 +231,11 @@ void Script::registerObjects()
         asCALL_THISCALL);
     core->RegisterObjectMethod(
         "Entity",
+        "void setMass(const float mass)",
+        asMETHOD(Entity, setMass),
+        asCALL_THISCALL);
+    core->RegisterObjectMethod(
+        "Entity",
         "void setTexture(const string &in, const string &in)",
         asMETHOD(Entity, setTexture),
         asCALL_THISCALL);

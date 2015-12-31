@@ -16,12 +16,18 @@ Entity::Entity(EntityType *type)
 
     ref_count = 1;
     scale = 1.0f;
+    mass = 0;
 
     physics.body = 0;
 }
 
 Entity::~Entity()
 {
+}
+
+void Entity::setMass(const float mass)
+{
+    this->mass = mass;
 }
 
 void Entity::setModel(const std::string &in)
@@ -70,7 +76,7 @@ void Entity::spawn(glm::vec3 pos, glm::vec3 rot)
                        pos,
                        glm::quat(rot),
                        glm::vec3(scale, scale, scale),
-                       1);
+                       mass);
 }
 
 int Entity::cullCheck(const glm::mat4 &ModelMat, ModelResource *m)

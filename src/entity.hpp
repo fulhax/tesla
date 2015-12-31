@@ -26,6 +26,7 @@ class Entity : public ASClass<Entity>
     EntityType *type;
 
     int ref_count;
+    float mass;
 
     static int cullCheck(const glm::mat4 &ModelMat, ModelResource *m);
     glm::mat4 getModelMatrix();
@@ -47,6 +48,7 @@ public:
     Shader shader;
 
     void setModel(const std::string &in);
+    void setMass(const float mass);
     void setTexture(const std::string &inname, const std::string &infile);
     void attachShader(const std::string &infile);
 };
