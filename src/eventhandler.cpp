@@ -20,26 +20,25 @@ int EventHandler::count()
     return events.size();
 }
 
-const std::string *EventHandler::poll()
+const Event *EventHandler::poll()
 {
-    static std::string out;
+    static Event out;
 
     auto ev = events.begin();
+
     if(ev != events.end()) {
         out = ev[0];
         events.erase(ev);
         return &out;
     }
+
     return nullptr;
 }
 
-void EventHandler::trigger(const std::string &event)
+void EventHandler::trigger(const std::string &event, const std::string &data)
 {
-    for(auto ev : events) {
-        if(strcmp(event.c_str(), ev.c_str()) == 0) {
-            return;
-        }
-    }
-
-    events.push_back(event);
+    events.push_back({
+        event,
+        data
+    });
 }

@@ -125,27 +125,24 @@ void Video::checkOpenGLErrors()
     }
 }
 
-void Video::update()
+void Video::update(Camera* camera)
 {
     checkOpenGLErrors();
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    camera.pos = glm::vec3(0, 10, 25);
-    camera.pitch = 30;
-
 
     glm::mat4 CamRotMat =
         glm::yawPitchRoll(
-            -camera.yaw * RAD,
-            -camera.pitch * RAD,
+            -camera->yaw * RAD,
+            -camera->pitch * RAD,
             0.0f);
 
-    glm::mat4 CamTransMat = glm::translate(glm::mat4(1.0f), camera.pos);
+    glm::mat4 CamTransMat = glm::translate(glm::mat4(1.0f), camera->pos);
 
     glm::mat4 CamMat = CamTransMat * CamRotMat;
     ViewMat = glm::inverse(CamMat);
 
-    camera.update(ProjMat, ViewMat);
+    camera->update(ProjMat, ViewMat);
 }
 
 void Video::swap()

@@ -51,6 +51,7 @@ public:
     Config config;
     Physics physics;
     EventHandler events;
+    Camera camera;
 private:
     std::vector<Entity *> entities;
     std::map<std::string, EntityType> entityTypes;

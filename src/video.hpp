@@ -23,7 +23,7 @@ public:
     glm::mat4 ViewMat;
 
     int init();
-    void update();
+    void update(Camera* camera);
     void resize(int width, int height);
     void swap();
 
@@ -33,8 +33,6 @@ public:
 
     int screen_width;
     int screen_height;
-
-    Camera camera;
 };
 
 #endif // VIDEO_HPP_

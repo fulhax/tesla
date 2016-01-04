@@ -3,13 +3,15 @@
 
 #include <glm/glm.hpp>
 
+#include "script.hpp"
+
 enum {
     FRUSTUM_OUTSIDE = 0,
     FRUSTUM_INTERSECT,
     FRUSTUM_INSIDE
 };
 
-class Camera
+class Camera : public ASClass<Camera>
 {
     enum {
         FRUSTUM_TOP = 0,

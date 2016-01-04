@@ -5,8 +5,8 @@ void init()
 void update()
 {
     while(events.count() != 0) {
-        string ev = events.poll();
-        print("event " + ev);
+        Event ev = events.poll();
+        print("event " + ev.event + "(" + ev.data  + ")");
     }
 }
 

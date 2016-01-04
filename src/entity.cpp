@@ -81,7 +81,7 @@ void Entity::spawn(glm::vec3 pos, glm::vec3 rot)
 
 int Entity::cullCheck(const glm::mat4 &ModelMat, ModelResource *m)
 {
-    Camera *camera = &engine.video.camera;
+    Camera *camera = &engine.camera;
 
     glm::vec4 tmax =  ModelMat * glm::vec4(m->bounding_box.max, 1.0);
     glm::vec4 tmin =  ModelMat * glm::vec4(m->bounding_box.min, 1.0);

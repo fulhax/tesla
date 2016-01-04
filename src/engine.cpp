@@ -108,6 +108,9 @@ int Engine::init()
 
     physics.update();
 
+    camera.pos = glm::vec3(0, 10, 25);
+    camera.pitch = 30;
+
     return 0;
 }
 
@@ -142,13 +145,17 @@ void Engine::handleEvents()
                 if(event.motion.xrel != 0) {
                     events.trigger(config.getString(
                                        "input.mouse.x",
-                                       "camera.yaw"));
+                                       "camera.yaw"),
+                                   std::to_string(
+                                       event.motion.xrel));
                 }
 
                 if(event.motion.yrel != 0) {
                     events.trigger(config.getString(
                                        "input.mouse.y",
-                                       "camera.pitch"));
+                                       "camera.pitch"),
+                                   std::to_string(
+                                       event.motion.yrel));
                 }
 
                 break;
@@ -202,9 +209,9 @@ void Engine::update()
         countfps += 1;
     }
 
-    video.update();
+    video.update(&camera);
     resources.update();
-    audio.update(&video.camera);
+    audio.update(&camera);
 
     mtime += time;
 
@@ -236,12 +243,12 @@ void Engine::update()
         physics.update();
 
         while(events.count()) {
-            const std::string *ev = events.poll();
+            const Event *ev = events.poll();
 
             lprintf(
                 LOG_WARNING,
                 "Stray event ^r\"%s\"^0 found!",
-                ev->c_str());
+                ev->event.c_str());
         }
     }
 

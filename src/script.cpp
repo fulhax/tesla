@@ -4,10 +4,12 @@
 
 #include <string>
 
-#include "engine.hpp"
 #include "entity.hpp"
-#include "errorhandler.hpp"
+#include "engine.hpp"
+#include "eventhandler.hpp"
+#include "camera.hpp"
 #include "resource.hpp"
+#include "errorhandler.hpp"
 
 Script::Script()
 {
@@ -161,6 +163,28 @@ void Script::registerObjects()
         asMETHOD(Ui, print),
         asCALL_THISCALL);
 
+    core->RegisterObjectType("Camera", 0, asOBJ_REF);
+    core->RegisterObjectBehaviour(
+        "Camera",
+        asBEHAVE_ADDREF,
+        "void f()",
+        asMETHOD(Camera, addRef),
+        asCALL_THISCALL);
+    core->RegisterObjectBehaviour(
+        "Camera",
+        asBEHAVE_RELEASE,
+        "void f()",
+        asMETHOD(Camera, releaseRef),
+        asCALL_THISCALL);
+    core->RegisterObjectProperty(
+        "Camera",
+        "float pitch",
+        asOFFSET(Camera, pitch));
+    core->RegisterObjectProperty(
+        "Camera",
+        "float yaw",
+        asOFFSET(Camera, yaw));
+
     core->RegisterObjectType("Engine", 0, asOBJ_REF);
     core->RegisterGlobalProperty("Engine engine", &engine);
     core->RegisterObjectBehaviour(
@@ -200,6 +224,44 @@ void Script::registerObjects()
         "void spawnEntity(string &in, vec3 &in, vec3 &in = vec3(0,0,0))",
         asMETHOD(Engine, spawnEntity),
         asCALL_THISCALL);
+    core->RegisterObjectProperty(
+        "Engine",
+        "Camera camera",
+        asOFFSET(Engine, camera));
+
+    core->RegisterObjectType(
+        "Event",
+        sizeof(Event),
+        asOBJ_VALUE | asGetTypeTraits<Event>());
+    core->RegisterObjectBehaviour(
+        "Event",
+        asBEHAVE_CONSTRUCT,
+        "void f()",
+        asFUNCTION(asConstructor<Event>),
+        asCALL_CDECL_OBJLAST);
+    core->RegisterObjectBehaviour(
+        "Event",
+        asBEHAVE_DESTRUCT,
+        "void f()",
+        asFUNCTION(asDestructor<Event>),
+        asCALL_CDECL_OBJLAST);
+    core->RegisterObjectProperty(
+        "Event",
+        "string event",
+        asOFFSET(Event, event));
+    core->RegisterObjectProperty(
+        "Event",
+        "string data",
+        asOFFSET(Event, data));
+    core->RegisterObjectMethod(
+        "Event",
+        "Event& opAssign(const Event &in)",
+        asMETHODPR(
+            Event,
+            operator=,
+            (const Event&),
+            Event&),
+        asCALL_THISCALL);
 
     core->RegisterObjectType("Events", 0, asOBJ_REF);
     core->RegisterGlobalProperty("Events events", &engine.events);
@@ -217,7 +279,7 @@ void Script::registerObjects()
         asCALL_THISCALL);
     core->RegisterObjectMethod(
         "Events",
-        "string &poll()",
+        "Event &poll()",
         asMETHOD(EventHandler, poll),
         asCALL_THISCALL);
     core->RegisterObjectMethod(
