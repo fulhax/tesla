@@ -6,6 +6,7 @@
 #include <map>
 
 #include "errorhandler.hpp"
+#include "eventhandler.hpp"
 #include "video.hpp"
 #include "resource.hpp"
 #include "script.hpp"
@@ -17,6 +18,7 @@
 
 #define EngineTick 1.f/30.f
 #define NUM_MSFRAMES 100
+#define MAX_MOUSEBUTTONS 32
 
 class Engine : public ASClass<Engine>
 {
@@ -38,6 +40,7 @@ public:
                     const glm::vec3 &rot);
 
     bool running;
+    bool mouse[MAX_MOUSEBUTTONS];
 
     Ui ui;
     Audio audio;
@@ -47,6 +50,7 @@ public:
     Debugger debugger;
     Config config;
     Physics physics;
+    EventHandler events;
 private:
     std::vector<Entity *> entities;
     std::map<std::string, EntityType> entityTypes;

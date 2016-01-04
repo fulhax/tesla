@@ -13,6 +13,10 @@ Engine::Engine()
     countfps = 0;
     memset(msframe, 0, NUM_MSFRAMES * sizeof(float));
     currframe = 0;
+
+    for(int i = 0; i < MAX_MOUSEBUTTONS; i++) {
+        mouse[i] = false;
+    }
 }
 
 Engine::~Engine()
@@ -102,6 +106,8 @@ int Engine::init()
         running = false;
     }
 
+    physics.update();
+
     return 0;
 }
 
@@ -132,10 +138,43 @@ void Engine::handleEvents()
                 break;
             }
 
+            case SDL_MOUSEMOTION: {
+                if(event.motion.xrel != 0) {
+                    events.trigger(config.getString(
+                                       "input.mouse.x",
+                                       "camera.yaw"));
+                }
+
+                if(event.motion.yrel != 0) {
+                    events.trigger(config.getString(
+                                       "input.mouse.y",
+                                       "camera.pitch"));
+                }
+
+                break;
+            }
+
+            case SDL_MOUSEBUTTONDOWN: {
+                mouse[event.button.button] = true;
+                break;
+            }
+
+            case SDL_MOUSEBUTTONUP: {
+                mouse[event.button.button] = false;
+                break;
+            }
 
             case SDL_QUIT:
                 running = false;
                 break;
+        }
+    }
+
+    for(int i = 0; i < MAX_MOUSEBUTTONS; i++) {
+        if(mouse[i]) {
+            char button[64] = {0};
+            snprintf(button, 64, "input.mouse.button%d", i);
+            events.trigger(config.getString(button, "action.trigger"));
         }
     }
 }
@@ -195,6 +234,15 @@ void Engine::update()
         }
 
         physics.update();
+
+        while(events.count()) {
+            const std::string *ev = events.poll();
+
+            lprintf(
+                LOG_WARNING,
+                "Stray event ^r\"%s\"^0 found!",
+                ev->c_str());
+        }
     }
 
     video.swap();

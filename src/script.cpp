@@ -201,6 +201,31 @@ void Script::registerObjects()
         asMETHOD(Engine, spawnEntity),
         asCALL_THISCALL);
 
+    core->RegisterObjectType("Events", 0, asOBJ_REF);
+    core->RegisterGlobalProperty("Events events", &engine.events);
+    core->RegisterObjectBehaviour(
+        "Events",
+        asBEHAVE_ADDREF,
+        "void f()",
+        asMETHOD(Engine, addRef),
+        asCALL_THISCALL);
+    core->RegisterObjectBehaviour(
+        "Events",
+        asBEHAVE_RELEASE,
+        "void f()",
+        asMETHOD(Engine, releaseRef),
+        asCALL_THISCALL);
+    core->RegisterObjectMethod(
+        "Events",
+        "string &poll()",
+        asMETHOD(EventHandler, poll),
+        asCALL_THISCALL);
+    core->RegisterObjectMethod(
+        "Events",
+        "int count()",
+        asMETHOD(EventHandler, count),
+        asCALL_THISCALL);
+
     core->RegisterObjectType("Entity", 0, asOBJ_REF);
     core->RegisterObjectBehaviour(
         "Entity",

@@ -7,6 +7,7 @@ include("../cmake/makelistabs.cmake")
 list(APPEND SOURCE_FILES
     "./engine.cpp"
     "./errorhandler.cpp"
+    "./eventhandler.cpp"
     "./main.cpp"
     "./video.cpp"
     "./resource.cpp"

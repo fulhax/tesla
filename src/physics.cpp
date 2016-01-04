@@ -6,6 +6,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/euler_angles.hpp>
 
+#include <vector>
+
 #include "engine.hpp"
 #include "errorhandler.hpp"
 

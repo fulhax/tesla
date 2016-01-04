@@ -4,6 +4,10 @@ void init()
 
 void update()
 {
+    while(events.count() != 0) {
+        string ev = events.poll();
+        print("event " + ev);
+    }
 }
 
 void draw()
