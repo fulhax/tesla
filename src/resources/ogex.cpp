@@ -431,6 +431,14 @@ void OGEX_Resource::SetupGL()
     num_tris = numFaces;
     num_verts = numVerts;
 
+    for(unsigned int i = 0; i < numVerts; i += 3) {
+        updateBoundingBox(glm::vec3(
+                              verts[i],
+                              verts[i + 1],
+                              verts[i + 2]
+                          ));
+    }
+
     if(indices) {
         glBindBuffer(GL_ARRAY_BUFFER, indices_buffer);
         glBufferData(
