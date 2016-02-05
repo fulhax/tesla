@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.4)
 
 project(game)
 
@@ -62,7 +62,9 @@ else()
         )
 endif()
 
-set(CMAKE_CXX_FLAGS "-Wall -Wno-unknown-pragmas -std=c++11")
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_CXX_FLAGS "-Wall -Wno-unknown-pragmas")
 add_definitions("-DGL_GLEXT_PROTOTYPES -DGLM_SWIZZLE")
 
 option(USEOPENMP "enable openmp mutlithreading" ON)
