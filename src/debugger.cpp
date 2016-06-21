@@ -8,11 +8,11 @@ Debugger::Debugger()
 
 Debugger::~Debugger()
 {
-    if(model) {
+    if (model) {
         delete model;
     }
 
-    if(texture) {
+    if (texture) {
         delete texture;
     }
 }
@@ -28,13 +28,14 @@ int Debugger::init()
 
     model->has_uv_buffer = true;
 
-    for(int i = 0; i < debugCube.num_vert; ++i) {
+    for (int i = 0; i < debugCube.num_vert; ++i) {
         model->updateBoundingBox(debugCube.verts[i]);
     }
 
     model->verts = new float[debugCube.num_vert * 3];
     unsigned int j = 0;
-    for(int i = 0; i < debugCube.num_vert * 3; i += 3) {
+
+    for (int i = 0; i < debugCube.num_vert * 3; i += 3) {
         model->verts[i] =  debugCube.verts[j].x;
         model->verts[i + 1] = debugCube.verts[j].y;
         model->verts[i + 2] = debugCube.verts[j].z;
@@ -44,7 +45,8 @@ int Debugger::init()
 
     model->indices = new uint32_t[debugCube.num_tris * 3];
     j = 0;
-    for(int i = 0; i < debugCube.num_tris * 3; i += 3) {
+
+    for (int i = 0; i < debugCube.num_tris * 3; i += 3) {
         model->indices[i] =  debugCube.tris[j].i[0];
         model->indices[i + 1] = debugCube.tris[j].i[1];
         model->indices[i + 2] = debugCube.tris[j].i[2];
@@ -113,7 +115,7 @@ int Debugger::init()
 
 Shader *Debugger::useDebugShader()
 {
-    if(shader.use()) {
+    if (shader.use()) {
         glLineWidth(2);
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         glDisable(GL_CULL_FACE);

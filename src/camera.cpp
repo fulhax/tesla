@@ -30,7 +30,7 @@ void Camera::update(glm::mat4 projMat, glm::mat4 viewMat)
     frustum[FRUSTUM_FAR]    = glm::normalize(rowW + rowZ);
     frustum[FRUSTUM_NEAR]   = glm::normalize(rowW - rowZ);
 
-    for(int i = 0; i < 6; i++) {
+    for (int i = 0; i < 6; i++) {
         float len = glm::length(frustum[i].xyz());
         frustum[i] /= len;
     }
@@ -38,8 +38,8 @@ void Camera::update(glm::mat4 projMat, glm::mat4 viewMat)
 
 int Camera::pointInFrustum(const glm::vec3 &point)
 {
-    for(int i = 0; i < 6; i++) {
-        if(pointDistance(i, point) <= 0) {
+    for (int i = 0; i < 6; i++) {
+        if (pointDistance(i, point) <= 0) {
             return FRUSTUM_OUTSIDE;
         }
     }
@@ -49,14 +49,14 @@ int Camera::pointInFrustum(const glm::vec3 &point)
 
 int Camera::sphereInFrustum(const glm::vec3 &point, float radius)
 {
-    for(int i = 0; i < 6; i++) {
+    for (int i = 0; i < 6; i++) {
         float dist = pointDistance(i, point);
 
-        if(dist < -radius) {
+        if (dist < -radius) {
             return FRUSTUM_OUTSIDE;
         }
 
-        if(fabs(dist) < radius) {
+        if (fabs(dist) < radius) {
             return FRUSTUM_INTERSECT;
         }
     }
@@ -73,78 +73,78 @@ int Camera::rectInFrustum(const glm::vec3 &point, const glm::vec3 &scale)
 {
     int cull = 0;
 
-    for(int i = 0; i < 6; i++) {
+    for (int i = 0; i < 6; i++) {
         int cube = 0;
 
-        if(pointDistance(i, glm::vec3(
-                             point.x - scale.x,
-                             point.y - scale.y,
-                             point.z - scale.z
-                         )) > 0) { // 0 0 0
+        if (pointDistance(i, glm::vec3(
+                              point.x - scale.x,
+                              point.y - scale.y,
+                              point.z - scale.z
+                          )) > 0) { // 0 0 0
             cube++;
         }
 
-        if(pointDistance(i, glm::vec3(
-                             point.x + scale.x,
-                             point.y - scale.y,
-                             point.z - scale.z
-                         )) > 0) { // 1 0 0
+        if (pointDistance(i, glm::vec3(
+                              point.x + scale.x,
+                              point.y - scale.y,
+                              point.z - scale.z
+                          )) > 0) { // 1 0 0
             cube++;
         }
 
-        if(pointDistance(i, glm::vec3(
-                             point.x - scale.x,
-                             point.y + scale.y,
-                             point.z - scale.z
-                         )) > 0) { // 0 1 0
+        if (pointDistance(i, glm::vec3(
+                              point.x - scale.x,
+                              point.y + scale.y,
+                              point.z - scale.z
+                          )) > 0) { // 0 1 0
             cube++;
         }
 
-        if(pointDistance(i, glm::vec3(
-                             point.x + scale.x,
-                             point.y + scale.y,
-                             point.z - scale.z
-                         )) > 0) { // 1 1 0
+        if (pointDistance(i, glm::vec3(
+                              point.x + scale.x,
+                              point.y + scale.y,
+                              point.z - scale.z
+                          )) > 0) { // 1 1 0
             cube++;
         }
 
-        if(pointDistance(i, glm::vec3(
-                             point.x - scale.x,
-                             point.y - scale.y,
-                             point.z + scale.z
-                         )) > 0) { // 0 0 1
+        if (pointDistance(i, glm::vec3(
+                              point.x - scale.x,
+                              point.y - scale.y,
+                              point.z + scale.z
+                          )) > 0) { // 0 0 1
             cube++;
         }
 
-        if(pointDistance(i, glm::vec3(
-                             point.x + scale.x,
-                             point.y - scale.y,
-                             point.z + scale.z
-                         )) > 0) { // 1 0 1
+        if (pointDistance(i, glm::vec3(
+                              point.x + scale.x,
+                              point.y - scale.y,
+                              point.z + scale.z
+                          )) > 0) { // 1 0 1
             cube++;
         }
 
-        if(pointDistance(i, glm::vec3(
-                             point.x - scale.x,
-                             point.y + scale.y,
-                             point.z + scale.z
-                         )) > 0) { // 0 1 1
+        if (pointDistance(i, glm::vec3(
+                              point.x - scale.x,
+                              point.y + scale.y,
+                              point.z + scale.z
+                          )) > 0) { // 0 1 1
             cube++;
         }
 
-        if(pointDistance(i, glm::vec3(
-                             point.x + scale.x,
-                             point.y + scale.y,
-                             point.z + scale.z
-                         )) > 0) { // 1 1 1
+        if (pointDistance(i, glm::vec3(
+                              point.x + scale.x,
+                              point.y + scale.y,
+                              point.z + scale.z
+                          )) > 0) { // 1 1 1
             cube++;
         }
 
-        if(cube == 0) {
+        if (cube == 0) {
             return FRUSTUM_OUTSIDE;
         }
 
-        if(cube == 8) {
+        if (cube == 8) {
             cull++;
         }
     }

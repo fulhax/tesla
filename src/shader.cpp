@@ -17,7 +17,7 @@ void Shader::attach(const char *filename)
 
 void Shader::unload()
 {
-    if(program <= 0) {
+    if (program <= 0) {
         return;
     }
 
@@ -27,19 +27,19 @@ void Shader::unload()
 
 int Shader::use()
 {
-    if(program <= 0) {
+    if (program <= 0) {
         program = glCreateProgram();
 
-        if(!program) {
+        if (!program) {
             lprintf(LOG_ERROR, "Unable to create shader program!");
             return 0;
         }
 
-        for(auto filename : shaders) {
+        for (auto filename : shaders) {
             ShaderResource *shader =
                 engine.resources.getShader(this, filename.c_str());
 
-            if(shader) {
+            if (shader) {
                 glAttachShader(program, shader->handle);
             } else {
                 unload();
@@ -52,11 +52,11 @@ int Shader::use()
         int status = 0;
         glGetProgramiv(program, GL_LINK_STATUS, &status);
 
-        if(status == GL_FALSE) {
+        if (status == GL_FALSE) {
             int length = 0;
             glGetShaderiv(program, GL_INFO_LOG_LENGTH, &length);
 
-            if(length > 0) {
+            if (length > 0) {
                 char *log = new char[length];
                 int written = 0;
                 glGetProgramInfoLog(program, length, &written, log);
@@ -80,7 +80,7 @@ int Shader::use()
 
 void Shader::validate()
 {
-    if(program <= 0) {
+    if (program <= 0) {
         lprintf(LOG_ERROR, "Program has not been linked.");
         return;
     }
@@ -89,11 +89,11 @@ void Shader::validate()
     glValidateProgram(program);
     glGetProgramiv(program, GL_VALIDATE_STATUS, &status);
 
-    if(status == GL_FALSE) {
+    if (status == GL_FALSE) {
         int length = 0;
         glGetProgramiv(program, GL_INFO_LOG_LENGTH, &length);
 
-        if(length > 0) {
+        if (length > 0) {
             char *log = new char[length];
             int written = 0;
             glGetProgramInfoLog(program, length, &written, log);
@@ -180,11 +180,11 @@ int Shader::getUniformLocation(const char *name)
 
     GLint uniform = -1;
 
-    if(pos == uniform_locations.end()) {
+    if (pos == uniform_locations.end()) {
         uniform = glGetUniformLocation(program, name);
         uniform_locations[name] = glGetUniformLocation(program, name);
 
-        if(uniform_locations[name] < 0) {
+        if (uniform_locations[name] < 0) {
             lprintf(LOG_WARNING, "setUniform failed: %s", name);
         } else {
             uniform_locations[name] = uniform;

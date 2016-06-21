@@ -16,7 +16,7 @@ int PNG_Resource::load(const char *filename)
 {
     FILE *file = fopen(filename, "rb");
 
-    if(file == NULL) {
+    if (file == NULL) {
         lprintf(LOG_WARNING, "Unable to open ^g\"%s\"^0", filename);
         return 0;
     }
@@ -27,7 +27,7 @@ int PNG_Resource::load(const char *filename)
                           NULL,
                           NULL);
 
-    if(png == NULL) {
+    if (png == NULL) {
         lprintf(LOG_ERROR, "Unable to create png struct!");
         fclose(file);
         return 0;
@@ -35,14 +35,14 @@ int PNG_Resource::load(const char *filename)
 
     png_info *info = png_create_info_struct(png);
 
-    if(info == NULL) {
+    if (info == NULL) {
         lprintf(LOG_ERROR, "Unable to create png_info struct!");
         png_destroy_read_struct(&png, NULL, NULL);
         fclose(file);
         return 0;
     }
 
-    if(setjmp(png_jmpbuf(png))) {
+    if (setjmp(png_jmpbuf(png))) {
         lprintf(LOG_ERROR, "PNG error!");
         png_destroy_read_struct(&png, &info, NULL);
         fclose(file);
@@ -76,7 +76,7 @@ int PNG_Resource::load(const char *filename)
 
     png_bytepp row_pointers = png_get_rows(png, info);
 
-    for(unsigned int i = 0; i < height; i++) {
+    for (unsigned int i = 0; i < height; i++) {
         memcpy(
             imageData + row_bytes * (height - 1 - i),
             row_pointers[i],
@@ -107,7 +107,7 @@ int PNG_Resource::load(const char *filename)
         GL_TEXTURE_MIN_FILTER,
         GL_LINEAR);
 
-    if(color == PNG_COLOR_TYPE_RGB) {
+    if (color == PNG_COLOR_TYPE_RGB) {
         type = GL_RGB;
     }
 

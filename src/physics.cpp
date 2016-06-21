@@ -37,14 +37,14 @@ void DebugDrawer::drawLine(const btVector3 &from, const btVector3 &to,
     static Shader shader;
     static bool first = true;
 
-    if(first) {
+    if (first) {
         shader.attach("shaders/debug.frag");
         shader.attach("shaders/debug.vert");
         first = false;
     }
 
-    if(shader.use()) {
-        if(!vertex_buffer) {
+    if (shader.use()) {
+        if (!vertex_buffer) {
             glGenBuffers(1, &vertex_buffer);
         }
 
@@ -211,7 +211,7 @@ btRigidBody *Physics::createMesh(ModelResource *m,
     btVector3 localInertia(0, 0, 0);
     btCollisionShape *shape;
 
-    if(mass > 0.f) {
+    if (mass > 0.f) {
         btConvexShape *tmpshape = new btConvexTriangleMeshShape(mesh);
 
         btShapeHull *hull = new btShapeHull(tmpshape);
@@ -223,7 +223,7 @@ btRigidBody *Physics::createMesh(ModelResource *m,
 
         btVector3 *points = const_cast<btVector3 *>(hull->getVertexPointer());
 
-        for(int i = 0; i < hull->numVertices(); i++) {
+        for (int i = 0; i < hull->numVertices(); i++) {
             hullshape->addPoint(points[i]);
         }
 

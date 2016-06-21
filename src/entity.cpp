@@ -48,7 +48,7 @@ void Entity::setTexture(const std::string &inname, const std::string &infile)
 
 void Entity::spawn(glm::vec3 pos, glm::vec3 rot)
 {
-    if(type == nullptr) {
+    if (type == nullptr) {
         lprintf(LOG_WARNING, "Trying to spawn uninitialized entity!");
         return;
     }
@@ -56,7 +56,7 @@ void Entity::spawn(glm::vec3 pos, glm::vec3 rot)
     lprintf(LOG_INFO, "Spawning Entity ^m\"%s\"^0", type->name.c_str());
     ScriptResource *s = engine.resources.getScript(type->script.c_str());
 
-    if(s) {
+    if (s) {
         engine.script.run(s, "void init(Entity@ self)", this);
     } else {
         lprintf(
@@ -67,7 +67,7 @@ void Entity::spawn(glm::vec3 pos, glm::vec3 rot)
 
     ModelResource *m = engine.resources.getModel(model);
 
-    if(m == nullptr) {
+    if (m == nullptr) {
         m = engine.debugger.useDebugModel();
     }
 
@@ -100,7 +100,7 @@ int Entity::cullCheck(const glm::mat4 &ModelMat, ModelResource *m)
             (tmin.z + tmax.z) / 2
         );
 
-    if(camera->rectInFrustum(bb_center, bb_size) == FRUSTUM_OUTSIDE) {
+    if (camera->rectInFrustum(bb_center, bb_size) == FRUSTUM_OUTSIDE) {
         return 0;
     }
 
@@ -109,14 +109,14 @@ int Entity::cullCheck(const glm::mat4 &ModelMat, ModelResource *m)
 
 void Entity::update()
 {
-    if(type == nullptr) {
+    if (type == nullptr) {
         lprintf(LOG_WARNING, "Trying to update uninitialized entity!");
         return;
     }
 
     ScriptResource *s = engine.resources.getScript(type->script.c_str());
 
-    if(s) {
+    if (s) {
         engine.script.run(s, "void update(Entity@ self)", this);
     }
 }
@@ -133,7 +133,7 @@ glm::mat4 Entity::getModelMatrix()
 
 void Entity::draw(const glm::mat4 &ProjMat, const glm::mat4 &ViewMat)
 {
-    if(!strlen(model) || textures.empty()) {
+    if (!strlen(model) || textures.empty()) {
         return;
     }
 
@@ -141,20 +141,20 @@ void Entity::draw(const glm::mat4 &ProjMat, const glm::mat4 &ViewMat)
 
     ModelResource *m = engine.resources.getModel(model);
 
-    if(m == nullptr) {
+    if (m == nullptr) {
         m = engine.debugger.useDebugModel();
     }
 
-    if(!cullCheck(ModelMat, m)) {
+    if (!cullCheck(ModelMat, m)) {
         return;
     }
 
     Shader *current = &shader;
 
-    if(!current->use()) {
+    if (!current->use()) {
         current = engine.debugger.useDebugShader();
 
-        if(!current) {
+        if (!current) {
             lprintf(LOG_ERROR, "Unable to load debug shader!");
             return;
         }
@@ -162,10 +162,10 @@ void Entity::draw(const glm::mat4 &ProjMat, const glm::mat4 &ViewMat)
 
     int num = 0;
 
-    for(auto texture : textures) {
+    for (auto texture : textures) {
         TextureResource *t = engine.resources.getTexture(texture.second.c_str());
 
-        if(t == nullptr) {
+        if (t == nullptr) {
             t = engine.debugger.useDebugTexture();
         }
 
@@ -178,23 +178,23 @@ void Entity::draw(const glm::mat4 &ProjMat, const glm::mat4 &ViewMat)
 
     current->bindAttribLocation(0, "in_Position");
 
-    if(m->has_uv_buffer) {
+    if (m->has_uv_buffer) {
         current->bindAttribLocation(1, "in_TexCoord");
     }
 
-    if(m->has_normals_buffer) {
+    if (m->has_normals_buffer) {
         current->bindAttribLocation(2, "in_Normal");
     }
 
-    if(m->has_tangent_buffer) {
+    if (m->has_tangent_buffer) {
         current->bindAttribLocation(3, "in_Tangent");
     }
 
-    if(m->has_binormals_buffer) {
+    if (m->has_binormals_buffer) {
         current->bindAttribLocation(4, "in_Binormal");
     }
 
-    if(m->has_color_buffer) {
+    if (m->has_color_buffer) {
         current->bindAttribLocation(5, "in_Color");
     }
 
@@ -213,7 +213,7 @@ void Entity::draw(const glm::mat4 &ProjMat, const glm::mat4 &ViewMat)
 
     glEnableVertexAttribArray(0);
 
-    if(m->has_uv_buffer) {
+    if (m->has_uv_buffer) {
         glBindBuffer(GL_ARRAY_BUFFER, m->uv_buffer);
         glVertexAttribPointer(
             1,
@@ -226,7 +226,7 @@ void Entity::draw(const glm::mat4 &ProjMat, const glm::mat4 &ViewMat)
         glEnableVertexAttribArray(1);
     }
 
-    if(m->has_normals_buffer) {
+    if (m->has_normals_buffer) {
         glBindBuffer(GL_ARRAY_BUFFER, m->normals_buffer);
         glVertexAttribPointer(
             2,
@@ -239,7 +239,7 @@ void Entity::draw(const glm::mat4 &ProjMat, const glm::mat4 &ViewMat)
         glEnableVertexAttribArray(2);
     }
 
-    if(m->has_tangent_buffer) {
+    if (m->has_tangent_buffer) {
         glBindBuffer(GL_ARRAY_BUFFER, m->tangent_buffer);
         glVertexAttribPointer(
             3,
@@ -252,7 +252,7 @@ void Entity::draw(const glm::mat4 &ProjMat, const glm::mat4 &ViewMat)
         glEnableVertexAttribArray(3);
     }
 
-    if(m->has_binormals_buffer) {
+    if (m->has_binormals_buffer) {
         glBindBuffer(GL_ARRAY_BUFFER, m->binormals_buffer);
         glVertexAttribPointer(
             4,
@@ -265,7 +265,7 @@ void Entity::draw(const glm::mat4 &ProjMat, const glm::mat4 &ViewMat)
         glEnableVertexAttribArray(4);
     }
 
-    if(m->has_color_buffer) {
+    if (m->has_color_buffer) {
         glBindBuffer(GL_ARRAY_BUFFER, m->color_buffer);
         glVertexAttribPointer(
             5,
@@ -290,23 +290,23 @@ void Entity::draw(const glm::mat4 &ProjMat, const glm::mat4 &ViewMat)
 
     glDisableVertexAttribArray(0);
 
-    if(m->has_uv_buffer) {
+    if (m->has_uv_buffer) {
         glDisableVertexAttribArray(1);
     }
 
-    if(m->has_normals_buffer) {
+    if (m->has_normals_buffer) {
         glDisableVertexAttribArray(2);
     }
 
-    if(m->has_tangent_buffer) {
+    if (m->has_tangent_buffer) {
         glDisableVertexAttribArray(3);
     }
 
-    if(m->has_binormals_buffer) {
+    if (m->has_binormals_buffer) {
         glDisableVertexAttribArray(4);
     }
 
-    if(m->has_color_buffer) {
+    if (m->has_color_buffer) {
         glDisableVertexAttribArray(5);
     }
 

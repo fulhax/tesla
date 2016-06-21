@@ -22,12 +22,12 @@ int TGA_Resource::load(const char *filename)
 
     FILE *file = fopen(filename, "rb");
 
-    if(file == NULL) {
+    if (file == NULL) {
         lprintf(LOG_WARNING, "Unable to open ^g\"%s\"^0", filename);
         return 0;
     }
 
-    if(fread(TGAcompare, 1, sizeof(TGAcompare), file) != sizeof(TGAcompare) ||
+    if (fread(TGAcompare, 1, sizeof(TGAcompare), file) != sizeof(TGAcompare) ||
         memcmp(TGAheader, TGAcompare, sizeof(TGAheader)) != 0 ||
         fread(header, 1, sizeof(header), file) != sizeof(header)) {
         fclose(file);
@@ -43,7 +43,7 @@ int TGA_Resource::load(const char *filename)
     width = header[1] * 256 + header[0];
     height = header[3] * 256 + header[2];
 
-    if(width  == 0 || height == 0 || (header[4] != 24 && header[4] != 32)) {
+    if (width  == 0 || height == 0 || (header[4] != 24 && header[4] != 32)) {
         lprintf(
             LOG_WARNING,
             "Failed to load ^g\"%s\"^0, incorrect format",
@@ -59,8 +59,8 @@ int TGA_Resource::load(const char *filename)
 
     imageData = new char[imageSize];
 
-    if(imageData == NULL || fread(imageData, 1, imageSize, file) != imageSize) {
-        if(imageData != NULL) {
+    if (imageData == NULL || fread(imageData, 1, imageSize, file) != imageSize) {
+        if (imageData != NULL) {
             delete [] imageData;
         }
 
@@ -73,7 +73,7 @@ int TGA_Resource::load(const char *filename)
         return 0;
     }
 
-    for(unsigned int i = 0; i < imageSize; i += bytesPerPixel) {
+    for (unsigned int i = 0; i < imageSize; i += bytesPerPixel) {
         unsigned int temp = imageData[i];
         imageData[i] = imageData[i + 2];
         imageData[i + 2] = temp;
@@ -102,7 +102,7 @@ int TGA_Resource::load(const char *filename)
         GL_TEXTURE_MIN_FILTER,
         GL_LINEAR);
 
-    if(bpp == 24) {
+    if (bpp == 24) {
         type = GL_RGB;
     }
 

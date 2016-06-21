@@ -24,19 +24,19 @@ Shape::Shape()
 
 Shape::~Shape()
 {
-    if(verts) {
+    if (verts) {
         delete [] verts;
     }
 
-    if(tris) {
+    if (tris) {
         delete [] tris;
     }
 
-    if(uvs) {
+    if (uvs) {
         delete [] uvs;
     }
 
-    if(normals) {
+    if (normals) {
         delete [] normals;
     }
 
@@ -48,14 +48,14 @@ Shape::~Shape()
 
 void Shape::mpiCacheAdd(int key, int tri)
 {
-    if(mpi_cache) {
+    if (mpi_cache) {
         mpi *tmp = new mpi;
         tmp->tri = tri;
         tmp->key = key;
 
         mpi *curr = mpi_cache;
 
-        while(curr->next) {
+        while (curr->next) {
             curr = curr->next;
         }
 
@@ -69,9 +69,9 @@ void Shape::mpiCacheAdd(int key, int tri)
 
 int Shape::mpiCacheGet(int key) const
 {
-    if(mpi_cache) {
-        for(mpi *curr = mpi_cache; curr; curr = curr->next) {
-            if(curr->key == key) {
+    if (mpi_cache) {
+        for (mpi *curr = mpi_cache; curr; curr = curr->next) {
+            if (curr->key == key) {
                 return curr->tri;
             }
         }
@@ -84,7 +84,7 @@ void Shape::mpiCacheClear() const
 {
     mpi *curr = mpi_cache;
 
-    while(curr) {
+    while (curr) {
         mpi *tmp = curr;
         curr = curr->next;
         delete tmp;
@@ -98,7 +98,7 @@ int Shape::getMiddlePoint(int p1, int p2)
     int greatertri = (p1 < p2) ? p2 : p1;
     int key = (smallertri << 16) + greatertri;
 
-    if((tri = mpiCacheGet(key))) {
+    if ((tri = mpiCacheGet(key))) {
         return tri;
     }
 
@@ -119,13 +119,13 @@ int Shape::getMiddlePoint(int p1, int p2)
 
 void Shape::subdivide(int recursion_level)
 {
-    if(num_vert == 0 || num_tris == 0) {
+    if (num_vert == 0 || num_tris == 0) {
         generate();
     }
 
     int newnum_vert = num_vert;
 
-    for(int i = 0; i < recursion_level; i++) {
+    for (int i = 0; i < recursion_level; i++) {
         newnum_vert += 30 * pow(4.0f, i);
     }
 
@@ -134,11 +134,11 @@ void Shape::subdivide(int recursion_level)
     delete [] verts;
     verts = newverts;
 
-    for(int i = 1; i <= recursion_level; i++) {
+    for (int i = 1; i <= recursion_level; i++) {
         int newnum_tris = num_tris * 4;
         tri *newtris = new tri[newnum_tris + 1];
 
-        for(int t = 0, nt = 0; t < num_tris; t++) {
+        for (int t = 0, nt = 0; t < num_tris; t++) {
             int a = getMiddlePoint(tris[t].i[0], tris[t].i[1]);
             int b = getMiddlePoint(tris[t].i[1], tris[t].i[2]);
             int c = getMiddlePoint(tris[t].i[2], tris[t].i[0]);
@@ -235,15 +235,15 @@ void Plane::subdivide(int recursion_level)
 
 void Plane::generate(int x, int y)
 {
-    if(vertex_buffer != 0) {
+    if (vertex_buffer != 0) {
         glGenBuffers(1, &vertex_buffer);
     }
 
-    if(indices_buffer != 0) {
+    if (indices_buffer != 0) {
         glGenBuffers(1, &indices_buffer);
     }
 
-    if(uv_buffer != 0) {
+    if (uv_buffer != 0) {
         glGenBuffers(1, &uv_buffer);
     }
 
@@ -286,7 +286,7 @@ void Cube::generate(bool xn, bool xp, bool yn, bool yp, bool zn, bool zp)
     int rtris = 0;
 
     //// Front
-    if(zn) {
+    if (zn) {
         uvs[rvert] = glm::vec2(0, 0);
         uvs[rvert + 1] = glm::vec2(0, 1);
         uvs[rvert + 2] = glm::vec2(1, 1);
@@ -310,7 +310,7 @@ void Cube::generate(bool xn, bool xp, bool yn, bool yp, bool zn, bool zp)
     }
 
     // Back
-    if(zp) {
+    if (zp) {
         uvs[rvert] = glm::vec2(0, 0);
         uvs[rvert + 1] = glm::vec2(0, 1);
         uvs[rvert + 2] = glm::vec2(1, 1);
@@ -334,7 +334,7 @@ void Cube::generate(bool xn, bool xp, bool yn, bool yp, bool zn, bool zp)
     }
 
     // Right
-    if(xp) {
+    if (xp) {
         uvs[rvert] = glm::vec2(0, 0);
         uvs[rvert + 1] = glm::vec2(0, 1);
         uvs[rvert + 2] = glm::vec2(1, 1);
@@ -358,7 +358,7 @@ void Cube::generate(bool xn, bool xp, bool yn, bool yp, bool zn, bool zp)
     }
 
     // Left
-    if(xn) {
+    if (xn) {
         uvs[rvert] = glm::vec2(0, 0);
         uvs[rvert + 1] = glm::vec2(0, 1);
         uvs[rvert + 2] = glm::vec2(1, 1);
@@ -382,7 +382,7 @@ void Cube::generate(bool xn, bool xp, bool yn, bool yp, bool zn, bool zp)
     }
 
     // Top
-    if(yp) {
+    if (yp) {
         uvs[rvert] = glm::vec2(0, 0);
         uvs[rvert + 1] = glm::vec2(0, 1);
         uvs[rvert + 2] = glm::vec2(1, 1);
@@ -406,7 +406,7 @@ void Cube::generate(bool xn, bool xp, bool yn, bool yp, bool zn, bool zp)
     }
 
     // Bottom
-    if(yn) {
+    if (yn) {
         uvs[rvert] = glm::vec2(0, 0);
         uvs[rvert + 1] = glm::vec2(0, 1);
         uvs[rvert + 2] = glm::vec2(1, 1);

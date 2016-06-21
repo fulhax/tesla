@@ -21,13 +21,13 @@ Script::~Script()
 {
     lprintf(LOG_INFO, "Shutting down AngelScript");
 
-    for(int i = 0; i < MAX_CONTEXTS; i++) {
-        if(ctx[i]) {
+    for (int i = 0; i < MAX_CONTEXTS; i++) {
+        if (ctx[i]) {
             ctx[i]->Unprepare();
         }
     }
 
-    if(core) {
+    if (core) {
         core->ShutDownAndRelease();
     }
 }
@@ -259,8 +259,8 @@ void Script::registerObjects()
         asMETHODPR(
             Event,
             operator=,
-            (const Event&),
-            Event&),
+            (const Event &),
+            Event &),
         asCALL_THISCALL);
 
     core->RegisterObjectType("Events", 0, asOBJ_REF);
@@ -342,7 +342,7 @@ int Script::init()
                   nullptr,
                   asCALL_CDECL);
 
-    if(ret < 0) {
+    if (ret < 0) {
         lprintf(LOG_ERROR, "Failed to set message callback!");
         return 1;
     }
@@ -350,7 +350,7 @@ int Script::init()
     RegisterStdString(core);
     registerObjects();
 
-    for(int i = 0; i < MAX_CONTEXTS; ++i) {
+    for (int i = 0; i < MAX_CONTEXTS; ++i) {
         ctx[i] = core->CreateContext();
     }
 
@@ -361,11 +361,11 @@ int Script::init()
 
 void Script::run(ScriptResource *script, const char *func, void *arg)
 {
-    if(script == nullptr) {
+    if (script == nullptr) {
         return;
     }
 
-    if(!script->module) {
+    if (!script->module) {
         lprintf(LOG_WARNING, "No script loaded!");
         script->failed = true;
         return;
@@ -373,7 +373,7 @@ void Script::run(ScriptResource *script, const char *func, void *arg)
 
     asIScriptFunction *f = script->module->GetFunctionByDecl(func);
 
-    if(!f) {
+    if (!f) {
         lprintf(LOG_WARNING, "Unable to find function ^g\"%s\"^0", func);
         script->failed = true;
         return;
@@ -385,10 +385,10 @@ void Script::run(ScriptResource *script, const char *func, void *arg)
     do {
         found = false;
 
-        for(curr = 0; curr < MAX_CONTEXTS; curr++) {
+        for (curr = 0; curr < MAX_CONTEXTS; curr++) {
             int r = ctx[curr]->GetState();
 
-            if(r == asEXECUTION_ERROR) {
+            if (r == asEXECUTION_ERROR) {
                 lprintf(
                     LOG_WARNING,
                     "Script failed ^g\"%s\"^0",
@@ -396,19 +396,19 @@ void Script::run(ScriptResource *script, const char *func, void *arg)
 
                 found = true;
                 break;
-            } else if(r == asEXECUTION_FINISHED ||
-                      r == asEXECUTION_UNINITIALIZED) {
+            } else if (r == asEXECUTION_FINISHED ||
+                       r == asEXECUTION_UNINITIALIZED) {
 
                 found = true;
                 break;
             }
         }
-    } while(!found);
+    } while (!found);
 
-    if(curr != MAX_CONTEXTS) {
+    if (curr != MAX_CONTEXTS) {
         ctx[curr]->Prepare(f);
 
-        if(arg) {
+        if (arg) {
             ctx[curr]->SetArgObject(0, arg);
         }
 
@@ -420,9 +420,9 @@ void Script::MessageCallback(const asSMessageInfo *msg, void *param)
 {
     logType type = LOG_ERROR;
 
-    if(msg->type == asMSGTYPE_WARNING) {
+    if (msg->type == asMSGTYPE_WARNING) {
         type = LOG_WARNING;
-    } else if(msg->type == asMSGTYPE_INFORMATION) {
+    } else if (msg->type == asMSGTYPE_INFORMATION) {
         type = LOG_INFO;
     }
 

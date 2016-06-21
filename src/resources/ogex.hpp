@@ -9,7 +9,7 @@ class ModelResource {};
 
 namespace ODDLParser
 {
-class DDLNode;
+    class DDLNode;
 }
 
 class OGEX_Resource : public ModelResource

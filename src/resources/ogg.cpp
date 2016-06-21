@@ -26,7 +26,7 @@ int OGG_Resource::load(const char *filename)
     vorbis_info *info;
     OggVorbis_File file;
 
-    if(ov_fopen(filename, &file) != 0) {
+    if (ov_fopen(filename, &file) != 0) {
         lprintf(
             LOG_ERROR,
             "Unable to open Ogg Vorbis file ^g\"%s\"^0!",
@@ -36,7 +36,7 @@ int OGG_Resource::load(const char *filename)
 
     info = ov_info(&file, -1);
 
-    if(info->channels == 1) {
+    if (info->channels == 1) {
         format = AL_FORMAT_MONO16;
     } else {
         format = AL_FORMAT_STEREO16;
@@ -47,7 +47,7 @@ int OGG_Resource::load(const char *filename)
     do {
         bytes = ov_read(&file, array, BUFFER_SIZE, endian, 2, 1, &bitStream);
 
-        if(bytes < 0) {
+        if (bytes < 0) {
             lprintf(LOG_ERROR, "Ogg Vorbis read error!");
             ov_clear(&file);
 
@@ -58,7 +58,7 @@ int OGG_Resource::load(const char *filename)
         }
 
         bufferData.insert(bufferData.end(), array, array + bytes);
-    } while(bytes > 0);
+    } while (bytes > 0);
 
     ov_clear(&file);
 

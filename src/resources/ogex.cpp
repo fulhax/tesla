@@ -21,23 +21,23 @@ OGEX_Resource::OGEX_Resource()
 }
 OGEX_Resource::~OGEX_Resource()
 {
-    if(normal_vb) {
+    if (normal_vb) {
         delete [] normal_vb;
     }
 
-    if(binormal_vb) {
+    if (binormal_vb) {
         delete [] binormal_vb;
     }
 
-    if(tangent_vb) {
+    if (tangent_vb) {
         delete [] tangent_vb;
     }
 
-    if(color_vb) {
+    if (color_vb) {
         delete [] color_vb;
     }
 
-    if(uv_vb) {
+    if (uv_vb) {
         delete [] uv_vb;
     }
 }
@@ -48,30 +48,30 @@ void printsubnodes(ODDLParser::DDLNode *node, int level)
     using namespace ODDLParser;
     DDLNode::DllNodeList children = node->getChildNodeList();
 
-    for(size_t i = 0; i < children.size(); i++) {
+    for (size_t i = 0; i < children.size(); i++) {
         DDLNode *child = children[i];
 
-        for(int j = 0; j < level; j++) {
+        for (int j = 0; j < level; j++) {
             fprintf(stdout, "    ");
         }
 
         fprintf(stdout, "node:%s", child->getType().c_str());
 
-        if(strlen(child->getName().c_str()) > 0) {
+        if (strlen(child->getName().c_str()) > 0) {
             fprintf(stdout, " name:%s", child->getName().c_str());
         }
 
         Property *prop = child->getProperties();
 
-        if(prop != nullptr) {
+        if (prop != nullptr) {
             fprintf(stdout, ": property");
         }
 
-        while(prop != nullptr) {
+        while (prop != nullptr) {
 
             fprintf(stdout, " %s", prop->m_key->m_text.m_buffer);
 
-            if(prop->m_value->m_type == 12) {
+            if (prop->m_value->m_type == 12) {
                 fprintf(stdout, ": %s", prop->m_value->getString());
             }
 
@@ -81,12 +81,12 @@ void printsubnodes(ODDLParser::DDLNode *node, int level)
         Value *values = child->getValue();
         fprintf(stdout, "\n");
 
-        while(values != nullptr) {
-            for(int j = 0; j <= level; j++) {
+        while (values != nullptr) {
+            for (int j = 0; j <= level; j++) {
                 fprintf(stdout, "    ");
             }
 
-            switch(values->m_type) {
+            switch (values->m_type) {
                 case Value::ddl_none:
                     break;
 
@@ -118,9 +118,9 @@ void printsubnodes(ODDLParser::DDLNode *node, int level)
 
         DataArrayList *array = child->getDataArrayList();
 
-        if(array) {
+        if (array) {
 
-            for(int j = 0; j <= level; j++) {
+            for (int j = 0; j <= level; j++) {
                 fprintf(stdout, "    ");
             }
 
@@ -129,22 +129,22 @@ void printsubnodes(ODDLParser::DDLNode *node, int level)
 
         array = child->getDataArrayList();
 
-        while(array != nullptr) {
+        while (array != nullptr) {
             Value *values = array->m_dataList;
 
-            for(int j = 0; j <= level; j++) {
+            for (int j = 0; j <= level; j++) {
                 fprintf(stdout, "    ");
             }
 
-            while(values != nullptr) {
-                switch(values->m_type) {
+            while (values != nullptr) {
+                switch (values->m_type) {
                     case Value::ddl_none:
                         break;
 
                     case Value::ddl_float: {
                         float val = values->getFloat();
 
-                        if(__signbitf(val) == false) {
+                        if (__signbitf(val) == false) {
                             fprintf(stdout, " ");
                         }
 
@@ -156,7 +156,7 @@ void printsubnodes(ODDLParser::DDLNode *node, int level)
                         int val = values->getInt32();
                         fprintf(stdout, "int32 %i ", val);
 
-                        if(val < 10) {
+                        if (val < 10) {
                             fprintf(stdout, " ");
                         }
 
@@ -167,7 +167,7 @@ void printsubnodes(ODDLParser::DDLNode *node, int level)
                         unsigned int val = values->getUnsignedInt32();
                         fprintf(stdout, "uint32 %u ", val);
 
-                        if(val < 10) {
+                        if (val < 10) {
                             fprintf(stdout, " ");
                         }
 
@@ -194,22 +194,22 @@ float *OGEX_Resource::load_vertexbuffer(ODDLParser::DDLNode *node)
     float *buffer = nullptr;
     DataArrayList *array = node->getDataArrayList();
 
-    if(array) {
+    if (array) {
         size_t arraylen = array->size() * array->m_numItems;
         buffer = new float[arraylen];
         size_t i = 0;
         numVerts = array->size(); // should always be the same for all attributes
 
-        while(array != nullptr) {
+        while (array != nullptr) {
             Value *values = array->m_dataList;
 
-            if(values->m_type != Value::ddl_float) {
+            if (values->m_type != Value::ddl_float) {
                 lprintf(LOG_ERROR, "wrong datatype for VertexArray");
                 delete [] buffer;
                 return 0;
             }
 
-            while(values != nullptr) {
+            while (values != nullptr) {
                 buffer[i] = values->getFloat();
                 i++;
                 values = values->getNext();
@@ -220,15 +220,15 @@ float *OGEX_Resource::load_vertexbuffer(ODDLParser::DDLNode *node)
     } else {
         Value *values = node->getValue();
 
-        if(values) {
-            if(values->m_type == Value::ddl_float) {
+        if (values) {
+            if (values->m_type == Value::ddl_float) {
 
                 buffer = new float[values->size()];
                 values = node->getValue();
 
                 size_t i = 0;
 
-                while(values != nullptr) {
+                while (values != nullptr) {
                     buffer[i] = values->getFloat();
                     i++;
                     values = values->getNext();
@@ -245,22 +245,22 @@ unsigned int *OGEX_Resource::load_indexbuffer(ODDLParser::DDLNode *node)
     unsigned int *buffer = nullptr;
     DataArrayList *array = node->getDataArrayList();
 
-    if(array) {
+    if (array) {
         size_t arraylen = array->size() * array->m_numItems;
 
         buffer = new unsigned int[arraylen];
         size_t i = 0;
 
-        while(array != nullptr) {
+        while (array != nullptr) {
             Value *values = array->m_dataList;
 
-            if(values->m_type != Value::ddl_unsigned_int32) {
+            if (values->m_type != Value::ddl_unsigned_int32) {
                 lprintf(LOG_ERROR, "wrong datatype for Index buffer");
                 delete [] buffer;
                 return 0;
             }
 
-            while(values != nullptr) {
+            while (values != nullptr) {
                 buffer[i] = values->getUnsignedInt32();
                 i++;
                 values = values->getNext();
@@ -280,49 +280,49 @@ bool OGEX_Resource::load_GeometryObject(ODDLParser::DDLNode *node)
     using namespace ODDLParser;
     DDLNode *meshnode = node->getChildNodeList()[0];
 
-    for(DDLNode *n : meshnode->getChildNodeList()) {
-        if(strcmp(n->getType().c_str(), "VertexArray") == 0) {
+    for (DDLNode *n : meshnode->getChildNodeList()) {
+        if (strcmp(n->getType().c_str(), "VertexArray") == 0) {
             Property *prop = n->getProperties();
 
-            while(prop != nullptr) {
-                if(strcmp(prop->m_key->m_text.m_buffer, "attrib") == 0) {
-                    if(prop->m_value->m_type == Value::ddl_string) {
+            while (prop != nullptr) {
+                if (strcmp(prop->m_key->m_text.m_buffer, "attrib") == 0) {
+                    if (prop->m_value->m_type == Value::ddl_string) {
                         const char *attrib = prop->m_value->getString();
 
-                        if(strcmp(attrib, "position") == 0) {
+                        if (strcmp(attrib, "position") == 0) {
                             verts = load_vertexbuffer(n);
 
-                            if(verts == nullptr) {
+                            if (verts == nullptr) {
                                 return false;
                             }
-                        } else if(strcmp(attrib, "normal") == 0) {
+                        } else if (strcmp(attrib, "normal") == 0) {
                             normal_vb = load_vertexbuffer(n);
 
-                            if(normal_vb == nullptr) {
+                            if (normal_vb == nullptr) {
                                 return false;
                             }
-                        } else if(strcmp(attrib, "texcoord") == 0) {
+                        } else if (strcmp(attrib, "texcoord") == 0) {
                             uv_vb = load_vertexbuffer(n);
 
-                            if(uv_vb == nullptr) {
+                            if (uv_vb == nullptr) {
                                 return false;
                             }
-                        } else if(strcmp(attrib, "tangent") == 0) {
+                        } else if (strcmp(attrib, "tangent") == 0) {
                             tangent_vb = load_vertexbuffer(n);
 
-                            if(tangent_vb == nullptr) {
+                            if (tangent_vb == nullptr) {
                                 return false;
                             }
-                        } else if(strcmp(attrib, "binormalsign") == 0) {
+                        } else if (strcmp(attrib, "binormalsign") == 0) {
                             binormal_vb = load_vertexbuffer(n);
 
-                            if(binormal_vb == nullptr) {
+                            if (binormal_vb == nullptr) {
                                 return false;
                             }
-                        } else if(strcmp(attrib, "color") == 0) {
+                        } else if (strcmp(attrib, "color") == 0) {
                             color_vb = load_vertexbuffer(n);
 
-                            if(color_vb == nullptr) {
+                            if (color_vb == nullptr) {
                                 return false;
                             }
                         }
@@ -333,10 +333,10 @@ bool OGEX_Resource::load_GeometryObject(ODDLParser::DDLNode *node)
             }
         }
 
-        if(strcmp(n->getType().c_str(), "IndexArray") == 0) {
+        if (strcmp(n->getType().c_str(), "IndexArray") == 0) {
             indices = load_indexbuffer(n);
 
-            if(!indices) {
+            if (!indices) {
                 return false;
             }
         }
@@ -351,7 +351,7 @@ int OGEX_Resource::load(const char *filename)
     FILE *f = fopen(filename, "rb");
     lprintf(LOG_INFO, " opening file:%s", filename);
 
-    if(!f) {
+    if (!f) {
         lprintf(LOG_ERROR, "File not found:%s", filename);
         return 0;
     }
@@ -361,7 +361,7 @@ int OGEX_Resource::load(const char *filename)
     filesize = ftell(f);
     fseek(f, 0, SEEK_SET);
 
-    if(filesize == 0) {
+    if (filesize == 0) {
         lprintf(LOG_ERROR, "Empty file:%s", filename);
         fclose(f);
         return 0;
@@ -369,7 +369,7 @@ int OGEX_Resource::load(const char *filename)
 
     char *buffer = new char[filesize + 1];
 
-    if(buffer == nullptr) {
+    if (buffer == nullptr) {
         lprintf(LOG_ERROR, "Out of memory while loading:%s", filename);
         fclose(f);
         return 0;
@@ -393,17 +393,17 @@ int OGEX_Resource::load(const char *filename)
 
         success = ddlparser.parse();
 
-        if(success) {
+        if (success) {
             DDLNode *root = ddlparser.getRoot();
             //printsubnodes(root, 0);
             DDLNode::DllNodeList children = root->getChildNodeList();
 
-            for(size_t i = 0; i < children.size(); i++) {
+            for (size_t i = 0; i < children.size(); i++) {
 
                 DDLNode *child = children[i];
                 const char *type = child->getType().c_str();
 
-                if(strcmp(type, "GeometryObject") == 0) {
+                if (strcmp(type, "GeometryObject") == 0) {
                     success = load_GeometryObject(child);
                     break; // TODO: handle more than one GeometryObject
                 }
@@ -414,7 +414,7 @@ int OGEX_Resource::load(const char *filename)
 
     delete[] buffer;
 
-    if(!success) {
+    if (!success) {
         lprintf(LOG_ERROR, "something went wrong loading: %s", filename);
     } else {
         //writeObj(filename);
@@ -431,7 +431,7 @@ void OGEX_Resource::SetupGL()
     num_tris = numFaces;
     num_verts = numVerts;
 
-    for(unsigned int i = 0; i < numVerts; i += 3) {
+    for (unsigned int i = 0; i < numVerts; i += 3) {
         updateBoundingBox(glm::vec3(
                               verts[i],
                               verts[i + 1],
@@ -439,7 +439,7 @@ void OGEX_Resource::SetupGL()
                           ));
     }
 
-    if(indices) {
+    if (indices) {
         glBindBuffer(GL_ARRAY_BUFFER, indices_buffer);
         glBufferData(
             GL_ARRAY_BUFFER,
@@ -448,7 +448,7 @@ void OGEX_Resource::SetupGL()
             GL_STATIC_DRAW);
     }
 
-    if(verts) {
+    if (verts) {
         glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
         glBufferData(
             GL_ARRAY_BUFFER,
@@ -457,7 +457,7 @@ void OGEX_Resource::SetupGL()
             GL_STATIC_DRAW);
     }
 
-    if(normal_vb) {
+    if (normal_vb) {
         glBindBuffer(GL_ARRAY_BUFFER, normals_buffer);
         glBufferData(
             GL_ARRAY_BUFFER,
@@ -467,7 +467,7 @@ void OGEX_Resource::SetupGL()
         has_normals_buffer = true;
     }
 
-    if(tangent_vb) {
+    if (tangent_vb) {
         glBindBuffer(GL_ARRAY_BUFFER, tangent_buffer);
         glBufferData(
             GL_ARRAY_BUFFER,
@@ -477,7 +477,7 @@ void OGEX_Resource::SetupGL()
         has_tangent_buffer = true;
     }
 
-    if(binormal_vb) {
+    if (binormal_vb) {
         glBindBuffer(GL_ARRAY_BUFFER, binormals_buffer);
         glBufferData(
             GL_ARRAY_BUFFER,
@@ -487,7 +487,7 @@ void OGEX_Resource::SetupGL()
         has_binormals_buffer = true;
     }
 
-    if(color_vb) {
+    if (color_vb) {
         glBindBuffer(GL_ARRAY_BUFFER, color_buffer);
         glBufferData(
             GL_ARRAY_BUFFER,
@@ -497,7 +497,7 @@ void OGEX_Resource::SetupGL()
         has_color_buffer = true;
     }
 
-    if(uv_vb) {
+    if (uv_vb) {
         glBindBuffer(GL_ARRAY_BUFFER, uv_buffer);
         glBufferData(
             GL_ARRAY_BUFFER,
@@ -517,41 +517,41 @@ void OGEX_Resource::writeObj(const char *filename)
     snprintf(outputfilename, FILENAME_MAX, "%s.obj", filename);
     FILE *f = fopen(outputfilename, "wt");
 
-    if(!f) {
+    if (!f) {
         return;
     }
 
     fprintf(f, "#numFaces:%u\n", numFaces);
 
-    if(verts) {
-        for(size_t i = 0; i < numVerts; i++) {
+    if (verts) {
+        for (size_t i = 0; i < numVerts; i++) {
             size_t offset = i * 3;
             fprintf(f, "v %f %f %f\n", verts[offset], verts[offset + 1],
                     verts[offset + 2]);
         }
     }
 
-    if(normal_vb) {
-        for(size_t i = 0; i < numVerts; i++) {
+    if (normal_vb) {
+        for (size_t i = 0; i < numVerts; i++) {
             size_t offset = i * 3;
             fprintf(f, "vn %f %f %f\n", normal_vb[offset], normal_vb[offset + 1],
                     normal_vb[offset + 2]);
         }
     }
 
-    if(uv_vb) {
-        for(size_t i = 0; i < numVerts; i++) {
+    if (uv_vb) {
+        for (size_t i = 0; i < numVerts; i++) {
             size_t offset = i * 2;
             fprintf(f, "vt %f %f\n", uv_vb[offset], uv_vb[offset + 1]);
         }
     }
 
-    for(size_t i = 0; i < numFaces; i++) {
+    for (size_t i = 0; i < numFaces; i++) {
         size_t offset = i * 3;
 
         fprintf(f, "f ");
 
-        for(size_t j = 0; j < 3; j++) {
+        for (size_t j = 0; j < 3; j++) {
 
             char pospart[32]    = {0};
             char uvpart[32]     = {0};
@@ -561,15 +561,15 @@ void OGEX_Resource::writeObj(const char *filename)
             snprintf(uvpart, 32, "/%u", indices[index] + 1);
             snprintf(normalpart, 32, "/%u", indices[index] + 1);
 
-            if(!uv_vb && normal_vb) {
+            if (!uv_vb && normal_vb) {
                 snprintf(uvpart, 32, "/");
             }
 
-            if(!normal_vb) {
+            if (!normal_vb) {
                 normalpart[0] = 0;
             }
 
-            if(!uv_vb && !normal_vb) {
+            if (!uv_vb && !normal_vb) {
                 uvpart[0] = 0;
                 normalpart[0] = 0;
             }

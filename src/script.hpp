@@ -35,7 +35,7 @@ public:
     }
     void releaseRef()
     {
-        if(--ref_count == 0) {
+        if (--ref_count == 0) {
             delete this;
         }
     }

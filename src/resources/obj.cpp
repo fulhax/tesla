@@ -10,21 +10,21 @@ OBJ_Resource::OBJ_Resource()
 
 OBJ_Resource::~OBJ_Resource()
 {
-    if(data) {
+    if (data) {
         delete data;
     }
 }
 
 int OBJ_Resource::load(const char *filename)
 {
-    if(data) {
+    if (data) {
         delete data;
         data = 0;
     }
 
     obj *tmpObj = loadObj(filename);
 
-    if(tmpObj) {
+    if (tmpObj) {
 
         has_uv_buffer = tmpObj->uvs != nullptr;
         has_normals_buffer = tmpObj->normals != nullptr;
@@ -35,10 +35,10 @@ int OBJ_Resource::load(const char *filename)
         verts = new float[data->numverts * 3];
         unsigned int j = 0;
 
-        for(unsigned int i = 0; i < data->numverts * 3; i+=3) {
+        for (unsigned int i = 0; i < data->numverts * 3; i += 3) {
             verts[i] = data->verts[j].x;
-            verts[i+1] = data->verts[j].y;
-            verts[i+2] = data->verts[j].z;
+            verts[i + 1] = data->verts[j].y;
+            verts[i + 2] = data->verts[j].z;
 
             j++;
         }
@@ -53,7 +53,7 @@ int OBJ_Resource::load(const char *filename)
             data->verts,
             GL_STATIC_DRAW);
 
-        for(unsigned int i = 0; i < data->numverts; ++i) {
+        for (unsigned int i = 0; i < data->numverts; ++i) {
             updateBoundingBox(glm::vec3(
                                   data->verts[i].x,
                                   data->verts[i].y,
@@ -77,10 +77,10 @@ int OBJ_Resource::load(const char *filename)
         indices = new uint32_t[data->numfaces * 3];
         j = 0;
 
-        for(unsigned int i = 0; i < data->numfaces * 3; i+=3) {
+        for (unsigned int i = 0; i < data->numfaces * 3; i += 3) {
             indices[i] = data->faces[j].verts[0];
-            indices[i+1] = data->faces[j].verts[1];
-            indices[i+2] = data->faces[j].verts[2];
+            indices[i + 1] = data->faces[j].verts[1];
+            indices[i + 2] = data->faces[j].verts[2];
 
             j++;
         }

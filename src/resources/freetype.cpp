@@ -25,7 +25,7 @@ int FT_Resource::next_p2(int a)
 {
     int rval = 1;
 
-    while(rval < a) {
+    while (rval < a) {
         rval <<= 1;
     }
 
@@ -40,8 +40,8 @@ void FT_Resource::fillTextureData(uint32_t ch,
     uint32_t bmp_pos = 0;
     uint32_t tex_pos = 0;
 
-    for(uint32_t bmp_y = 0; bmp_y < glyphs[ch].height; bmp_y++) {
-        for(uint32_t bmp_x = 0; bmp_x < glyphs[ch].width; bmp_x++) {
+    for (uint32_t bmp_y = 0; bmp_y < glyphs[ch].height; bmp_y++) {
+        for (uint32_t bmp_x = 0; bmp_x < glyphs[ch].width; bmp_x++) {
             bmp_pos = 2 * (bmp_x + bmp_y * glyphs[ch].width);
             tex_pos = 2 * ((glyphs[ch].x + bmp_x) +
                            ((glyphs[ch].y + bmp_y) * MAX_TEXTURE_WIDTH));
@@ -60,25 +60,25 @@ int FT_Resource::load(const char *filename)
     char *size = 0;
     strtok_r(real_filename, ":", &size);
 
-    if(size) {
+    if (size) {
         max_height = atoi(size);
     }
 
-    if(max_height == 0) {
+    if (max_height == 0) {
         lprintf(LOG_WARNING, "No fontsize specified for ^g\"%s\"^0.", filename);
         return 0;
     }
 
     FT_Library library;
 
-    if(FT_Init_FreeType(&library) != 0) {
+    if (FT_Init_FreeType(&library) != 0) {
         lprintf(LOG_WARNING, "Failed to initialize freetype!");
         return 0;
     }
 
     FT_Face face;
 
-    if(FT_New_Face(library, real_filename, 0, &face)) {
+    if (FT_New_Face(library, real_filename, 0, &face)) {
 
         lprintf(
             LOG_WARNING,
@@ -91,8 +91,8 @@ int FT_Resource::load(const char *filename)
     int max_width = 0;
     int max_rows = 0;
 
-    for(uint32_t ch = 0; ch < NUMBER_OF_CHARS; ch++) {
-        if(FT_Load_Glyph(
+    for (uint32_t ch = 0; ch < NUMBER_OF_CHARS; ch++) {
+        if (FT_Load_Glyph(
                 face,
                 FT_Get_Char_Index(face, ch),
                 FT_LOAD_RENDER)) {
@@ -103,7 +103,7 @@ int FT_Resource::load(const char *filename)
 
         FT_Glyph glyph;
 
-        if(FT_Get_Glyph(face->glyph, &glyph)) {
+        if (FT_Get_Glyph(face->glyph, &glyph)) {
             lprintf(LOG_WARNING, "Unable to get glyph ^r\"%c\"^0", ch);
             return 0;
         }
@@ -121,8 +121,8 @@ int FT_Resource::load(const char *filename)
                               glyphs[ch].width *
                               glyphs[ch].height];
 
-        for(uint32_t y = 0; y < glyphs[ch].height; y++) {
-            for(uint32_t x = 0; x < glyphs[ch].width; x++) {
+        for (uint32_t y = 0; y < glyphs[ch].height; y++) {
+            for (uint32_t x = 0; x < glyphs[ch].width; x++) {
                 glyphs[ch].bitmap[2 * (x + y * glyphs[ch].width)] =
                     glyphs[ch].bitmap[2 * (x + y * glyphs[ch].width) + 1] =
                         (x >= bitmap.width || y >= bitmap.rows) ?
@@ -132,12 +132,12 @@ int FT_Resource::load(const char *filename)
 
         max_width += glyphs[ch].width;
 
-        if(max_width > MAX_TEXTURE_WIDTH - 1) {
+        if (max_width > MAX_TEXTURE_WIDTH - 1) {
             max_width = glyphs[ch].width;
             max_rows++;
         }
 
-        if(glyphs[ch].height > max_height) {
+        if (glyphs[ch].height > max_height) {
             max_height = glyphs[ch].height;
         }
 
@@ -153,7 +153,7 @@ int FT_Resource::load(const char *filename)
         MAX_TEXTURE_WIDTH *
         static_cast<int>(texture_height) * 2];
 
-    for(uint32_t ch = 0; ch < NUMBER_OF_CHARS; ch++) {
+    for (uint32_t ch = 0; ch < NUMBER_OF_CHARS; ch++) {
         glyphs[ch].y = max_height * glyphs[ch].row;
         fillTextureData(ch, texture_data);
 
@@ -236,12 +236,12 @@ TextData *FT_Resource::print(const std::string &in)
     int len = strlen(buffer);
     int advance = 0;
 
-    for(int c = 0; c < len; c++) {
+    for (int c = 0; c < len; c++) {
         int bc = static_cast<int>(buffer[c]);
 
         advance += glyphs[bc].advance;
 
-        for(int i = 0; i < 4; i++) {
+        for (int i = 0; i < 4; i++) {
             glm::vec2 pos =
                 glm::vec2(
                     glyphs[bc].left + advance + glyphs[bc].v[i].x,

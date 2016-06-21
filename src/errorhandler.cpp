@@ -7,7 +7,7 @@
 #ifdef __linux__
 int scolor(char *out, int attr, int fg, int bg = -1)
 {
-    if(bg != -1) {
+    if (bg != -1) {
         snprintf(out, MAX_STRLEN, "%c[%d;%d;%dm", 0x1B, attr, fg + 30, bg + 40);
     } else {
         snprintf(out, MAX_STRLEN, "%c[%d;%dm", 0x1B, attr, fg + 30);
@@ -37,13 +37,13 @@ void cfprintf(FILE *f, const char *fo, ...)
     vsprintf(in, fo, args);
     va_end(args);
 
-    for(char *at = in; *at != '\0'; at++) {
-        if(*at == '^') {
+    for (char *at = in; *at != '\0'; at++) {
+        if (*at == '^') {
             at++;
 
             #ifdef __linux__
 
-            switch(*at) {
+            switch (*at) {
                 case '0':
                     ao += ccolor(&out[ao]);
                     break;
@@ -100,7 +100,7 @@ void lprintf(logType t, const char *f, ...)
 
     vsprintf(output, f, args);
 
-    switch(t) {
+    switch (t) {
         case LOG_INFO:
             cfprintf(stdout, "^0[^gINFO^0]    %s\n", output);
             break;
