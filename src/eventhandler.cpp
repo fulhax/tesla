@@ -28,17 +28,50 @@ const Event *EventHandler::poll()
 
     if (ev != events.end()) {
         out = ev[0];
+
+        if (ev->keep == true) {
+            keptevents.push_back(out);
+        }
+
         events.erase(ev);
+
         return &out;
     }
 
     return nullptr;
 }
 
-void EventHandler::trigger(const std::string &event, const std::string &data)
+void EventHandler::update()
 {
+    auto it = std::next(keptevents.begin(), keptevents.size());
+    std::move(keptevents.begin(), it, std::back_inserter(events));
+    keptevents.erase(keptevents.begin(), it);
+}
+
+void EventHandler::untrigger(const std::string &event)
+{
+    for (auto ev = events.begin(); ev != events.end(); ++ev) {
+        if (ev->event == event) {
+            events.erase(ev);
+            return;
+        }
+    }
+}
+
+void EventHandler::trigger(const std::string &event, const std::string &data,
+                           bool keep)
+{
+    if (keep) {
+        for (auto ev : events) {
+            if (ev.event == event) {
+                return;
+            }
+        }
+    }
+
     events.push_back({
         event,
-        data
+        data,
+        keep
     });
 }

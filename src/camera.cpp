@@ -48,8 +48,6 @@ void Camera::moveForward(const float &speed)
     pos.x += sinf(yrad) * s;
     pos.y -= sinf(xrad) * s;
     pos.z -= cosf(yrad) * s;
-
-    printf("camera: %f,%f,%f, %f\n", pos.x, pos.y, pos.z, s);
 }
 
 void Camera::moveBackwards(const float &speed)

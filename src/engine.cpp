@@ -168,7 +168,25 @@ void Engine::handleEvents()
                     event.key.keysym.sym
                 );
 
-                events.trigger(config.getString(key, "action.trigger"));
+                events.trigger(
+                    config.getString(key, "action.trigger"),
+                    "1",
+                    true
+                );
+
+                break;
+            }
+
+            case SDL_KEYUP: {
+                char key[64] = {0};
+                snprintf(
+                    key,
+                    sizeof(key),
+                    "input.keyboard.%c",
+                    event.key.keysym.sym
+                );
+
+                events.untrigger(config.getString(key, "action.trigger"));
 
                 break;
             }
@@ -264,6 +282,7 @@ void Engine::update()
         }
     }
 
+    events.update();
     video.swap();
 
     ctime = SDL_GetPerformanceCounter();
