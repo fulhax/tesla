@@ -47,7 +47,7 @@ void Ui::drawRect(int x, int y, int w, int h, glm::vec3 color)
     static Shader shader;
     static bool first = true;
 
-    if(first) {
+    if (first) {
         shader.attach("shaders/ui.frag");
         shader.attach("shaders/ui.vert");
         first = false;
@@ -58,7 +58,7 @@ void Ui::drawRect(int x, int y, int w, int h, glm::vec3 color)
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    if(shader.use()) {
+    if (shader.use()) {
         shader.setUniform("in_UiPos", glm::vec2(x + halfw, y + halfh));
         shader.setUniform("in_Color", glm::vec4(color, 1));
         shader.setUniform("in_OrthoMatrix", engine.video.OrthoMat);
@@ -123,7 +123,7 @@ void Ui::print(const std::string &fontfile, int x, int y,
     static Shader shader;
     static bool first = true;
 
-    if(first) {
+    if (first) {
         shader.attach("shaders/font.frag");
         shader.attach("shaders/font.vert");
         first = false;
@@ -134,15 +134,15 @@ void Ui::print(const std::string &fontfile, int x, int y,
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    if(shader.use()) {
+    if (shader.use()) {
         FontResource *font = engine.resources.getFont(fontfile.c_str());
 
-        if(font) {
-            if(!vertex_buffer) {
+        if (font) {
+            if (!vertex_buffer) {
                 glGenBuffers(1, &vertex_buffer);
             }
 
-            if(!uv_buffer) {
+            if (!uv_buffer) {
                 glGenBuffers(1, &uv_buffer);
             }
 

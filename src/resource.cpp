@@ -36,7 +36,7 @@ ResourceHandler::~ResourceHandler()
 {
     lprintf(LOG_INFO, "Shutting down resourcehandler");
 
-    for(auto res : resources) {
+    for (auto res : resources) {
         lprintf(LOG_INFO, "Unloading ^g\"%s\"^0.", res.first.c_str());
         delete res.second;
     }
@@ -49,19 +49,19 @@ Resource *ResourceHandler::getByType(const char *ext)
     Resource *res = nullptr;
     char *post = const_cast<char *>(strrchr(ext, ':'));
 
-    if(post) {
+    if (post) {
         post[0] = 0;
     }
 
-    if(strcmp("tga", ext) == 0) {
+    if (strcmp("tga", ext) == 0) {
         res = new TGA_Resource;
-    } else if(strcmp("png", ext) == 0) {
+    } else if (strcmp("png", ext) == 0) {
         res = new PNG_Resource;
-    } else if(strcmp("obj", ext) == 0) {
+    } else if (strcmp("obj", ext) == 0) {
         res = new OBJ_Resource;
-    } else if(strcmp("ogex", ext) == 0) {
+    } else if (strcmp("ogex", ext) == 0) {
         res = new OGEX_Resource;
-    } else if(
+    } else if (
         strcmp("vs", ext) == 0 ||
         strcmp("vert", ext) == 0 ||
         strcmp("gs", ext) == 0 ||
@@ -72,11 +72,11 @@ Resource *ResourceHandler::getByType(const char *ext)
         strcmp("frag", ext) == 0
     ) {
         res = new GLSL_Resource;
-    } else if(strcmp("as", ext) == 0) {
+    } else if (strcmp("as", ext) == 0) {
         res = new AS_Resource;
-    } else if(strcmp("ogg", ext) == 0) {
+    } else if (strcmp("ogg", ext) == 0) {
         res = new OGG_Resource;
-    } else if(
+    } else if (
         strcmp("ttf", ext) == 0 ||
         strcmp("otf", ext) == 0
     ) {
@@ -85,7 +85,7 @@ Resource *ResourceHandler::getByType(const char *ext)
         lprintf(LOG_ERROR, "Unrecognized file format ^g%s^0", ext);
     }
 
-    if(post) {
+    if (post) {
         post[0] = ':';
     }
 
@@ -121,17 +121,17 @@ void ResourceHandler::update()
 {
     auto check = notify.checkForChanges();
 
-    for(auto changes : check) {
+    for (auto changes : check) {
         auto res = resources.lower_bound(changes.first);
 
         std::vector<std::string> files;
 
-        while(res != resources.end()) {
+        while (res != resources.end()) {
             int partial = strncmp(res->first.c_str(),
                                   changes.first.c_str(),
                                   changes.first.length());
 
-            if(partial == 0) {
+            if (partial == 0) {
                 lprintf(LOG_INFO, "Unloading ^g\"%s\"^0.", res->first.c_str());
                 delete res->second;
                 files.push_back(res->first);
@@ -142,8 +142,8 @@ void ResourceHandler::update()
             }
         }
 
-        if(files.size() > 0) {
-            for(auto file : files) {
+        if (files.size() > 0) {
+            for (auto file : files) {
                 getResource(file.c_str());
             }
         }
@@ -181,7 +181,7 @@ ShaderResource *ResourceHandler::getShader(
 {
     ShaderResource *s = reinterpret_cast<ShaderResource *>(getResource(filename));
 
-    if(s) {
+    if (s) {
         s->parents.push_back(parent);
     }
 
@@ -196,7 +196,7 @@ bool ResourceHandler::fileExists(const char *filename)
     char *size = 0;
     strtok_r(real_filename, ":", &size);
 
-    if(access(real_filename, F_OK) < 0) {
+    if (access(real_filename, F_OK) < 0) {
         return 0;
     }
 
@@ -207,8 +207,8 @@ Resource *ResourceHandler::getResource(const char *filename)
 {
     auto res = resources.find(filename);
 
-    if(res != resources.end()) {
-        if(res->second->failed) {
+    if (res != resources.end()) {
+        if (res->second->failed) {
             return nullptr;
         }
 
@@ -218,10 +218,10 @@ Resource *ResourceHandler::getResource(const char *filename)
     char fullpath[FILENAME_MAX];
     snprintf(fullpath, FILENAME_MAX, "%s/%s", datapath, filename);
 
-    if(!fileExists(fullpath)) {
+    if (!fileExists(fullpath)) {
         snprintf(fullpath, FILENAME_MAX, "%s/%s", enginepath, filename);
 
-        if(!fileExists(fullpath)) {
+        if (!fileExists(fullpath)) {
             lprintf(LOG_WARNING, "File not found ^g\"%s\"^0!", filename);
             resources[filename] = new Resource;
             return nullptr;
@@ -230,11 +230,11 @@ Resource *ResourceHandler::getResource(const char *filename)
 
     const char *ext = strrchr(fullpath, '.') + 1;
 
-    if(ext) {
+    if (ext) {
         Resource *res = getByType(ext);
 
-        if(res) {
-            if(res->load(fullpath)) {
+        if (res) {
+            if (res->load(fullpath)) {
                 lprintf(LOG_INFO, "^g\"%s\"^0 loaded.", filename);
                 res->failed = false;
                 resources[filename] = res;
@@ -256,12 +256,12 @@ Resource *ResourceHandler::getResource(const char *filename)
 
 void ModelResource::updateBoundingBox(glm::vec3 vertex)
 {
-    for(int i = 0; i < 3; i++) {
-        if(vertex[i] < bounding_box.min[i]) {
+    for (int i = 0; i < 3; i++) {
+        if (vertex[i] < bounding_box.min[i]) {
             bounding_box.min[i] = vertex[i];
         }
 
-        if(vertex[i] > bounding_box.max[i]) {
+        if (vertex[i] > bounding_box.max[i]) {
             bounding_box.max[i] = vertex[i];
         }
     }

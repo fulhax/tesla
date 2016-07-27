@@ -93,13 +93,13 @@ public:
     }
     ~ShaderResource()
     {
-        for(auto p : parents) {
+        for (auto p : parents) {
             p->unload();
         }
 
         parents.clear();
 
-        if(handle) {
+        if (handle) {
             glDeleteShader(handle);
         }
     }
@@ -162,11 +162,11 @@ public:
     }
     ~ModelResource()
     {
-        if(verts != 0) {
+        if (verts != 0) {
             delete [] verts;
         }
 
-        if(indices != 0) {
+        if (indices != 0) {
             delete [] indices;
         }
 
@@ -192,7 +192,7 @@ public:
     }
     ~ScriptResource()
     {
-        if(module) {
+        if (module) {
             module->Discard();
         }
     }

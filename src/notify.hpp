@@ -5,7 +5,7 @@
 #include <string>
 
 #ifdef _WIN32
-struct notify_directory;
+    struct notify_directory;
 #endif
 
 

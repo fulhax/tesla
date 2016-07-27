@@ -26,7 +26,7 @@ const Event *EventHandler::poll()
 
     auto ev = events.begin();
 
-    if(ev != events.end()) {
+    if (ev != events.end()) {
         out = ev[0];
         events.erase(ev);
         return &out;

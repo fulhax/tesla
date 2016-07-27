@@ -17,15 +17,15 @@ Audio::~Audio()
     alDeleteSources(max_sources, sources);
     lprintf(LOG_INFO, "Shutting down audio");
 
-    if(sources) {
+    if (sources) {
         delete [] sources;
     }
 
-    if(context) {
+    if (context) {
         alcDestroyContext(context);
     }
 
-    if(device) {
+    if (device) {
         alcCloseDevice(device);
     }
 }
@@ -34,19 +34,19 @@ int Audio::init()
 {
     device = alcOpenDevice(nullptr);
 
-    if(!device) {
+    if (!device) {
         lprintf(LOG_ERROR, "Failed to open audio device!");
         return 1;
     }
 
     context = alcCreateContext(device, nullptr);
 
-    if(!context) {
+    if (!context) {
         lprintf(LOG_ERROR, "Could not create OpenAL context!");
         return 1;
     }
 
-    if(alcMakeContextCurrent(context) == ALC_FALSE) {
+    if (alcMakeContextCurrent(context) == ALC_FALSE) {
         lprintf(LOG_ERROR, "Unable to make context current!");
         return 1;
     }
@@ -62,7 +62,7 @@ int Audio::init()
 
 void Audio::update(Camera *camera) const
 {
-    if(device && context) {
+    if (device && context) {
         alListener3f(
             AL_POSITION,
             camera->pos.x,
@@ -79,11 +79,11 @@ void Audio::update(Camera *camera) const
 
 bool Audio::isPlaying(uint32_t source) const
 {
-    if(!device || !context || !sources) {
+    if (!device || !context || !sources) {
         return false;
     }
 
-    if(source > max_sources) {
+    if (source > max_sources) {
         return false;
     }
 
@@ -95,27 +95,27 @@ bool Audio::isPlaying(uint32_t source) const
 
 int Audio::play(const char *filename, glm::vec3 position)
 {
-    if(!device || !context) {
+    if (!device || !context) {
         return -1;
     }
 
     SoundResource *s = engine.resources.getSound(filename);
 
-    if(s) {
+    if (s) {
         int curr_source = -1;
         int state;
 
-        for(uint8_t i = 0; i < max_sources; i++) {
+        for (uint8_t i = 0; i < max_sources; i++) {
             alGetSourcei(sources[i], AL_SOURCE_STATE, &state);
 
-            if(state != AL_PLAYING) {
+            if (state != AL_PLAYING) {
                 curr_source = sources[i];
                 break;
             }
         }
 
         //printf("curr:%d\n", curr_source);
-        if(curr_source == -1) {
+        if (curr_source == -1) {
             lprintf(LOG_WARNING, "No free audio sources!");
             return -1;
         }

@@ -23,7 +23,7 @@ public:
     glm::mat4 ViewMat;
 
     int init();
-    void update(Camera* camera);
+    void update(Camera *camera);
     void resize(int width, int height);
     void swap();
 

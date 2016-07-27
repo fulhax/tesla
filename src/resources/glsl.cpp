@@ -29,27 +29,27 @@ int GLSL_Resource::load(const char *filename)
     int num_ext = sizeof(extensions) / sizeof(shader_file_extension);
     const char *ext = strrchr(filename, '.');
 
-    if(!ext) {
+    if (!ext) {
         return 0;
     }
 
     uint32_t type = 0;
 
-    for(int i = 0; i < num_ext; i++) {
-        if(strcmp(ext, extensions[i].ext) == 0) {
+    for (int i = 0; i < num_ext; i++) {
+        if (strcmp(ext, extensions[i].ext) == 0) {
             type = extensions[i].type;
             break;
         }
     }
 
-    if(type == 0) {
+    if (type == 0) {
         lprintf(LOG_ERROR, "Unrecognized extension ^g%s^0", ext);
         return 0;
     }
 
     FILE *file = fopen(filename, "rb");
 
-    if(file == NULL) {
+    if (file == NULL) {
         lprintf(LOG_ERROR, "Unable to open ^g\"%s\"^0", filename);
         return 0;
     }
@@ -59,7 +59,7 @@ int GLSL_Resource::load(const char *filename)
     char *code = new char[size + 1];
     fseek(file, 0, SEEK_SET);
 
-    if(!fread(code, size, 1, file)) {
+    if (!fread(code, size, 1, file)) {
         lprintf(LOG_ERROR, "Unable to read ^g\"%s\"^0", filename);
         delete [] code;
         fclose(file);
@@ -79,11 +79,11 @@ int GLSL_Resource::load(const char *filename)
     int result;
     glGetShaderiv(handle, GL_COMPILE_STATUS, &result);
 
-    if(result == GL_FALSE) {
+    if (result == GL_FALSE) {
         int length = 0;
         glGetShaderiv(handle, GL_INFO_LOG_LENGTH, &length);
 
-        if(length > 0) {
+        if (length > 0) {
             char *log = new char[length];
             int written = 0;
             glGetShaderInfoLog(handle, length, &written, log);

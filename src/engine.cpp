@@ -14,7 +14,7 @@ Engine::Engine()
     memset(msframe, 0, NUM_MSFRAMES * sizeof(float));
     currframe = 0;
 
-    for(int i = 0; i < MAX_MOUSEBUTTONS; i++) {
+    for (int i = 0; i < MAX_MOUSEBUTTONS; i++) {
         mouse[i] = false;
     }
 }
@@ -33,7 +33,7 @@ float Engine::getMS() const
 {
     float sum = 0;
 
-    for(int i = 0; i < NUM_MSFRAMES; i++) {
+    for (int i = 0; i < NUM_MSFRAMES; i++) {
         sum += msframe[i];
     }
 
@@ -58,7 +58,7 @@ int Engine::spawnEntity(const std::string &name, const glm::vec3 &pos,
 {
     auto type = entityTypes.find(name);
 
-    if(type == entityTypes.end()) {
+    if (type == entityTypes.end()) {
         lprintf(LOG_WARNING, "Unknown entity type ^g\"%s\"^0", name.c_str());
         return -1;
     }
@@ -74,7 +74,7 @@ int Engine::init()
 {
     int ret = SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS);
 
-    if(ret != 0) {
+    if (ret != 0) {
         lprintf(LOG_ERROR, "Failed to init SDL");
         return 1;
     }
@@ -85,12 +85,12 @@ int Engine::init()
     audio.init();
     physics.init();
 
-    if(script.init() != 0) {
+    if (script.init() != 0) {
         running = false;
         return 1;
     }
 
-    if(video.init() != 0) {
+    if (video.init() != 0) {
         running = false;
         return 1;
     }
@@ -99,7 +99,7 @@ int Engine::init()
 
     ScriptResource *s = engine.resources.getScript("main.as");
 
-    if(s) {
+    if (s) {
         script.run(s, "void init()");
     } else {
         lprintf(LOG_WARNING, "Main script not found, shutting down.");
@@ -116,7 +116,7 @@ int Engine::init()
 
 void Engine::shutdown()
 {
-    for(auto e : entities) {
+    for (auto e : entities) {
         delete e;
     }
 
@@ -131,10 +131,10 @@ void Engine::handleEvents()
 {
     SDL_Event event;
 
-    while(SDL_PollEvent(&event)) {
-        switch(event.type) {
+    while (SDL_PollEvent(&event)) {
+        switch (event.type) {
             case SDL_WINDOWEVENT: {
-                if(event.window.event == SDL_WINDOWEVENT_RESIZED) {
+                if (event.window.event == SDL_WINDOWEVENT_RESIZED) {
                     video.resize(event.window.data1, event.window.data2);
                 }
 
@@ -142,7 +142,7 @@ void Engine::handleEvents()
             }
 
             case SDL_MOUSEMOTION: {
-                if(event.motion.xrel != 0) {
+                if (event.motion.xrel != 0) {
                     events.trigger(config.getString(
                                        "input.mouse.x",
                                        "camera.yaw"),
@@ -150,7 +150,7 @@ void Engine::handleEvents()
                                        event.motion.xrel));
                 }
 
-                if(event.motion.yrel != 0) {
+                if (event.motion.yrel != 0) {
                     events.trigger(config.getString(
                                        "input.mouse.y",
                                        "camera.pitch"),
@@ -177,8 +177,8 @@ void Engine::handleEvents()
         }
     }
 
-    for(int i = 0; i < MAX_MOUSEBUTTONS; i++) {
-        if(mouse[i]) {
+    for (int i = 0; i < MAX_MOUSEBUTTONS; i++) {
+        if (mouse[i]) {
             char button[64] = {0};
             snprintf(button, 64, "input.mouse.button%d", i);
             events.trigger(config.getString(button, "action.trigger"));
@@ -200,7 +200,7 @@ void Engine::update()
     static float fpstimer = 0;
     static float mtime = time;
 
-    if(fpstimer >= 1.f) {
+    if (fpstimer >= 1.f) {
         fps = countfps;
         countfps = 0;
         fpstimer = time;
@@ -216,14 +216,14 @@ void Engine::update()
     mtime += time;
 
 
-    for(auto e : entities) {
+    for (auto e : entities) {
         e->draw(video.ProjMat, video.ViewMat);
     }
 
     script.run(s, "void draw()");
     ui.update();
 
-    while(mtime >= EngineTick) {
+    while (mtime >= EngineTick) {
         mtime -= EngineTick;
 
         handleEvents();
@@ -236,13 +236,13 @@ void Engine::update()
 
         script.run(s, "void update()");
 
-        for(auto e : entities) {
+        for (auto e : entities) {
             e->update();
         }
 
         physics.update();
 
-        while(events.count()) {
+        while (events.count()) {
             const Event *ev = events.poll();
 
             lprintf(

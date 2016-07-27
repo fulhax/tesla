@@ -1,7 +1,7 @@
 #include "notify.hpp"
 
 #ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
+    #define WIN32_LEAN_AND_MEAN
 #endif
 #include <windows.h>
 #include "errorhandler.hpp"
@@ -18,7 +18,7 @@ Notify::Notify()
 }
 Notify::~Notify()
 {
-    for(auto watch : watchers) {
+    for (auto watch : watchers) {
         CloseHandle(watch.first);
     }
 
@@ -38,7 +38,7 @@ void Notify::watchDir(const char *dirname, bool recursive)
                               FILE_FLAG_BACKUP_SEMANTICS,
                               nullptr);
 
-    if(watch != nullptr) {
+    if (watch != nullptr) {
         watchers[watch].dir_name = dirname;
         watchers[watch].recursive = recursive;
         watchers[watch].handle = FindFirstChangeNotification(dirname, true,
@@ -51,7 +51,7 @@ std::map<std::string, std::string> Notify::checkForChanges()
 {
     std::map<std::string, std::string> output;
 
-    for(auto watch : watchers) {
+    for (auto watch : watchers) {
         HANDLE watchhandle = watch.first;
         notify_directory &dir = watchers[watchhandle];
         HANDLE waitHandle = watchers[watchhandle].handle;
@@ -61,16 +61,16 @@ std::map<std::string, std::string> Notify::checkForChanges()
 
         DWORD wait = WaitForMultipleObjects(1, &waitHandle, false, 0);
 
-        if(wait == WAIT_OBJECT_0) {
-            if(ReadDirectoryChangesW(watchhandle, (LPVOID)&strFileNotifyInfo,
-                                     sizeof(strFileNotifyInfo),
-                                     TRUE,
-                                     FILE_NOTIFY_CHANGE_LAST_WRITE,
-                                     &dwBytesReturned,
-                                     nullptr,
-                                     nullptr) != 0) {
+        if (wait == WAIT_OBJECT_0) {
+            if (ReadDirectoryChangesW(watchhandle, (LPVOID)&strFileNotifyInfo,
+                                      sizeof(strFileNotifyInfo),
+                                      TRUE,
+                                      FILE_NOTIFY_CHANGE_LAST_WRITE,
+                                      &dwBytesReturned,
+                                      nullptr,
+                                      nullptr) != 0) {
 
-                if(strFileNotifyInfo[0].Action == FILE_ACTION_MODIFIED) {
+                if (strFileNotifyInfo[0].Action == FILE_ACTION_MODIFIED) {
                     char fullpath[FILENAME_MAX] = {0};
                     char filename[FILENAME_MAX] = {0};
                     wcstombs(filename,
@@ -82,18 +82,18 @@ std::map<std::string, std::string> Notify::checkForChanges()
                              filename
                             );
 
-                    for(char &l : fullpath) {
-                        if(l == '\\') {
+                    for (char &l : fullpath) {
+                        if (l == '\\') {
                             l = '/';
-                        } else if(l == 0) {
+                        } else if (l == 0) {
                             break;
                         }
                     }
 
-                    for(char &l : filename) {
-                        if(l == '\\') {
+                    for (char &l : filename) {
+                        if (l == '\\') {
                             l = '/';
-                        } else if(l == 0) {
+                        } else if (l == 0) {
                             break;
                         }
                     }
@@ -105,7 +105,7 @@ std::map<std::string, std::string> Notify::checkForChanges()
 
             HANDLE newhandle = nullptr;
 
-            if(FindNextChangeNotification(&newhandle) != 0) {
+            if (FindNextChangeNotification(&newhandle) != 0) {
                 watchers[watchhandle].handle = newhandle;
             } else {
 

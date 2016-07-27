@@ -19,14 +19,14 @@ Notify::Notify()
 {
     inotify = inotify_init1(IN_NONBLOCK);
 
-    if(inotify < 0) {
+    if (inotify < 0) {
         lprintf(LOG_WARNING, "Failed to start inotify!");
     }
 }
 
 Notify::~Notify()
 {
-    for(auto watch : watchers) {
+    for (auto watch : watchers) {
         inotify_rm_watch(inotify, watch.first);
     }
 
@@ -49,16 +49,16 @@ void Notify::watchDir(const char *dirname, bool recursive)
 
     lprintf(LOG_INFO, "Watching %s for filechanges", dirname);
 
-    if((dh = opendir(dirname)) == NULL) {
+    if ((dh = opendir(dirname)) == NULL) {
         lprintf(LOG_ERROR, "Could not open directory ^g\"%s\"^0", dirname);
         return;
     }
 
-    while((entry = readdir(dh)) != NULL) {
-        if(strncmp(entry->d_name, "..", 2) != 0 &&
+    while ((entry = readdir(dh)) != NULL) {
+        if (strncmp(entry->d_name, "..", 2) != 0 &&
             strncmp(entry->d_name, ".", 1) != 0) {
 
-            if(entry->d_type == DT_DIR) {
+            if (entry->d_type == DT_DIR) {
                 snprintf(
                     fullpath,
                     FILENAME_MAX,
@@ -66,7 +66,7 @@ void Notify::watchDir(const char *dirname, bool recursive)
                     dirname,
                     entry->d_name);
 
-                if(recursive) {
+                if (recursive) {
                     watchDir(fullpath);
                 }
             }
@@ -84,13 +84,13 @@ std::map<std::string, std::string> Notify::checkForChanges()
     do {
         length = read(inotify, buffer, BUF_LEN);
 
-        if(length < 0) {
+        if (length < 0) {
             break;
         }
 
         inotify_event *event = reinterpret_cast<inotify_event *>(&buffer[i]);
 
-        if(event->mask & IN_CLOSE_WRITE || event->mask & IN_MOVED_TO) {
+        if (event->mask & IN_CLOSE_WRITE || event->mask & IN_MOVED_TO) {
             char fullpath[FILENAME_MAX];
             bool subdir = true;
 
@@ -102,14 +102,14 @@ std::map<std::string, std::string> Notify::checkForChanges()
                           engine.resources.datapath,
                           strlen(engine.resources.datapath));
 
-            if(cmp == 0) {
-                if(strlen(path) == strlen(engine.resources.datapath)) {
+            if (cmp == 0) {
+                if (strlen(path) == strlen(engine.resources.datapath)) {
                     subdir = false;
                 } else {
                     path += strlen(engine.resources.datapath) + 1;
                 }
             } else {
-                if(strlen(path) == strlen(engine.resources.enginepath)) {
+                if (strlen(path) == strlen(engine.resources.enginepath)) {
                     subdir = false;
                 } else {
                     path += strlen(engine.resources.enginepath) + 1;
@@ -123,7 +123,7 @@ std::map<std::string, std::string> Notify::checkForChanges()
                 watch.c_str(),
                 event->name);
 
-            if(subdir) {
+            if (subdir) {
                 char filename[FILENAME_MAX];
 
                 snprintf(
@@ -140,7 +140,7 @@ std::map<std::string, std::string> Notify::checkForChanges()
         }
 
         i += EVENT_SIZE + event->len;
-    } while(i < length);
+    } while (i < length);
 
     return output;
 }

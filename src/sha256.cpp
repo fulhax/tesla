@@ -41,13 +41,13 @@ void transform_sha256(sha256 *sha)
 {
     unsigned int a, b, c, d, e, f, g, h, m[64] = {0};
 
-    for(unsigned int i = 0; i < 16; i++) {
+    for (unsigned int i = 0; i < 16; i++) {
         unsigned int j = i * 4;
         m[i] = (sha->data[j] << 24) | (sha->data[j + 1] << 16) |
                (sha->data[j + 2] << 8) | (sha->data[j + 3]);
     }
 
-    for(unsigned int i = 16; i < 64; i++) {
+    for (unsigned int i = 16; i < 64; i++) {
         unsigned int s0 = (rotate_bits(m[i - 15], 7)) ^ (rotate_bits(m[i - 15],
                           18)) ^ (m[i - 15] >> 3);
         unsigned int s1 = (rotate_bits(m[i - 2], 17)) ^ (rotate_bits(m[i - 2],
@@ -64,7 +64,7 @@ void transform_sha256(sha256 *sha)
     g = sha->hash[6];
     h = sha->hash[7];
 
-    for(unsigned int i = 0; i < 64; i++) {
+    for (unsigned int i = 0; i < 64; i++) {
         unsigned int S1   = (rotate_bits(e, 6)) ^ (rotate_bits(e,
                             11)) ^ (rotate_bits(e, 25));
         unsigned int ch   = (e & f) ^ ((~e) & g);
@@ -96,11 +96,11 @@ void transform_sha256(sha256 *sha)
 
 void update_sha256(unsigned char *buffer, size_t len, sha256 *sha)
 {
-    for(size_t i = 0; i < len; i++) {
+    for (size_t i = 0; i < len; i++) {
         sha->data[sha->datalen] = buffer[i];
         sha->datalen++;
 
-        if(sha->datalen == 64) {
+        if (sha->datalen == 64) {
             transform_sha256(sha);
             sha->bits += 512;
             sha->datalen = 0;
@@ -110,11 +110,11 @@ void update_sha256(unsigned char *buffer, size_t len, sha256 *sha)
 
 void final_sha256(sha256 *sha) // pads the buffer to the right length
 {
-    if(sha->datalen < 56) {
+    if (sha->datalen < 56) {
         unsigned int i = sha->datalen;
         sha->data[i++] = 0x80;
 
-        while(i < 56) {
+        while (i < 56) {
             sha->data[i++] = 0;
         }
     } else {
@@ -122,13 +122,13 @@ void final_sha256(sha256 *sha) // pads the buffer to the right length
         sha->data[i] = 0x80;
         i++;
 
-        while(i < 64) {
+        while (i < 64) {
             sha->data[i++] = 0;
         }
 
         transform_sha256(sha);
 
-        for(i = 0; i < 56; i++) {
+        for (i = 0; i < 56; i++) {
             sha->data[i] = 0;
         }
     }
@@ -153,7 +153,7 @@ void calculate_sha256(void *buffer, size_t len, unsigned char *result)
     update_sha256((unsigned char *)buffer, len, &sha);
     final_sha256(&sha);
 
-    for(unsigned int i = 0; i < 4; ++i) { // change endianness
+    for (unsigned int i = 0; i < 4; ++i) { // change endianness
         result[i]      = (sha.hash[0] >> (24 - i * 8)) & 0x000000ff;
         result[i + 4]  = (sha.hash[1] >> (24 - i * 8)) & 0x000000ff;
         result[i + 8]  = (sha.hash[2] >> (24 - i * 8)) & 0x000000ff;

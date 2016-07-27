@@ -30,21 +30,21 @@ int Video::init()
                   &window,
                   &renderer);
 
-    if(ret != 0) {
+    if (ret != 0) {
         lprintf(LOG_ERROR, "Failed to create SDL window!");
         return 1;
     }
 
     context = SDL_GL_CreateContext(window);
 
-    if(!context) {
+    if (!context) {
         lprintf(LOG_ERROR, "Failed to create OpenGL context!");
         return 1;
     }
 
     SDL_GetRendererInfo(renderer, &ri);
 
-    if(!(ri.flags & SDL_RENDERER_ACCELERATED) ||
+    if (!(ri.flags & SDL_RENDERER_ACCELERATED) ||
         !(ri.flags & SDL_RENDERER_TARGETTEXTURE)) {
 
         lprintf(LOG_ERROR, "Unsupported hardware!");
@@ -53,12 +53,12 @@ int Video::init()
 
     #ifdef _WIN32
 
-    if(gl3wInit()) {
+    if (gl3wInit()) {
         lprintf(LOG_ERROR, "Failed to initialize OpenGL!");
         return 1;
     }
 
-    if(!gl3wIsSupported(3, 2)) {
+    if (!gl3wIsSupported(3, 2)) {
         lprintf(LOG_ERROR, "OpenGL 3.2 not supported!");
         return 1;
     }
@@ -119,13 +119,13 @@ void Video::checkOpenGLErrors()
 {
     GLenum err = glGetError();
 
-    while(err != GL_NO_ERROR) {
+    while (err != GL_NO_ERROR) {
         lprintf(LOG_ERROR, "OpenGL: %s (%i)", gluErrorString(err), err);
         err = glGetError();
     }
 }
 
-void Video::update(Camera* camera)
+void Video::update(Camera *camera)
 {
     checkOpenGLErrors();
 
