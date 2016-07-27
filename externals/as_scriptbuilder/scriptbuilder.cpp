@@ -4,14 +4,14 @@
 #include <stdio.h>
 
 #if defined(_MSC_VER) && !defined(_WIN32_WCE) && !defined(__S3E__)
-#include <direct.h>
+    #include <direct.h>
 #endif
 #ifdef _WIN32_WCE
-#include <windows.h> // For GetModuleFileName()
+    #include <windows.h> // For GetModuleFileName()
 #endif
 
 #if defined(__S3E__) || defined(__APPLE__) || defined(__GNUC__)
-#include <unistd.h> // For getcwd()
+    #include <unistd.h> // For getcwd()
 #endif
 
 #include <map>
@@ -45,14 +45,14 @@ void CScriptBuilder::SetIncludeCallback(INCLUDECALLBACK_t callback,
 int CScriptBuilder::StartNewModule(asIScriptEngine *engine,
                                    const char *moduleName)
 {
-    if(engine == 0) {
+    if (engine == 0) {
         return -1;
     }
 
     this->engine = engine;
     module = engine->GetModule(moduleName, asGM_ALWAYS_CREATE);
 
-    if(module == 0) {
+    if (module == 0) {
         return -1;
     }
 
@@ -73,13 +73,13 @@ unsigned int CScriptBuilder::GetSectionCount() const
 
 std::string CScriptBuilder::GetSectionName(unsigned int idx) const
 {
-    if(idx >= includedScripts.size()) {
+    if (idx >= includedScripts.size()) {
         return "";
     }
 
     auto it = includedScripts.begin();
 
-    while(idx-- > 0) {
+    while (idx-- > 0) {
         ++it;
     }
 
@@ -95,10 +95,10 @@ int CScriptBuilder::AddSectionFromFile(const char *filename)
     // it is possible to name the same file in multiple ways using relative paths.
     std::string fullpath = GetAbsolutePath(filename);
 
-    if(IncludeIfNotAlreadyIncluded(fullpath.c_str())) {
+    if (IncludeIfNotAlreadyIncluded(fullpath.c_str())) {
         int r = LoadScriptSection(fullpath.c_str());
 
-        if(r < 0) {
+        if (r < 0) {
             return r;
         } else {
             return 1;
@@ -114,14 +114,14 @@ int CScriptBuilder::AddSectionFromFile(const char *filename)
 int CScriptBuilder::AddSectionFromMemory(const char *sectionName,
         const char *scriptCode, unsigned int scriptLength, int lineOffset)
 {
-    if(IncludeIfNotAlreadyIncluded(sectionName)) {
+    if (IncludeIfNotAlreadyIncluded(sectionName)) {
         int r = ProcessScriptSection(
                     scriptCode,
                     scriptLength,
                     sectionName,
                     lineOffset);
 
-        if(r < 0) {
+        if (r < 0) {
             return r;
         }
 
@@ -140,7 +140,7 @@ void CScriptBuilder::DefineWord(const char *word)
 {
     std::string sword = word;
 
-    if(definedWords.find(sword) == definedWords.end()) {
+    if (definedWords.find(sword) == definedWords.end()) {
         definedWords.insert(sword);
     }
 }
@@ -164,7 +164,7 @@ bool CScriptBuilder::IncludeIfNotAlreadyIncluded(const char *filename)
 {
     std::string scriptFile = filename;
 
-    if(includedScripts.find(scriptFile) != includedScripts.end()) {
+    if (includedScripts.find(scriptFile) != includedScripts.end()) {
         // Already included
         return false;
     }
@@ -186,7 +186,7 @@ int CScriptBuilder::LoadScriptSection(const char *filename)
     FILE *f = fopen(scriptFile.c_str(), "rb");
     #endif
 
-    if(f == 0) {
+    if (f == 0) {
         // Write a message to the engine's message callback
         std::string msg = "Failed to open script file '" +
                           GetAbsolutePath(scriptFile) + "'";
@@ -210,14 +210,14 @@ int CScriptBuilder::LoadScriptSection(const char *filename)
     std::string code;
     size_t c = 0;
 
-    if(len > 0) {
+    if (len > 0) {
         code.resize(len);
         c = fread(&code[0], len, 1, f);
     }
 
     fclose(f);
 
-    if(c == 0 && len > 0) {
+    if (c == 0 && len > 0) {
         // Write a message to the engine's message callback
         std::string msg = "Failed to load script file '" +
                           GetAbsolutePath(scriptFile) + "'";
@@ -241,7 +241,7 @@ int CScriptBuilder::ProcessScriptSection(const char *script,
     std::vector<std::string> includes;
 
     // Perform a superficial parsing of the script first to store the metadata
-    if(length) {
+    if (length) {
         modifiedScript.assign(script, length);
     } else {
         modifiedScript = script;
@@ -252,7 +252,7 @@ int CScriptBuilder::ProcessScriptSection(const char *script,
     unsigned int pos = 0;
     int nested = 0;
 
-    while(pos < modifiedScript.size()) {
+    while (pos < modifiedScript.size()) {
         asUINT len = 0;
 
         asETokenClass t = engine->ParseToken(
@@ -260,7 +260,7 @@ int CScriptBuilder::ProcessScriptSection(const char *script,
                               modifiedScript.size() - pos,
                               &len);
 
-        if(t == asTC_UNKNOWN && modifiedScript[pos] == '#' &&
+        if (t == asTC_UNKNOWN && modifiedScript[pos] == '#' &&
             (pos + 1 < modifiedScript.size())) {
             int start = pos++;
 
@@ -275,13 +275,13 @@ int CScriptBuilder::ProcessScriptSection(const char *script,
 
             pos += len;
 
-            if(token == "if") {
+            if (token == "if") {
                 t = engine->ParseToken(
                         &modifiedScript[pos],
                         modifiedScript.size() - pos,
                         &len);
 
-                if(t == asTC_WHITESPACE) {
+                if (t == asTC_WHITESPACE) {
                     pos += len;
                     t = engine->ParseToken(
                             &modifiedScript[pos],
@@ -289,7 +289,7 @@ int CScriptBuilder::ProcessScriptSection(const char *script,
                             &len);
                 }
 
-                if(t == asTC_IDENTIFIER) {
+                if (t == asTC_IDENTIFIER) {
                     std::string word;
                     word.assign(&modifiedScript[pos], len);
 
@@ -300,16 +300,16 @@ int CScriptBuilder::ProcessScriptSection(const char *script,
 
                     // Has this identifier been defined by the application
                     // or not?
-                    if(definedWords.find(word) == definedWords.end()) {
+                    if (definedWords.find(word) == definedWords.end()) {
                         // Exclude all the code until and including the #endif
                         pos = ExcludeCode(pos);
                     } else {
                         nested++;
                     }
                 }
-            } else if(token == "endif") {
+            } else if (token == "endif") {
                 // Only remove the #endif if there was a matching #if
-                if(nested > 0) {
+                if (nested > 0) {
                     OverwriteCode(start, pos - start);
                     nested--;
                 }
@@ -329,14 +329,14 @@ int CScriptBuilder::ProcessScriptSection(const char *script,
     // Then check for meta data and #include directives
     pos = 0;
 
-    while(pos < modifiedScript.size()) {
+    while (pos < modifiedScript.size()) {
         asUINT len = 0;
         asETokenClass t = engine->ParseToken(
                               &modifiedScript[pos],
                               modifiedScript.size() - pos,
                               &len);
 
-        if(t == asTC_COMMENT || t == asTC_WHITESPACE) {
+        if (t == asTC_COMMENT || t == asTC_WHITESPACE) {
             pos += len;
             continue;
         }
@@ -344,12 +344,12 @@ int CScriptBuilder::ProcessScriptSection(const char *script,
         #if AS_PROCESS_METADATA == 1
 
         // Check if class
-        if(currentClass == "" && modifiedScript.substr(pos, len) == "class") {
+        if (currentClass == "" && modifiedScript.substr(pos, len) == "class") {
             // Get the identifier after "class"
             do {
                 pos += len;
 
-                if(pos >= modifiedScript.size()) {
+                if (pos >= modifiedScript.size()) {
                     t = asTC_UNKNOWN;
                     break;
                 }
@@ -359,20 +359,20 @@ int CScriptBuilder::ProcessScriptSection(const char *script,
                         modifiedScript.size() - pos,
                         &len);
 
-            } while(t == asTC_COMMENT || t == asTC_WHITESPACE);
+            } while (t == asTC_COMMENT || t == asTC_WHITESPACE);
 
-            if(t == asTC_IDENTIFIER) {
+            if (t == asTC_IDENTIFIER) {
                 currentClass = modifiedScript.substr(pos, len);
 
                 // Search until first { is encountered
-                while(pos < modifiedScript.length()) {
+                while (pos < modifiedScript.length()) {
                     engine->ParseToken(
                         &modifiedScript[pos],
                         modifiedScript.size() - pos,
                         &len);
 
                     // If start of class section encountered stop
-                    if(modifiedScript[pos] == '{') {
+                    if (modifiedScript[pos] == '{') {
                         pos += len;
                         break;
                     }
@@ -386,14 +386,14 @@ int CScriptBuilder::ProcessScriptSection(const char *script,
         }
 
         // Check if end of class
-        if(currentClass != "" && modifiedScript[pos] == '}') {
+        if (currentClass != "" && modifiedScript[pos] == '}') {
             currentClass = "";
             pos += len;
             continue;
         }
 
         // Check if namespace
-        if(modifiedScript.substr(pos, len) == "namespace") {
+        if (modifiedScript.substr(pos, len) == "namespace") {
             // Get the identifier after "namespace"
             do {
                 pos += len;
@@ -402,23 +402,23 @@ int CScriptBuilder::ProcessScriptSection(const char *script,
                         modifiedScript.size() - pos,
                         &len);
 
-            } while(t == asTC_COMMENT || t == asTC_WHITESPACE);
+            } while (t == asTC_COMMENT || t == asTC_WHITESPACE);
 
-            if(currentNamespace != "") {
+            if (currentNamespace != "") {
                 currentNamespace += "::";
             }
 
             currentNamespace += modifiedScript.substr(pos, len);
 
             // Search until first { is encountered
-            while(pos < modifiedScript.length()) {
+            while (pos < modifiedScript.length()) {
                 engine->ParseToken(
                     &modifiedScript[pos],
                     modifiedScript.size() - pos,
                     &len);
 
                 // If start of namespace section encountered stop
-                if(modifiedScript[pos] == '{') {
+                if (modifiedScript[pos] == '{') {
                     pos += len;
                     break;
                 }
@@ -431,10 +431,10 @@ int CScriptBuilder::ProcessScriptSection(const char *script,
         }
 
         // Check if end of namespace
-        if(currentNamespace != "" && modifiedScript[pos] == '}') {
+        if (currentNamespace != "" && modifiedScript[pos] == '}') {
             size_t found = currentNamespace.rfind("::");
 
-            if(found != std::string::npos) {
+            if (found != std::string::npos) {
                 currentNamespace.erase(found);
             } else {
                 currentNamespace = "";
@@ -445,7 +445,7 @@ int CScriptBuilder::ProcessScriptSection(const char *script,
         }
 
         // Is this the start of metadata?
-        if(modifiedScript[pos] == '[') {
+        if (modifiedScript[pos] == '[') {
             // Get the metadata string
             pos = ExtractMetadataString(pos, &metadata);
 
@@ -455,7 +455,7 @@ int CScriptBuilder::ProcessScriptSection(const char *script,
 
             // Store away the declaration in a map for lookup after the
             // build has completed
-            if(type > 0) {
+            if (type > 0) {
                 SMetadataDecl decl(metadata, declaration, type, currentClass,
                                    currentNamespace);
                 foundDeclarations.push_back(decl);
@@ -464,7 +464,7 @@ int CScriptBuilder::ProcessScriptSection(const char *script,
         #endif
 
             // Is this a preprocessor directive?
-            if(modifiedScript[pos] == '#' &&
+            if (modifiedScript[pos] == '#' &&
                 (pos + 1 < modifiedScript.size())) {
 
                 int start = pos++;
@@ -474,18 +474,18 @@ int CScriptBuilder::ProcessScriptSection(const char *script,
                                       modifiedScript.size() - pos,
                                       &len);
 
-                if(t == asTC_IDENTIFIER) {
+                if (t == asTC_IDENTIFIER) {
                     std::string token;
                     token.assign(&modifiedScript[pos], len);
 
-                    if(token == "include") {
+                    if (token == "include") {
                         pos += len;
                         t = engine->ParseToken(
                                 &modifiedScript[pos],
                                 modifiedScript.size() - pos,
                                 &len);
 
-                        if(t == asTC_WHITESPACE) {
+                        if (t == asTC_WHITESPACE) {
                             pos += len;
                             t = engine->ParseToken(
                                     &modifiedScript[pos],
@@ -493,7 +493,7 @@ int CScriptBuilder::ProcessScriptSection(const char *script,
                                     &len);
                         }
 
-                        if(t == asTC_VALUE && len > 2
+                        if (t == asTC_VALUE && len > 2
                             && (modifiedScript[pos] == '"' ||
                                 modifiedScript[pos] == '\'')) {
                             // Get the include file
@@ -526,10 +526,10 @@ int CScriptBuilder::ProcessScriptSection(const char *script,
     module->AddScriptSection(sectionname, modifiedScript.c_str(),
                              modifiedScript.size(), lineOffset);
 
-    if(includes.size() > 0) {
+    if (includes.size() > 0) {
         // If the callback has been set, then call it for each included file
-        if(includeCallback) {
-            for(int n = 0; n < (int)includes.size(); n++) {
+        if (includeCallback) {
+            for (int n = 0; n < (int)includes.size(); n++) {
 
                 int r = includeCallback(
                             includes[n].c_str(),
@@ -537,7 +537,7 @@ int CScriptBuilder::ProcessScriptSection(const char *script,
                             this,
                             callbackParam);
 
-                if(r < 0) {
+                if (r < 0) {
                     return r;
                 }
             }
@@ -550,17 +550,17 @@ int CScriptBuilder::ProcessScriptSection(const char *script,
             std::string path = sectionname;
             size_t posOfSlash = path.find_last_of("/\\");
 
-            if(posOfSlash != std::string::npos) {
+            if (posOfSlash != std::string::npos) {
                 path.resize(posOfSlash + 1);
             } else {
                 path = "";
             }
 
             // Load the included scripts
-            for(int n = 0; n < static_cast<int>(includes.size()); n++) {
+            for (int n = 0; n < static_cast<int>(includes.size()); n++) {
                 // If the include is a relative path, then prepend the path of
                 // the originating script
-                if(includes[n].find_first_of("/\\") != 0 &&
+                if (includes[n].find_first_of("/\\") != 0 &&
                     includes[n].find_first_of(":") == std::string::npos) {
                     includes[n] = path + includes[n];
                 }
@@ -568,7 +568,7 @@ int CScriptBuilder::ProcessScriptSection(const char *script,
                 // Include the script section
                 int r = AddSectionFromFile(includes[n].c_str());
 
-                if(r < 0) {
+                if (r < 0) {
                     return r;
                 }
             }
@@ -582,7 +582,7 @@ int CScriptBuilder::Build()
 {
     int r = module->Build();
 
-    if(r < 0) {
+    if (r < 0) {
         return r;
     }
 
@@ -590,29 +590,33 @@ int CScriptBuilder::Build()
 
     // After the script has been built, the metadata strings should be
     // stored for later lookup by function id, type id, and variable index
-    for(int n = 0; n < static_cast<int>(foundDeclarations.size()); n++) {
+    for (int n = 0; n < static_cast<int>(foundDeclarations.size()); n++) {
         SMetadataDecl *decl = &foundDeclarations[n];
         module->SetDefaultNamespace(decl->nameSpace.c_str());
 
-        if(decl->type == 1) {
+        if (decl->type == 1) {
             // Find the type id
-            int typeId = module->GetTypeIdByDecl(decl->declaration.c_str());
+            asITypeInfo* type = module->GetTypeInfoByDecl(
+                decl->declaration.c_str()
+            );
+
+            int typeId = type->GetTypeId();
             assert(typeId >= 0);
 
-            if(typeId >= 0) {
+            if (typeId >= 0) {
                 typeMetadataMap.insert(
                     std::map<int, std::string>::value_type(
                         typeId,
                         decl->metadata));
             }
-        } else if(decl->type == 2) {
-            if(decl->parentClass == "") {
+        } else if (decl->type == 2) {
+            if (decl->parentClass == "") {
                 // Find the function id
                 asIScriptFunction *func =
                     module->GetFunctionByDecl(decl->declaration.c_str());
                 assert(func);
 
-                if(func) {
+                if (func) {
                     funcMetadataMap.insert(
                         std::map<int, std::string>::value_type(
                             func->GetId(),
@@ -624,7 +628,7 @@ int CScriptBuilder::Build()
                 assert(typeId > 0);
                 auto it = classMetadataMap.find(typeId);
 
-                if(it == classMetadataMap.end()) {
+                if (it == classMetadataMap.end()) {
                     classMetadataMap.insert(
                         std::map<int, SClassMetadata>::value_type(
                             typeId,
@@ -633,27 +637,27 @@ int CScriptBuilder::Build()
                     it = classMetadataMap.find(typeId);
                 }
 
-                asIObjectType *type = engine->GetObjectTypeById(typeId);
+                asITypeInfo *type = engine->GetTypeInfoById(typeId);
                 asIScriptFunction *func =
                     type->GetMethodByDecl(decl->declaration.c_str());
 
                 assert(func);
 
-                if(func) {
+                if (func) {
                     it->second.funcMetadataMap.insert(
                         std::map<int, std::string>::value_type(
                             func->GetId(),
                             decl->metadata));
                 }
             }
-        } else if(decl->type == 4) {
-            if(decl->parentClass == "") {
+        } else if (decl->type == 4) {
+            if (decl->parentClass == "") {
                 // Find the global virtual property accessors
                 asIScriptFunction *func =
                     module->GetFunctionByName(
                         ("get_" + decl->declaration).c_str());
 
-                if(func) {
+                if (func) {
                     funcMetadataMap.insert(
                         std::map<int, std::string>::value_type(
                             func->GetId(),
@@ -663,7 +667,7 @@ int CScriptBuilder::Build()
                 func = module->GetFunctionByName(
                            ("set_" + decl->declaration).c_str());
 
-                if(func) {
+                if (func) {
                     funcMetadataMap.insert(
                         std::map<int, std::string>::value_type(
                             func->GetId(),
@@ -675,7 +679,7 @@ int CScriptBuilder::Build()
                 assert(typeId > 0);
                 auto it = classMetadataMap.find(typeId);
 
-                if(it == classMetadataMap.end()) {
+                if (it == classMetadataMap.end()) {
                     classMetadataMap.insert(
                         std::map<int, SClassMetadata>::value_type(
                             typeId,
@@ -684,12 +688,12 @@ int CScriptBuilder::Build()
                     it = classMetadataMap.find(typeId);
                 }
 
-                asIObjectType *type = engine->GetObjectTypeById(typeId);
+                asITypeInfo *type = engine->GetTypeInfoById(typeId);
                 asIScriptFunction *func =
                     type->GetMethodByName(
                         ("get_" + decl->declaration).c_str());
 
-                if(func) {
+                if (func) {
                     it->second.funcMetadataMap.insert(
                         std::map<int, std::string>::value_type(
                             func->GetId(),
@@ -699,7 +703,7 @@ int CScriptBuilder::Build()
                 func = type->GetMethodByName(
                            ("set_" + decl->declaration).c_str());
 
-                if(func) {
+                if (func) {
                     it->second.funcMetadataMap.insert(
                         std::map<int, std::string>::value_type(
                             func->GetId(),
@@ -707,49 +711,54 @@ int CScriptBuilder::Build()
                 }
 
             }
-        } else if(decl->type == 3) {
-            if(decl->parentClass == "") {
+        } else if (decl->type == 3) {
+            if (decl->parentClass == "") {
                 // Find the global variable index
                 int varIdx = module->GetGlobalVarIndexByName(
-                                 decl->declaration.c_str());
+                                 decl->declaration.c_str()
+                             );
 
                 assert(varIdx >= 0);
 
-                if(varIdx >= 0) {
+                if (varIdx >= 0) {
                     varMetadataMap.insert(
                         std::map<int, std::string>::value_type(
                             varIdx,
                             decl->metadata));
                 }
             } else {
-                int typeId = module->GetTypeIdByDecl(decl->parentClass.c_str());
+                int typeId = module->GetTypeIdByDecl(
+                                 decl->parentClass.c_str()
+                             );
+
                 assert(typeId > 0);
 
                 // Add the classes if needed
                 auto it = classMetadataMap.find(typeId);
 
-                if(it == classMetadataMap.end()) {
+                if (it == classMetadataMap.end()) {
                     classMetadataMap.insert(
                         std::map<int, SClassMetadata>::value_type(
                             typeId,
-                            SClassMetadata(decl->parentClass)));
+                            SClassMetadata(decl->parentClass)
+                        ));
 
                     it = classMetadataMap.find(typeId);
                 }
 
                 // Add the variable to class
-                asIObjectType *objectType = engine->GetObjectTypeById(typeId);
+                asITypeInfo *objectType = engine->GetTypeInfoById(typeId);
                 int idx = -1;
 
                 // Search through all properties to get proper declaration
-                for(asUINT i = 0;
-                    i < static_cast<asUINT>(objectType->GetPropertyCount());
-                    ++i) {
+                for (asUINT i = 0;
+                     i < static_cast<asUINT>(objectType->GetPropertyCount());
+                     ++i) {
 
                     const char *name;
                     objectType->GetProperty(i, &name);
 
-                    if(decl->declaration == name) {
+                    if (decl->declaration == name) {
                         idx = i;
                         break;
                     }
@@ -758,7 +767,7 @@ int CScriptBuilder::Build()
                 // If found, add it
                 assert(idx >= 0);
 
-                if(idx >= 0) {
+                if (idx >= 0) {
                     it->second.varMetadataMap.insert(
                         std::map<int,
                         std::string>::value_type(idx, decl->metadata));
@@ -778,9 +787,9 @@ int CScriptBuilder::SkipStatement(int pos)
     asUINT len = 0;
 
     // Skip until ; or { whichever comes first
-    while(pos < static_cast<int>(modifiedScript.length()) &&
-          modifiedScript[pos] != ';' &&
-          modifiedScript[pos] != '{') {
+    while (pos < static_cast<int>(modifiedScript.length()) &&
+           modifiedScript[pos] != ';' &&
+           modifiedScript[pos] != '{') {
 
         engine->ParseToken(
             &modifiedScript[pos],
@@ -791,7 +800,7 @@ int CScriptBuilder::SkipStatement(int pos)
     }
 
     // Skip entire statement block
-    if(pos < static_cast<int>(modifiedScript.length()) &&
+    if (pos < static_cast<int>(modifiedScript.length()) &&
         modifiedScript[pos] == '{') {
 
         pos += 1;
@@ -799,16 +808,16 @@ int CScriptBuilder::SkipStatement(int pos)
         // Find the end of the statement block
         int level = 1;
 
-        while(level > 0 && pos < static_cast<int>(modifiedScript.size())) {
+        while (level > 0 && pos < static_cast<int>(modifiedScript.size())) {
             asETokenClass t = engine->ParseToken(
                                   &modifiedScript[pos],
                                   modifiedScript.size() - pos,
                                   &len);
 
-            if(t == asTC_KEYWORD) {
-                if(modifiedScript[pos] == '{') {
+            if (t == asTC_KEYWORD) {
+                if (modifiedScript[pos] == '{') {
                     level++;
-                } else if(modifiedScript[pos] == '}') {
+                } else if (modifiedScript[pos] == '}') {
                     level--;
                 }
             }
@@ -828,13 +837,13 @@ int CScriptBuilder::ExcludeCode(int pos)
     asUINT len = 0;
     int nested = 0;
 
-    while(pos < static_cast<int>(modifiedScript.size())) {
+    while (pos < static_cast<int>(modifiedScript.size())) {
         engine->ParseToken(
             &modifiedScript[pos],
             modifiedScript.size() - pos,
             &len);
 
-        if(modifiedScript[pos] == '#') {
+        if (modifiedScript[pos] == '#') {
             modifiedScript[pos] = ' ';
             pos++;
 
@@ -848,15 +857,15 @@ int CScriptBuilder::ExcludeCode(int pos)
             token.assign(&modifiedScript[pos], len);
             OverwriteCode(pos, len);
 
-            if(token == "if") {
+            if (token == "if") {
                 nested++;
-            } else if(token == "endif") {
-                if(nested-- == 0) {
+            } else if (token == "endif") {
+                if (nested-- == 0) {
                     pos += len;
                     break;
                 }
             }
-        } else if(modifiedScript[pos] != '\n') {
+        } else if (modifiedScript[pos] != '\n') {
             OverwriteCode(pos, len);
         }
 
@@ -871,8 +880,8 @@ void CScriptBuilder::OverwriteCode(int start, int len)
 {
     char *code = &modifiedScript[start];
 
-    for(int n = 0; n < len; n++) {
-        if(*code != '\n') {
+    for (int n = 0; n < len; n++) {
+        if (*code != '\n') {
             *code = ' ';
         }
 
@@ -894,27 +903,27 @@ int CScriptBuilder::ExtractMetadataString(int pos, std::string *metadata)
     int level = 1;
     asUINT len = 0;
 
-    while(level > 0 && pos < static_cast<int>(modifiedScript.size())) {
+    while (level > 0 && pos < static_cast<int>(modifiedScript.size())) {
         asETokenClass t = engine->ParseToken(
                               &modifiedScript[pos],
                               modifiedScript.size() - pos,
                               &len);
 
-        if(t == asTC_KEYWORD) {
-            if(modifiedScript[pos] == '[') {
+        if (t == asTC_KEYWORD) {
+            if (modifiedScript[pos] == '[') {
                 level++;
-            } else if(modifiedScript[pos] == ']') {
+            } else if (modifiedScript[pos] == ']') {
                 level--;
             }
         }
 
         // Copy the metadata to our buffer
-        if(level > 0) {
+        if (level > 0) {
             metadata->append(&modifiedScript[pos], len);
         }
 
         // Overwrite the metadata with space characters to allow compilation
-        if(t != asTC_WHITESPACE) {
+        if (t != asTC_WHITESPACE) {
             OverwriteCode(pos, len);
         }
 
@@ -945,14 +954,14 @@ int CScriptBuilder::ExtractDeclaration(int pos,
                 modifiedScript.size() - pos,
                 &len);
 
-    } while(t == asTC_WHITESPACE || t == asTC_COMMENT);
+    } while (t == asTC_WHITESPACE || t == asTC_COMMENT);
 
     // We're expecting, either a class, interface, function, or variable
     // declaration
-    if(t == asTC_KEYWORD || t == asTC_IDENTIFIER) {
+    if (t == asTC_KEYWORD || t == asTC_IDENTIFIER) {
         token.assign(&modifiedScript[pos], len);
 
-        if(token == "interface" || token == "class") {
+        if (token == "interface" || token == "class") {
             // Skip white spaces and comments
             do {
                 pos += len;
@@ -961,9 +970,9 @@ int CScriptBuilder::ExtractDeclaration(int pos,
                         modifiedScript.size() - pos,
                         &len);
 
-            } while(t == asTC_WHITESPACE || t == asTC_COMMENT);
+            } while (t == asTC_WHITESPACE || t == asTC_COMMENT);
 
-            if(t == asTC_IDENTIFIER) {
+            if (t == asTC_IDENTIFIER) {
                 *type = 1;
                 declaration->assign(&modifiedScript[pos], len);
                 pos += len;
@@ -984,17 +993,17 @@ int CScriptBuilder::ExtractDeclaration(int pos,
             pos += len;
             std::string name;
 
-            for(; pos < static_cast<int>(modifiedScript.size());) {
+            for (; pos < static_cast<int>(modifiedScript.size());) {
                 t = engine->ParseToken(
                         &modifiedScript[pos],
                         modifiedScript.size() - pos,
                         &len);
 
-                if(t == asTC_KEYWORD) {
+                if (t == asTC_KEYWORD) {
                     token.assign(&modifiedScript[pos], len);
 
-                    if(token == "{") {
-                        if(hasParenthesis) {
+                    if (token == "{") {
+                        if (hasParenthesis) {
                             // We've found the end of a function signature
                             *type = 2;
                         } else {
@@ -1006,12 +1015,12 @@ int CScriptBuilder::ExtractDeclaration(int pos,
                         return pos;
                     }
 
-                    if(token == "=" || token == ";") {
+                    if (token == "=" || token == ";") {
                         // Substitute the declaration with just the name
                         *declaration = name;
                         *type = 3;
                         return pos;
-                    } else if(token == "(") {
+                    } else if (token == "(") {
                         // This is the first parenthesis we encounter. If the
                         // parenthesis isn't followed by a statement block,
                         // then this is a variable declaration, in which case
@@ -1019,7 +1028,7 @@ int CScriptBuilder::ExtractDeclaration(int pos,
                         // variable, not the initialization parameters.
                         hasParenthesis = true;
                     }
-                } else if(t == asTC_IDENTIFIER) {
+                } else if (t == asTC_IDENTIFIER) {
                     name.assign(&modifiedScript[pos], len);
                 }
 
@@ -1036,7 +1045,7 @@ const char *CScriptBuilder::GetMetadataStringForType(int typeId)
 {
     auto it = typeMetadataMap.find(typeId);
 
-    if(it != typeMetadataMap.end()) {
+    if (it != typeMetadataMap.end()) {
         return it->second.c_str();
     }
 
@@ -1045,10 +1054,10 @@ const char *CScriptBuilder::GetMetadataStringForType(int typeId)
 
 const char *CScriptBuilder::GetMetadataStringForFunc(asIScriptFunction *func)
 {
-    if(func) {
+    if (func) {
         auto it = funcMetadataMap.find(func->GetId());
 
-        if(it != funcMetadataMap.end()) {
+        if (it != funcMetadataMap.end()) {
             return it->second.c_str();
         }
     }
@@ -1060,7 +1069,7 @@ const char *CScriptBuilder::GetMetadataStringForVar(int varIdx)
 {
     auto it = varMetadataMap.find(varIdx);
 
-    if(it != varMetadataMap.end()) {
+    if (it != varMetadataMap.end()) {
         return it->second.c_str();
     }
 
@@ -1072,13 +1081,13 @@ const char *CScriptBuilder::GetMetadataStringForTypeProperty(int typeId,
 {
     auto typeIt = classMetadataMap.find(typeId);
 
-    if(typeIt == classMetadataMap.end()) {
+    if (typeIt == classMetadataMap.end()) {
         return "";
     }
 
     auto propIt = typeIt->second.varMetadataMap.find(varIdx);
 
-    if(propIt == typeIt->second.varMetadataMap.end()) {
+    if (propIt == typeIt->second.varMetadataMap.end()) {
         return "";
     }
 
@@ -1088,16 +1097,16 @@ const char *CScriptBuilder::GetMetadataStringForTypeProperty(int typeId,
 const char *CScriptBuilder::GetMetadataStringForTypeMethod(int typeId,
         asIScriptFunction *method)
 {
-    if(method) {
+    if (method) {
         auto typeIt = classMetadataMap.find(typeId);
 
-        if(typeIt == classMetadataMap.end()) {
+        if (typeIt == classMetadataMap.end()) {
             return "";
         }
 
         auto methodIt = typeIt->second.funcMetadataMap.find(method->GetId());
 
-        if(methodIt == typeIt->second.funcMetadataMap.end()) {
+        if (methodIt == typeIt->second.funcMetadataMap.end()) {
             return "";
         }
 
@@ -1115,24 +1124,24 @@ std::string GetAbsolutePath(const std::string &file)
     // Replace backslashes for forward slashes
     size_t pos = 0;
 
-    while((pos = str.find("\\", pos)) != std::string::npos) {
+    while ((pos = str.find("\\", pos)) != std::string::npos) {
         str[pos] = '/';
     }
 
     // Replace /./ with nothing
     pos = 0;
 
-    while((pos = str.find("/./", pos)) != std::string::npos) {
+    while ((pos = str.find("/./", pos)) != std::string::npos) {
         str.erase(pos, 3);
     }
 
     // For each /../ remove the parent dir and the /../
     pos = 0;
 
-    while((pos = str.find("/../")) != std::string::npos) {
+    while ((pos = str.find("/../")) != std::string::npos) {
         size_t pos2 = str.rfind("/", pos - 1);
 
-        if(pos2 != std::string::npos) {
+        if (pos2 != std::string::npos) {
             str.erase(pos2, pos + 3 - pos2);
         } else {
             // The path is invalid
@@ -1141,8 +1150,8 @@ std::string GetAbsolutePath(const std::string &file)
     }
 
     // If this is a relative path, complement it with the current path
-    if(!((str.length() > 0 && (str[0] == '/' || str[0] == '\\')) ||
-         str.find(":") != std::string::npos)) {
+    if (!((str.length() > 0 && (str[0] == '/' || str[0] == '\\')) ||
+          str.find(":") != std::string::npos)) {
 
         str = GetCurrentDir() + "/" + str;
     }
@@ -1157,7 +1166,7 @@ std::string GetCurrentDir()
     #ifdef _WIN32_WCE
     static TCHAR apppath[MAX_PATH] = TEXT("");
 
-    if(!apppath[0]) {
+    if (!apppath[0]) {
         GetModuleFileName(NULL, apppath, MAX_PATH);
 
         int appLen = _tcslen(apppath);
@@ -1167,8 +1176,8 @@ std::string GetCurrentDir()
         // the path part of the exe's full-path filename
         // Safety is that we make sure not to walk off the front of the
         // array (in case the path is nothing more than a filename)
-        while(appLen > 1) {
-            if(apppath[appLen - 1] == TEXT('\\')) {
+        while (appLen > 1) {
+            if (apppath[appLen - 1] == TEXT('\\')) {
                 break;
             }
 
