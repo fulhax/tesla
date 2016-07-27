@@ -143,20 +143,32 @@ void Engine::handleEvents()
 
             case SDL_MOUSEMOTION: {
                 if (event.motion.xrel != 0) {
-                    events.trigger(config.getString(
-                                       "input.mouse.x",
-                                       "camera.yaw"),
-                                   std::to_string(
-                                       event.motion.xrel));
+                    events.trigger(
+                        config.getString("input.mouse.x", "camera.yaw"),
+                        std::to_string(event.motion.xrel)
+                    );
                 }
 
                 if (event.motion.yrel != 0) {
-                    events.trigger(config.getString(
-                                       "input.mouse.y",
-                                       "camera.pitch"),
-                                   std::to_string(
-                                       event.motion.yrel));
+                    events.trigger(
+                        config.getString("input.mouse.y", "camera.pitch"),
+                        std::to_string(event.motion.yrel)
+                    );
                 }
+
+                break;
+            }
+
+            case SDL_KEYDOWN: {
+                char key[64] = {0};
+                snprintf(
+                    key,
+                    sizeof(key),
+                    "input.keyboard.%c",
+                    event.key.keysym.sym
+                );
+
+                events.trigger(config.getString(key, "action.trigger"));
 
                 break;
             }
@@ -180,7 +192,7 @@ void Engine::handleEvents()
     for (int i = 0; i < MAX_MOUSEBUTTONS; i++) {
         if (mouse[i]) {
             char button[64] = {0};
-            snprintf(button, 64, "input.mouse.button%d", i);
+            snprintf(button, sizeof(button), "input.mouse.button%d", i);
             events.trigger(config.getString(button, "action.trigger"));
         }
     }

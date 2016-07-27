@@ -2,6 +2,8 @@
 
 #include <glm/gtc/matrix_access.hpp>
 
+#include <engine.hpp>
+
 Camera::Camera()
 {
     pos = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -34,6 +36,52 @@ void Camera::update(glm::mat4 projMat, glm::mat4 viewMat)
         float len = glm::length(frustum[i].xyz());
         frustum[i] /= len;
     }
+}
+
+void Camera::moveForward(const float &speed)
+{
+    float yrad = yaw * RAD;
+    float xrad = pitch * RAD;
+
+    float s = speed * engine.getTick();
+
+    pos.x += sinf(yrad) * s;
+    pos.y -= sinf(xrad) * s;
+    pos.z -= cosf(yrad) * s;
+
+    printf("camera: %f,%f,%f, %f\n", pos.x, pos.y, pos.z, s);
+}
+
+void Camera::moveBackwards(const float &speed)
+{
+    float yrad = yaw * RAD;
+    float xrad = pitch * RAD;
+
+    float s = speed * engine.getTick();
+
+    pos.x -= sinf(yrad) * s;
+    pos.y += sinf(xrad) * s;
+    pos.z += cosf(yrad) * s;
+}
+
+void Camera::moveLeft(const float &speed)
+{
+    float yrad = yaw * RAD;
+
+    float s = speed * engine.getTick();
+
+    pos.x -= cosf(yrad) * s;
+    pos.z -= sinf(yrad) * s;
+}
+
+void Camera::moveRight(const float &speed)
+{
+    float yrad = yaw * RAD;
+
+    float s = speed * engine.getTick();
+
+    pos.x += cosf(yrad) * s;
+    pos.z += sinf(yrad) * s;
 }
 
 int Camera::pointInFrustum(const glm::vec3 &point)

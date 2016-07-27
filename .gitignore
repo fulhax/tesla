@@ -1,3 +1,4 @@
 build
 bin/*
+!bin/settings.conf
 !bin/engine

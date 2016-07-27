@@ -184,6 +184,26 @@ void Script::registerObjects()
         "Camera",
         "float yaw",
         asOFFSET(Camera, yaw));
+    core->RegisterObjectMethod(
+        "Camera",
+        "void moveForward(const float &in)",
+        asMETHOD(Camera, moveForward),
+        asCALL_THISCALL);
+    core->RegisterObjectMethod(
+        "Camera",
+        "void moveBackwards(const float &in)",
+        asMETHOD(Camera, moveBackwards),
+        asCALL_THISCALL);
+    core->RegisterObjectMethod(
+        "Camera",
+        "void moveLeft(const float &in)",
+        asMETHOD(Camera, moveLeft),
+        asCALL_THISCALL);
+    core->RegisterObjectMethod(
+        "Camera",
+        "void moveRight(const float &in)",
+        asMETHOD(Camera, moveRight),
+        asCALL_THISCALL);
 
     core->RegisterObjectType("Engine", 0, asOBJ_REF);
     core->RegisterGlobalProperty("Engine engine", &engine);

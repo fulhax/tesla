@@ -39,6 +39,11 @@ public:
     int sphereInFrustum(const glm::vec3 &point, float radius);
     int cubeInFrustum(const glm::vec3 &point, float scale);
     int rectInFrustum(const glm::vec3 &point, const glm::vec3 &scale);
+
+    void moveForward(const float &speed);
+    void moveBackwards(const float &speed);
+    void moveLeft(const float &speed);
+    void moveRight(const float &speed);
 };
 
 #endif // CAMERA_HPP_
