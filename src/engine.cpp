@@ -15,7 +15,7 @@ Engine::Engine()
     currframe = 0;
 
     for (int i = 0; i < MAX_MOUSEBUTTONS; i++) {
-        mouse[i] = false;
+        mouse.button[i] = false;
     }
 }
 
@@ -156,6 +156,9 @@ void Engine::handleEvents()
                     );
                 }
 
+                mouse.x = event.motion.x;
+                mouse.y = event.motion.y;
+
                 break;
             }
 
@@ -192,12 +195,12 @@ void Engine::handleEvents()
             }
 
             case SDL_MOUSEBUTTONDOWN: {
-                mouse[event.button.button] = true;
+                mouse.button[event.button.button] = true;
                 break;
             }
 
             case SDL_MOUSEBUTTONUP: {
-                mouse[event.button.button] = false;
+                mouse.button[event.button.button] = false;
                 break;
             }
 
@@ -208,7 +211,7 @@ void Engine::handleEvents()
     }
 
     for (int i = 0; i < MAX_MOUSEBUTTONS; i++) {
-        if (mouse[i]) {
+        if (mouse.button[i]) {
             char button[64] = {0};
             snprintf(button, sizeof(button), "input.mouse.button%d", i);
             events.trigger(config.getString(button, "action.trigger"));

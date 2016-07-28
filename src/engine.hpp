@@ -40,7 +40,6 @@ public:
                     const glm::vec3 &rot);
 
     bool running;
-    bool mouse[MAX_MOUSEBUTTONS];
 
     Ui ui;
     Audio audio;
@@ -52,6 +51,12 @@ public:
     Physics physics;
     EventHandler events;
     Camera camera;
+
+    struct {
+        int x;
+        int y;
+        bool button[MAX_MOUSEBUTTONS];
+    } mouse;
 private:
     std::vector<Entity *> entities;
     std::map<std::string, EntityType> entityTypes;
