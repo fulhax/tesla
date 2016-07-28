@@ -158,6 +158,8 @@ void Engine::handleEvents()
 
                 mouse.x = event.motion.x;
                 mouse.y = event.motion.y;
+                mouse.rx = event.motion.xrel;
+                mouse.ry = event.motion.yrel;
 
                 break;
             }

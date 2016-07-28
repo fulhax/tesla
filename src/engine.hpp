@@ -55,6 +55,8 @@ public:
     struct {
         int x;
         int y;
+        float rx;
+        float ry;
         bool button[MAX_MOUSEBUTTONS];
     } mouse;
 private:
