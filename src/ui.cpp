@@ -18,10 +18,10 @@ Ui::~Ui()
 
 void Ui::update()
 {
-    drawRect(0, 100, 100, 100, glm::vec3(1, 0, 0));
+    drawRect(10, 10, 100, 100, glm::vec3(1, 0, 0));
 
-    startClip(50, 150, 100, 100);
-    drawRect(0, 100, 100, 100, glm::vec3(0, 1, 0));
+    startClip(10, 10, 100, 100);
+    drawRect(20, 20, 200, 200, glm::vec3(0, 1, 0));
     endClip();
 }
 
@@ -39,10 +39,8 @@ void Ui::endClip()
 void Ui::drawRect(int x, int y, int w, int h, glm::vec3 color)
 {
     Plane plane;
-    float halfh = h * 0.5f;
-    float halfw = w * 0.5f;
 
-    plane.generate(halfh, halfw);
+    plane.generate2d(w, h);
 
     static Shader shader;
     static bool first = true;
@@ -59,7 +57,7 @@ void Ui::drawRect(int x, int y, int w, int h, glm::vec3 color)
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     if (shader.use()) {
-        shader.setUniform("in_UiPos", glm::vec2(x + halfw, y + halfh));
+        shader.setUniform("in_UiPos", glm::vec2(x, y));
         shader.setUniform("in_Color", glm::vec4(color, 1));
         shader.setUniform("in_OrthoMatrix", engine.video.OrthoMat);
 
