@@ -18,24 +18,23 @@ Ui::Ui()
     // rootWindow->addElement(new UiElement(0,160,0,0,100,100,false,false, glm::vec3(0,1,0)));
     // rootWindow->addElement(new UiElement(0,190,0,0,50,50,false,false, glm::vec3(0,0,1)));
     // rootElement->move(rootElement->getX()+200, rootElement->getY());
-    this->rootElement = nullptr;
 }
 
 Ui::~Ui()
 {
-    delete this->rootElement;
 }
 
 void Ui::init() {
-    //engine.resources.getUI("foobaz.ui");
-    this->rootElement = new UiWindow("foobaz.ui");
 }
 
 void Ui::update()
 {
+    UiResource *resource = engine.resources.getUI("foobaz.ui");
+    UiElement *el = resource->element;
+
     const Event* ev = nullptr;
-    if(rootElement != nullptr){
-        rootElement->handleEvent(ev);
+    if(el != nullptr){
+        el->handleEvent(ev);
     }
 
     //while((ev = engine.events.poll())) {
@@ -45,8 +44,11 @@ void Ui::update()
 
 void Ui::draw()
 {
-    if(rootElement != nullptr){
-        rootElement->draw(); 
+    UiResource *resource = engine.resources.getUI("foobaz.ui");
+    UiElement *el = resource->element;
+
+    if(el != nullptr){
+        el->draw(); 
     }
 }
 

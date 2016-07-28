@@ -2,11 +2,33 @@
 #include "engine.hpp"
 #include "../eventhandler.hpp"
 
+UiElement::UiElement(){
+    this->resource = nullptr;    
+}
+
+UiElement::~UiElement(){
+    for(int i=this->elements.size() -1; i>=0;i--){
+        delete this->elements[i];
+    }
+    this->elements.clear();
+}
+
+void UiElement::addElement(UiElement *element)
+{
+    element->attach(this);
+    this->elements.push_back(element);
+}
+
+std::vector<UiElement *> UiElement::getElements()
+{
+    return this->elements;
+}
+
 UiElement::UiElement(const char *filename)
 {
     strcpy(this->filename , filename);
-    this->resource = engine.resources.getUI(filename);
     this->detach();
+    //this->resource = engine.resources.getUI(filename);
 }
 
 float UiElement::getX()
@@ -114,6 +136,17 @@ void UiElement::detach()
 //     }
 // }
 
+void UiElement::handleEvent(const Event* ev)
+{
+    //UiElement::handleEvent(ev);
+    //this->resource = engine.resources.getUI(this->filename);
+    printf("%d", this->getElements().size());
+    for(auto element : this->getElements()) {
+        element->handleEvent(ev);
+    }
+}
+
+
 bool UiElement::inBounds(float x, float y)
 {
     return (
@@ -136,10 +169,7 @@ void UiElement::move(float x, float y)
 
 void UiElement::draw()
 {
-    printf("%d %d %d %d\n", (int) this->getX(),
-        (int) this->getY(),
-        (int) this->getW(),
-        (int) this->getH());
+    engine.ui.startClip((int) this->getX(), (int)this->getY(), this->getW(), this->getH());
     engine.ui.drawRect(
         (int) this->getX(),
         (int) this->getY(),
@@ -147,9 +177,9 @@ void UiElement::draw()
         (int) this->getH(),
         this->resource->color
     );
-}
-
-void UiElement::handleEvent(const Event* ev)
-{
-    this->resource = engine.resources.getUI(this->filename);
+    for(auto element : this->getElements()) {
+        element->draw();
+    }
+    engine.ui.endClip();
+    
 }

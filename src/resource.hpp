@@ -18,6 +18,7 @@
 #include "shader.hpp"
 #include "script.hpp"
 #include "ui.hpp"
+#include "ui/uielement.hpp"
 
 class Resource
 {
@@ -43,6 +44,7 @@ public:
     float x;
     float y; 
     glm::vec3 color;
+    UiElement *element;
 
     UiResource()
     {

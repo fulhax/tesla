@@ -8,8 +8,6 @@
 
 #include "script.hpp"
 
-class UiElement;
-
 struct TextData {
     std::vector<glm::vec2> verts;
     std::vector<glm::vec2> uvs;
@@ -32,8 +30,6 @@ public:
     void update();
     void draw();
     void init();
-
-    UiElement *rootElement;
 };
 
 #endif // UI_HPP_
