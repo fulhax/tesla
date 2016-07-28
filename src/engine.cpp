@@ -274,8 +274,8 @@ void Engine::update()
         ui.update();
         physics.update();
 
-        while (events.count()) {
-            const Event *ev = events.poll();
+        while (!events.lastevent()) {
+            auto ev = events.poll();
 
             lprintf(
                 LOG_WARNING,

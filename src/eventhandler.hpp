@@ -10,14 +10,18 @@ class Event
 {
 public:
     Event() {}
-    ~Event() {}
+    virtual ~Event() {}
+    static Event *factory()
+    {
+        return new Event();
+    }
     Event(std::string event, std::string data, bool keep)
     {
         this->event = event;
         this->data = data;
         this->keep = keep;
     }
-    explicit Event(Event* ev)
+    explicit Event(Event *ev)
     {
         this->event = ev->event;
         this->data = ev->data;
@@ -32,12 +36,13 @@ public:
 class EventHandler : public ASClass<EventHandler>
 {
     std::vector<Event> events;
-    std::vector<Event> keptevents;
+    unsigned int current;
 public:
     EventHandler();
     virtual ~EventHandler();
 
     int count();
+    bool lastevent();
     void update();
     void untrigger(const std::string &event);
     void trigger(const std::string &event, const std::string &data = "1",
