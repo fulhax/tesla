@@ -233,6 +233,46 @@ void Plane::subdivide(int recursion_level)
     lprintf(LOG_WARNING, "Planes cannot be subdivided\n");
 }
 
+void Plane::generate2d(int x, int y)
+{
+    if (vertex_buffer != 0) {
+        glGenBuffers(1, &vertex_buffer);
+    }
+
+    if (indices_buffer != 0) {
+        glGenBuffers(1, &indices_buffer);
+    }
+
+    if (uv_buffer != 0) {
+        glGenBuffers(1, &uv_buffer);
+    }
+
+    uvs[0] = glm::vec2(1, 0);
+    uvs[1] = glm::vec2(1, 1);
+    uvs[2] = glm::vec2(0, 1);
+    uvs[3] = glm::vec2(0, 0);
+
+    verts[0] = glm::vec3(x, 0, 0);
+    verts[1] = glm::vec3(x, y, 0);
+    verts[2] = glm::vec3(0, y, 0);
+    verts[3] = glm::vec3(0, 0, 0);
+
+    tris[0] = tri(0, 1, 2);
+    tris[1] = tri(0, 2, 3);
+
+    glBindBuffer(GL_ARRAY_BUFFER, uv_buffer);
+    glBufferData(GL_ARRAY_BUFFER, num_vert * 12, uvs, GL_DYNAMIC_DRAW);
+
+    glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
+    glBufferData(GL_ARRAY_BUFFER, num_vert * 12, verts, GL_DYNAMIC_DRAW);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices_buffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, num_tris * 12, tris, GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
 void Plane::generate(int x, int y)
 {
     if (vertex_buffer != 0) {

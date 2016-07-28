@@ -181,13 +181,10 @@ int Shader::getUniformLocation(const char *name)
     GLint uniform = -1;
 
     if (pos == uniform_locations.end()) {
-        uniform = glGetUniformLocation(program, name);
         uniform_locations[name] = glGetUniformLocation(program, name);
 
-        if (uniform_locations[name] < 0) {
+        if (uniform_locations[name] == -1) {
             lprintf(LOG_WARNING, "setUniform failed: %s", name);
-        } else {
-            uniform_locations[name] = uniform;
         }
     } else {
         uniform = pos->second;

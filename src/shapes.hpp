@@ -69,6 +69,7 @@ public:
         generate(1, 1);
     };
     void generate(int x, int y);
+    void generate2d(int x, int y);
     static void subdivide(int recursion_level);
 
     Plane()

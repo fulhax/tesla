@@ -36,8 +36,8 @@ void Ui::update()
     const Event* ev = nullptr;
     if(rootElement != nullptr){
         rootElement->handleEvent(ev);
-        //rootElement->move(rootElement->getX()+(engine.getTick()*10.0f), rootElement->getY());
     }
+
     //while((ev = engine.events.poll())) {
     //}
 
@@ -64,7 +64,7 @@ void Ui::endClip()
 void Ui::drawRect(int x, int y, int w, int h, glm::vec3 color)
 {
     Plane plane;
-    plane.generate(h, w);
+    plane.generate2d(w, h);
 
     static Shader shader;
     static bool first = true;
