@@ -275,14 +275,14 @@ void Engine::update()
 
         physics.update();
 
-        while (!events.lastevent()) {
-            auto ev = events.poll();
-
-            lprintf(
-                LOG_WARNING,
-                "Stray event ^r\"%s\"^0 found!",
-                ev->event.c_str());
-        }
+        // while (!events.lastevent()) {
+        //     auto ev = events.poll();
+        //
+        //     lprintf(
+        //         LOG_WARNING,
+        //         "Stray event ^r\"%s\"^0 found!",
+        //         ev->event.c_str());
+        // }
     }
 
     events.update();
