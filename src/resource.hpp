@@ -35,6 +35,24 @@ public:
     bool failed;
 };
 
+class UiResource : public Resource
+{
+public:
+    uint32_t w;
+    uint32_t h;
+    float x;
+    float y; 
+    glm::vec3 color;
+
+    UiResource()
+    {
+       w = 0; 
+       h = 0;
+       x = 0;
+       y = 0;
+    }
+};
+
 class TextureResource : public Resource
 {
 public:
@@ -231,6 +249,7 @@ public:
     ScriptResource *getScript(const char *filename);
     SoundResource *getSound(const char *filename);
     FontResource *getFont(const char *filename);
+    UiResource *getUI(const char *filename);
 
     char datapath[FILENAME_MAX];
     char enginepath[FILENAME_MAX];

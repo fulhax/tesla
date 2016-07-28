@@ -3,21 +3,12 @@
 #include <string>
 #include <glm/glm.hpp>
 #include "../eventhandler.hpp"
+#include "../resource.hpp"
 
 class UiElement
 {
 public:
-    UiElement(
-        int id,
-        float x,
-        float y,
-        float z,
-        unsigned int w,
-        unsigned int h,
-        bool movable,
-        bool resizable,
-        glm::vec3 color
-    );
+    explicit UiElement(const char *filename);
     virtual void attach(UiElement *parent);
     virtual void detach();
     virtual bool inBounds(float x, float y);
@@ -30,13 +21,9 @@ public:
     unsigned int getW();
     unsigned int getH();
     UiElement *parent;
-    float x, y, z;
+    UiResource *resource;
+    char filename[255];
 private:
-    unsigned int id;
-    bool movable;
-    bool resizable;
-    unsigned int w, h;
-    glm::vec3 color;
 protected:
 };
 

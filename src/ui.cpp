@@ -9,14 +9,16 @@
 #include "engine.hpp"
 #include "ui/window.hpp"
 #include "eventhandler.hpp"
+#include "resource.hpp"
+#include "ui/uielement.hpp"
 
 Ui::Ui()
 {
-    this->rootElement = new UiWindow(0,0,0,0,200,200,false,false, glm::vec3(1,0,0));
-    UiWindow* rootWindow = reinterpret_cast<UiWindow*>(this->rootElement);
-    rootWindow->addElement(new UiElement(0,160,0,0,100,100,false,false, glm::vec3(0,1,0)));
-    rootWindow->addElement(new UiElement(0,190,0,0,50,50,false,false, glm::vec3(0,0,1)));
-    rootElement->move(rootElement->getX()+200, rootElement->getY());
+    // UiWindow* rootWindow = reinterpret_cast<UiWindow*>(this->rootElement);
+    // rootWindow->addElement(new UiElement(0,160,0,0,100,100,false,false, glm::vec3(0,1,0)));
+    // rootWindow->addElement(new UiElement(0,190,0,0,50,50,false,false, glm::vec3(0,0,1)));
+    // rootElement->move(rootElement->getX()+200, rootElement->getY());
+    this->rootElement = nullptr;
 }
 
 Ui::~Ui()
@@ -24,11 +26,18 @@ Ui::~Ui()
     delete this->rootElement;
 }
 
+void Ui::init() {
+    //engine.resources.getUI("foobaz.ui");
+    this->rootElement = new UiWindow("foobaz.ui");
+}
+
 void Ui::update()
 {
     const Event* ev = nullptr;
-    rootElement->handleEvent(ev);
-    rootElement->move(rootElement->getX()+(engine.getTick()*10.0f), rootElement->getY());
+    if(rootElement != nullptr){
+        rootElement->handleEvent(ev);
+        //rootElement->move(rootElement->getX()+(engine.getTick()*10.0f), rootElement->getY());
+    }
     //while((ev = engine.events.poll())) {
     //}
 
@@ -36,7 +45,9 @@ void Ui::update()
 
 void Ui::draw()
 {
-    rootElement->draw(); 
+    if(rootElement != nullptr){
+        rootElement->draw(); 
+    }
 }
 
 void Ui::startClip(int x, int y, int w, int h)

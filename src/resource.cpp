@@ -26,6 +26,9 @@
 // FontResource
 #include "resources/freetype.hpp"
 
+// UiResource
+#include "resources/ui_json.hpp"
+
 ResourceHandler::ResourceHandler()
 {
     memset(datapath, 0, FILENAME_MAX);
@@ -59,6 +62,8 @@ Resource *ResourceHandler::getByType(const char *ext)
         res = new PNG_Resource;
     } else if (strcmp("obj", ext) == 0) {
         res = new OBJ_Resource;
+    } else if (strcmp("ui", ext) == 0) {
+        res = new UI_Resource;
     } else if (strcmp("ogex", ext) == 0) {
         res = new OGEX_Resource;
     } else if (
@@ -265,4 +270,9 @@ void ModelResource::updateBoundingBox(glm::vec3 vertex)
             bounding_box.max[i] = vertex[i];
         }
     }
+}
+
+UiResource *ResourceHandler::getUI(const char *filename)
+{
+    return reinterpret_cast<UiResource *>(getResource(filename));
 }

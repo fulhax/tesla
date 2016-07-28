@@ -7,7 +7,8 @@
 #include <string>
 
 #include "script.hpp"
-#include "ui/uielement.hpp"
+
+class UiElement;
 
 struct TextData {
     std::vector<glm::vec2> verts;
@@ -30,6 +31,7 @@ public:
     void print(const std::string &fontfile, int x, int y, const std::string &in);
     void update();
     void draw();
+    void init();
 
     UiElement *rootElement;
 };

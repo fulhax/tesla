@@ -84,6 +84,7 @@ int Engine::init()
     resources.init();
     audio.init();
     physics.init();
+    ui.init();
 
     if (script.init() != 0) {
         running = false;

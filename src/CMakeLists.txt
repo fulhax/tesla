@@ -5,12 +5,12 @@ project(game)
 include("../cmake/makelistabs.cmake")
 
 list(APPEND SOURCE_FILES
+    "./resource.cpp"
     "./engine.cpp"
     "./errorhandler.cpp"
     "./eventhandler.cpp"
     "./main.cpp"
     "./video.cpp"
-    "./resource.cpp"
     "./shader.cpp"
     "./entity.cpp"
     "./script.cpp"
@@ -25,6 +25,7 @@ list(APPEND SOURCE_FILES
     "./ui/window.cpp"
     "./sha256.cpp"
     "./resources/tga.cpp"
+    "./resources/ui_json.cpp"
     "./resources/png.cpp"
     "./resources/obj.cpp"
     "./resources/glsl.cpp"

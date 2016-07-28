@@ -3,7 +3,7 @@
 
 void UiWindow::draw()
 {
-    engine.ui.startClip(this->getX(), this->getY(), this->getW(), this->getH());
+    engine.ui.startClip((int) this->getX(), (int)this->getY(), this->getW(), this->getH());
     UiElement::draw();
     for(auto element : this->getElements()) {
         element->draw();

@@ -2,60 +2,39 @@
 #include "engine.hpp"
 #include "../eventhandler.hpp"
 
-UiElement::UiElement(
-    int id,
-    float x,
-    float y,
-    float z,
-    unsigned int w,
-    unsigned int h,
-    bool movable,
-    bool resizable,
-    glm::vec3 color
-)
+UiElement::UiElement(const char *filename)
 {
-    this->id = id; 
-    this->x = x;
-    this->y = y;
-    this->z = z; // z-index
-
-    this->w = w;
-    this->h = h;
-
-    this->resizable = resizable;
-    this->movable = movable;
-
-    this->color = color;
-
+    strcpy(this->filename , filename);
+    this->resource = engine.resources.getUI(filename);
     this->detach();
 }
 
 float UiElement::getX()
 {
     if(this->parent != nullptr) {
-        return this->parent->x + this->x;
+        return this->parent->resource->x + this->resource->x;
     } else {
-        return this->x;
+        return this->resource->x;
     }
 }
 
 float UiElement::getY()
 {
     if(this->parent != nullptr) {
-        return this->parent->y + this->y;
+        return this->parent->resource->y + this->resource->y;
     } else {
-        return this->y;
+        return this->resource->y;
     }
 }
 
 unsigned int UiElement::getW()
 {
-    return this->w;
+    return this->resource->w;
 }
 
 unsigned int UiElement::getH()
 {
-    return this->h;
+    return this->resource->h;
 }
 
 void UiElement::attach(UiElement *parent)
@@ -145,27 +124,32 @@ bool UiElement::inBounds(float x, float y)
 
 void UiElement::resize(unsigned int w, unsigned int h)
 {
-    this->w = w;
-    this->h = h;
+    this->resource->w = w;
+    this->resource->h = h;
 }
 
 void UiElement::move(float x, float y)
 {
-    this->x = x;
-    this->y = y;
+    this->resource->x = x;
+    this->resource->y = y;
 }
 
 void UiElement::draw()
 {
+    printf("%d %d %d %d\n", (int) this->getX(),
+        (int) this->getY(),
+        (int) this->getW(),
+        (int) this->getH());
     engine.ui.drawRect(
         (int) this->getX(),
         (int) this->getY(),
         (int) this->getW(),
         (int) this->getH(),
-        this->color
+        this->resource->color
     );
 }
 
 void UiElement::handleEvent(const Event* ev)
 {
+    this->resource = engine.resources.getUI(this->filename);
 }
