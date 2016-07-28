@@ -268,13 +268,13 @@ void Engine::update()
         //     sound = audio.play("sound/Example.ogg", glm::vec3(0, 0, 0));
         // }
 
+        ui.update();
         script.run(s, "void update()");
 
         for (auto e : entities) {
             e->update();
         }
 
-        ui.update();
         physics.update();
 
         // while (!events.lastevent()) {
