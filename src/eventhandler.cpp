@@ -22,7 +22,13 @@ int EventHandler::count()
 
 bool EventHandler::lastevent()
 {
-    return (current == events.size());
+    bool last = (current == events.size());
+
+    if (last) {
+        current = 0;
+    }
+
+    return last;
 }
 
 const Event *EventHandler::poll()
@@ -45,7 +51,7 @@ void EventHandler::update()
 {
     current = 0;
 
-    for (int i = events.size() -1; i >= 0; i--) {
+    for (int i = events.size() - 1; i >= 0; i--) {
         if (!events[i].keep) {
             events.erase(events.begin() + i);
         }
@@ -58,7 +64,7 @@ void EventHandler::update()
 
 void EventHandler::untrigger(const std::string &event)
 {
-    for (int i = events.size() -1; i >= 0; i--) {
+    for (int i = events.size() - 1; i >= 0; i--) {
         if (events[i].event == event) {
             events.erase(events.begin() + i);
         }
