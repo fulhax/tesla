@@ -7,7 +7,7 @@
 
 EventHandler::EventHandler()
 {
-
+    current = 0;
 }
 
 EventHandler::~EventHandler()
@@ -20,40 +20,47 @@ int EventHandler::count()
     return events.size();
 }
 
+bool EventHandler::lastevent()
+{
+    return (current == events.size());
+}
+
 const Event *EventHandler::poll()
 {
     static Event out;
-
     auto ev = events.begin();
 
-    if (ev != events.end()) {
-        out = ev[0];
-
-        if (ev->keep == true) {
-            keptevents.push_back(out);
-        }
-
-        events.erase(ev);
+    if (current != events.size()) {
+        out = ev[current];
+        current += 1;
 
         return &out;
     }
 
+    current = 0;
     return nullptr;
 }
 
 void EventHandler::update()
 {
-    auto it = std::next(keptevents.begin(), keptevents.size());
-    std::move(keptevents.begin(), it, std::back_inserter(events));
-    keptevents.erase(keptevents.begin(), it);
+    current = 0;
+
+    for (int i = events.size() -1; i >= 0; i--) {
+        if (!events[i].keep) {
+            events.erase(events.begin() + i);
+        }
+    }
+
+    // auto it = std::next(keptevents.begin(), keptevents.size());
+    // std::move(keptevents.begin(), it, std::back_inserter(events));
+    // keptevents.clear();
 }
 
 void EventHandler::untrigger(const std::string &event)
 {
-    for (auto ev = events.begin(); ev != events.end(); ++ev) {
-        if (ev->event == event) {
-            events.erase(ev);
-            return;
+    for (int i = events.size() -1; i >= 0; i--) {
+        if (events[i].event == event) {
+            events.erase(events.begin() + i);
         }
     }
 }

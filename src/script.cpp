@@ -307,6 +307,11 @@ void Script::registerObjects()
         "int count()",
         asMETHOD(EventHandler, count),
         asCALL_THISCALL);
+    core->RegisterObjectMethod(
+        "Events",
+        "bool lastevent()",
+        asMETHOD(EventHandler, lastevent),
+        asCALL_THISCALL);
 
     core->RegisterObjectType("Entity", 0, asOBJ_REF);
     core->RegisterObjectBehaviour(
