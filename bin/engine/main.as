@@ -4,8 +4,10 @@ void init()
 
 void update()
 {
-    while(events.count() != 0) {
-        Event ev = events.poll();
+    Event ev;
+    while (!events.lastevent()) {
+        ev = events.poll();
+
         print("event " + ev.event + "(" + ev.data  + ")");
     }
 }
