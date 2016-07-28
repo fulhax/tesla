@@ -27,8 +27,8 @@ Ui::~Ui()
 void Ui::update()
 {
     const Event* ev = nullptr;
-    rootElement->handleEvent(ev);
-    rootElement->move(rootElement->getX()+(engine.getTick()*10.0f), rootElement->getY());
+    //rootElement->handleEvent(ev);
+    rootElement->move(rootElement->getX()+0.5f, rootElement->getY());
     //while((ev = engine.events.poll())) {
     //}
 

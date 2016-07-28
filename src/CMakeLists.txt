@@ -21,6 +21,8 @@ list(APPEND SOURCE_FILES
     "./shapes.cpp"
     "./physics.cpp"
     "./ui.cpp"
+    "./ui/uielement.cpp"
+    "./ui/window.cpp"
     "./sha256.cpp"
     "./resources/tga.cpp"
     "./resources/png.cpp"

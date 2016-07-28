@@ -251,7 +251,7 @@ void Engine::update()
     }
 
     script.run(s, "void draw()");
-    ui.update();
+    ui.draw();
 
     while (mtime >= EngineTick) {
         mtime -= EngineTick;
@@ -270,6 +270,7 @@ void Engine::update()
             e->update();
         }
 
+        ui.update();
         physics.update();
 
         while (events.count()) {
