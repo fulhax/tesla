@@ -85,12 +85,13 @@ void Entity::spawn(glm::vec3 pos, glm::vec3 rot)
                        mass);
 }
 
-int Entity::cullCheck(const glm::mat4 &ModelMat, ModelResource *m)
+int Entity::cullCheck(const glm::mat4 &ModelMat, ModelResource *m, float scale)
 {
     Camera *camera = &engine.camera;
 
-    glm::vec4 tmax =  ModelMat * glm::vec4(m->bounding_box.max, 1.0);
-    glm::vec4 tmin =  ModelMat * glm::vec4(m->bounding_box.min, 1.0);
+    glm::mat4 CullMat = glm::scale(ModelMat, glm::vec3(scale, scale, scale));
+    glm::vec4 tmax = CullMat * glm::vec4(m->bounding_box.max, 1.0);
+    glm::vec4 tmin = CullMat * glm::vec4(m->bounding_box.min, 1.0);
 
     glm::vec3 bb_size =
         glm::vec3(
@@ -134,7 +135,7 @@ glm::mat4 Entity::getModelMatrix()
     glm::mat4 ModelMat = glm::mat4(1.0);
     transform.getOpenGLMatrix(glm::value_ptr(ModelMat));
 
-    return ModelMat;
+    return glm::scale(ModelMat, glm::vec3(scale, scale, scale));
 }
 
 void Entity::draw(const glm::mat4 &ProjMat, const glm::mat4 &ViewMat)
@@ -151,7 +152,7 @@ void Entity::draw(const glm::mat4 &ProjMat, const glm::mat4 &ViewMat)
         m = engine.debugger.useDebugModel();
     }
 
-    if (!cullCheck(ModelMat, m)) {
+    if (!cullCheck(ModelMat, m, scale)) {
         return;
     }
 

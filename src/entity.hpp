@@ -30,7 +30,7 @@ class Entity
     int ref_count;
     float mass;
 
-    static int cullCheck(const glm::mat4 &ModelMat, ModelResource *m);
+    static int cullCheck(const glm::mat4 &ModelMat, ModelResource *m, float scale);
     glm::mat4 getModelMatrix();
 public:
     struct {

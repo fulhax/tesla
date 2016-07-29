@@ -249,6 +249,7 @@ btRigidBody *Physics::createMesh(ModelResource *m, glm::vec3 position,
 
     if (mass > 0.1f) {
         btConvexShape *tmpshape = new btConvexTriangleMeshShape(mesh);
+        tmpshape->setLocalScaling(btVector3(size.x, size.y, size.z));
 
         btShapeHull *hull = new btShapeHull(tmpshape);
         btScalar margin = tmpshape->getMargin();
