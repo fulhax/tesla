@@ -2,14 +2,21 @@
 #include "engine.hpp"
 #include "../eventhandler.hpp"
 
-UiElement::UiElement(){
-    this->resource = nullptr;    
+#define EQUAL(a,b) (strcmp(a,b) == 0)
+
+UiElement::UiElement()
+{
+    this->resource = nullptr;
+    this->movable = true;
+    this->resizable = false;
 }
 
-UiElement::~UiElement(){
-    for(int i=this->elements.size() -1; i>=0;i--){
+UiElement::~UiElement()
+{
+    for(int i = this->elements.size() - 1; i >= 0; i--) {
         delete this->elements[i];
     }
+
     this->elements.clear();
 }
 
@@ -177,9 +184,18 @@ void UiElement::draw()
         (int) this->getH(),
         this->resource->color
     );
+
+    int cm[4] = {this->getX(), this->getY(), this->getW(), this->getH()};
+
     for(auto element : this->getElements()) {
+        if(this->resource->clip) {
+            engine.ui.startClip(cm[0], cm[1], cm[2], cm[3]);
+        }
+
         element->draw();
+
+        if(this->resource->clip) {
+            engine.ui.endClip();
+        }
     }
-    engine.ui.endClip();
-    
 }

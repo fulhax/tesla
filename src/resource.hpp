@@ -43,6 +43,7 @@ public:
     uint32_t h;
     float x;
     float y; 
+    bool clip; 
     glm::vec3 color;
     UiElement *element;
 
@@ -52,6 +53,7 @@ public:
        h = 0;
        x = 0;
        y = 0;
+       clip = false;
     }
 };
 

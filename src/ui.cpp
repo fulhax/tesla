@@ -50,6 +50,8 @@ void Ui::draw()
     if(el != nullptr){
         el->draw(); 
     }
+
+    endClip();
 }
 
 void Ui::startClip(int x, int y, int w, int h)

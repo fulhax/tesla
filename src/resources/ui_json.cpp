@@ -64,6 +64,10 @@ void UI_Resource::setByJson(nlohmann::json &json){
         this->w = jsonObj["w"].get<unsigned int>();
         this->h = jsonObj["h"].get<unsigned int>();
         
+        if(jsonObj["clip"].is_boolean()){
+            this->clip = jsonObj["clip"];
+        }
+        
         if(jsonObj["color"].is_object()){
             this->color = glm::vec3(
                 jsonObj["color"]["r"].get<float>(),
