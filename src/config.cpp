@@ -18,6 +18,7 @@ void Config::readConfig(const char *filename)
 
         while (!feof(f)) {
             char line[MAX_LINE] = {0};
+            bool instring = false;
             std::string key;
             std::string val;
             std::string *current = &key;
@@ -33,7 +34,9 @@ void Config::readConfig(const char *filename)
                     current = &val;
                 } else if (*tmp == '#') {
                     break;
-                } else if (*tmp != ' ') {
+                } else if (*tmp == '"') {
+                    instring = !instring;
+                } else if (*tmp != ' ' || instring) {
                     current->append(tmp, 1);
                 }
 
@@ -83,7 +86,7 @@ void Config::saveConfig(const char *filename) const
             }
         }
 
-        fprintf(o, "%s = %s\n", c.first.c_str(), c.second.c_str());
+        fprintf(o, "\"%s\" = %s\n", c.first.c_str(), c.second.c_str());
     }
 
     fclose(o);

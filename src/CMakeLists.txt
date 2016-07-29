@@ -37,6 +37,7 @@ list(APPEND SOURCE_FILES
     "../externals/fast_obj_loader/fast_obj_loader.cpp"
     "../externals/as_scriptbuilder/scriptbuilder.cpp"
     "../externals/as_scriptstdstring/scriptstdstring.cpp"
+    "../externals/as_serializer/serializer.cpp"
     )
 
 list(APPEND INCLUDE_DIRS
@@ -44,6 +45,7 @@ list(APPEND INCLUDE_DIRS
     "../externals/fast_obj_loader"
     "../externals/as_scriptbuilder"
     "../externals/as_scriptstdstring"
+    "../externals/as_serializer"
     "${CMAKE_CURRENT_BINARY_DIR}/generated"
     )
 

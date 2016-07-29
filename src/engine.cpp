@@ -70,6 +70,16 @@ int Engine::spawnEntity(const std::string &name, const glm::vec3 &pos,
     return entities.size() - 1;
 }
 
+Entity *Engine::getEntityById(const int &id)
+{
+    if (id == -1) {
+        return nullptr;
+    }
+
+    lprintf(LOG_INFO, "Trying to get entity %d", id);
+    return entities[id];
+}
+
 int Engine::init()
 {
     int ret = SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS);
@@ -109,8 +119,13 @@ int Engine::init()
 
     physics.update();
 
-    camera.pos = glm::vec3(0, 10, 25);
-    camera.pitch = 30;
+    camera.attachCharacter(
+        physics.createCharacter(
+            glm::vec3(0, 10, 25),
+            glm::vec2(1, 2),
+            0.25f
+        )
+    );
 
     return 0;
 }
@@ -230,10 +245,20 @@ void Engine::update()
     uint64_t ctime = SDL_GetPerformanceCounter();
     uint64_t freq = SDL_GetPerformanceFrequency();
 
+
     time = static_cast<double>(ctime - oldtime) /
            static_cast<double>(freq);
 
     oldtime = ctime;
+    //
+    // -- -
+    // time = (
+    //            static_cast<double>(ctime) /
+    //            static_cast<double>(freq)
+    //        ) - static_cast<double>(oldtime);
+    //
+    // oldtime = ctime / freq;
+
     static float fpstimer = 0;
     static float mtime = time;
 
@@ -252,13 +277,16 @@ void Engine::update()
 
     mtime += time;
 
-
     for (auto e : entities) {
         e->draw(video.ProjMat, video.ViewMat);
     }
 
     script.run(s, "void draw()");
     ui.draw();
+
+    static char foo[256] = {0};
+    static char bar[256] = {0};
+    static int ticks = 0;
 
     while (mtime >= EngineTick) {
         mtime -= EngineTick;
@@ -278,6 +306,19 @@ void Engine::update()
             e->update();
         }
 
+
+        snprintf(
+            foo,
+            sizeof(foo),
+            "vel: %f, %f, %f",
+            camera.vel.x,
+            camera.vel.y,
+            camera.vel.z
+        );
+
+        camera.update(video.ProjMat, video.ViewMat);
+        //test->updateAction(physics.dynamics_world, engine.getTick());
+
         physics.update();
 
         // while (!events.lastevent()) {
@@ -288,10 +329,26 @@ void Engine::update()
         //         "Stray event ^r\"%s\"^0 found!",
         //         ev->event.c_str());
         // }
+        snprintf(bar, sizeof(bar), "time: %f, ticks: %d", time, ticks);
+        ticks = 0;
     }
+
+    ticks++;
+
+    ui.printDef(0, 250, foo);
+    ui.printDef(0, 300, bar);
 
     events.update();
     video.swap();
+
+    // btTransform trans;
+    // trans = test->getGhostObject()->getWorldTransform();
+    //
+    // camera.pos = glm::vec3(
+    //                  trans.getOrigin().x(),
+    //                  trans.getOrigin().y(),
+    //                  trans.getOrigin().z()
+    //              );
 
     ctime = SDL_GetPerformanceCounter();
     freq = SDL_GetPerformanceFrequency();

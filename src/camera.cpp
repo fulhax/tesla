@@ -6,9 +6,12 @@
 
 Camera::Camera()
 {
-    pos = glm::vec3(0.0f, 0.0f, 0.0f);
+    pos = glm::vec3(0.f, 0.f, 0.f);
+    vel = glm::vec3(0.f, 0.f, 0.f);
+
     yaw = 0;
     pitch = 0;
+    character = nullptr;
 }
 
 Camera::~Camera()
@@ -16,8 +19,60 @@ Camera::~Camera()
 
 }
 
+void Camera::attachCharacter(btKinematicCharacterController *c)
+{
+    character = c;
+    // character->setFallSpeed(55);
+    // character->setJumpSpeed(20);
+    //character->setMaxJumpHeight(20);
+}
+
+void Camera::detachCharacter()
+{
+    character = nullptr;
+}
+
 void Camera::update(glm::mat4 projMat, glm::mat4 viewMat)
 {
+    if (character) {
+        // character->setJumpSpeed(10);
+        // character->setFallSpeed(55);
+        //character->setMaxJumpHeight(30);
+
+        vel *= engine.getTick();
+        character->setWalkDirection(
+            btVector3(
+                vel.x,
+                vel.y,
+                vel.z
+            )
+        );
+
+        // character->setVelocityForTimeInterval(
+        //     btVector3(
+        //         vel.x,
+        //         vel.y,
+        //         vel.z
+        //     ), engine.getTick()
+        // );
+
+        // engine.physics.updateCharacter(character);
+
+        btTransform trans;
+        trans = character->getGhostObject()->getWorldTransform();
+
+        pos = glm::vec3(
+                  trans.getOrigin().x(),
+                  trans.getOrigin().y() + 0.5f,
+                  trans.getOrigin().z()
+              );
+
+    } else {
+        pos += vel * engine.getTick();
+    }
+
+    vel = glm::vec3(0.f, 0.f, 0.f);
+
     glm::mat4 mpv = projMat * viewMat;
 
     glm::vec4 rowX = glm::row(mpv, 0);
@@ -38,48 +93,63 @@ void Camera::update(glm::mat4 projMat, glm::mat4 viewMat)
     }
 }
 
+void Camera::jump()
+{
+    if (character) {
+        character->jump();
+    }
+}
+
 void Camera::moveForward(const float &speed)
 {
     float yrad = yaw * RAD;
-    float xrad = pitch * RAD;
+    //float xrad = pitch * RAD;
 
-    float s = speed * engine.getTick();
+    glm::vec3 cam = glm::vec3(0.f, 0.f, 0.f);
 
-    pos.x += sinf(yrad) * s;
-    pos.y -= sinf(xrad) * s;
-    pos.z -= cosf(yrad) * s;
+    cam.x += sinf(yrad);
+    //cam.y -= sinf(xrad);
+    cam.z -= cosf(yrad);
+
+    vel += glm::normalize(cam) * speed;
 }
 
 void Camera::moveBackwards(const float &speed)
 {
     float yrad = yaw * RAD;
-    float xrad = pitch * RAD;
+    //float xrad = pitch * RAD;
 
-    float s = speed * engine.getTick();
+    glm::vec3 cam = glm::vec3(0.f, 0.f, 0.f);
 
-    pos.x -= sinf(yrad) * s;
-    pos.y += sinf(xrad) * s;
-    pos.z += cosf(yrad) * s;
+    cam.x -= sinf(yrad);
+    //cam.y += sinf(xrad);
+    cam.z += cosf(yrad);
+
+    vel += glm::normalize(cam) * speed;
 }
 
 void Camera::moveLeft(const float &speed)
 {
     float yrad = yaw * RAD;
 
-    float s = speed * engine.getTick();
+    glm::vec3 cam = glm::vec3(0.f, 0.f, 0.f);
 
-    pos.x -= cosf(yrad) * s;
-    pos.z -= sinf(yrad) * s;
+    cam.x -= cosf(yrad);
+    cam.z -= sinf(yrad);
+
+    vel += glm::normalize(cam) * speed;
 }
 
 void Camera::moveRight(const float &speed)
 {
     float yrad = yaw * RAD;
 
-    float s = speed * engine.getTick();
+    glm::vec3 cam = glm::vec3(0.f, 0.f, 0.f);
 
-    pos.x += cosf(yrad) * s;
-    pos.z += sinf(yrad) * s;
+    cam.x += cosf(yrad);
+    cam.z += sinf(yrad);
+
+    vel += glm::normalize(cam) * speed;
 }
 
 int Camera::pointInFrustum(const glm::vec3 &point)

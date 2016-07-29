@@ -13,7 +13,7 @@ struct TextData {
     std::vector<glm::vec2> uvs;
 };
 
-class Ui : public ASClass<Ui>
+class Ui
 {
     glm::mat4 OrthoMat;
 public:

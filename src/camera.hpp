@@ -4,6 +4,7 @@
 #include <glm/glm.hpp>
 
 #include "script.hpp"
+#include "physics.hpp"
 
 enum {
     FRUSTUM_OUTSIDE = 0,
@@ -11,7 +12,7 @@ enum {
     FRUSTUM_INSIDE
 };
 
-class Camera : public ASClass<Camera>
+class Camera
 {
     enum {
         FRUSTUM_TOP = 0,
@@ -24,7 +25,10 @@ class Camera : public ASClass<Camera>
 
     float pointDistance(int i, const glm::vec3 &point);
     glm::vec4 frustum[6];
+    btKinematicCharacterController* character;
+    bool jumping;
 public:
+    glm::vec3 vel;
     glm::vec3 pos;
 
     float yaw;
@@ -40,10 +44,15 @@ public:
     int cubeInFrustum(const glm::vec3 &point, float scale);
     int rectInFrustum(const glm::vec3 &point, const glm::vec3 &scale);
 
+    void attachCharacter(btKinematicCharacterController *c);
+    void detachCharacter();
+
     void moveForward(const float &speed);
     void moveBackwards(const float &speed);
     void moveLeft(const float &speed);
     void moveRight(const float &speed);
+
+    void jump();
 };
 
 #endif // CAMERA_HPP_

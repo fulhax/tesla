@@ -20,7 +20,7 @@
 #define NUM_MSFRAMES 100
 #define MAX_MOUSEBUTTONS 32
 
-class Engine : public ASClass<Engine>
+class Engine
 {
 public:
     Engine();
@@ -38,6 +38,7 @@ public:
 
     int spawnEntity(const std::string &name, const glm::vec3 &pos,
                     const glm::vec3 &rot);
+    Entity* getEntityById(const int &id);
 
     bool running;
 
@@ -59,13 +60,14 @@ public:
         float ry;
         bool button[MAX_MOUSEBUTTONS];
     } mouse;
+
+    float time;
+    uint64_t oldtime;
 private:
     std::vector<Entity *> entities;
     std::map<std::string, EntityType> entityTypes;
     void handleEvents();
 
-    uint64_t oldtime;
-    float time;
     float msframe[NUM_MSFRAMES];
     int currframe;
     int countfps;
