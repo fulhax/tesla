@@ -6,9 +6,12 @@
 
 Camera::Camera()
 {
-    pos = glm::vec3(0.0f, 0.0f, 0.0f);
+    pos = glm::vec3(0.f, 0.f, 0.f);
+    vel = glm::vec3(0.f, 0.f, 0.f);
+
     yaw = 0;
     pitch = 0;
+    character = nullptr;
 }
 
 Camera::~Camera()
@@ -16,8 +19,44 @@ Camera::~Camera()
 
 }
 
+void Camera::attachCharacter(btKinematicCharacterController *c)
+{
+    character = c;
+}
+
+void Camera::detachCharacter()
+{
+    character = nullptr;
+}
+
 void Camera::update(glm::mat4 projMat, glm::mat4 viewMat)
 {
+    if (character) {
+        character->setWalkDirection(
+            btVector3(
+                vel.x,
+                vel.y,
+                vel.z
+            )
+        );
+
+        engine.physics.updateCharacter(character);
+
+        btTransform trans;
+        trans = character->getGhostObject()->getWorldTransform();
+
+        pos = glm::vec3(
+                  trans.getOrigin().x(),
+                  trans.getOrigin().y() + 0.5f,
+                  trans.getOrigin().z()
+              );
+
+    } else {
+        pos += vel;
+    }
+
+    vel = glm::vec3(0.f, 0.f, 0.f);
+
     glm::mat4 mpv = projMat * viewMat;
 
     glm::vec4 rowX = glm::row(mpv, 0);
@@ -45,9 +84,9 @@ void Camera::moveForward(const float &speed)
 
     float s = speed * engine.getTick();
 
-    pos.x += sinf(yrad) * s;
-    pos.y -= sinf(xrad) * s;
-    pos.z -= cosf(yrad) * s;
+    vel.x += sinf(yrad) * s;
+    vel.y -= sinf(xrad) * s;
+    vel.z -= cosf(yrad) * s;
 }
 
 void Camera::moveBackwards(const float &speed)
@@ -57,9 +96,9 @@ void Camera::moveBackwards(const float &speed)
 
     float s = speed * engine.getTick();
 
-    pos.x -= sinf(yrad) * s;
-    pos.y += sinf(xrad) * s;
-    pos.z += cosf(yrad) * s;
+    vel.x -= sinf(yrad) * s;
+    vel.y += sinf(xrad) * s;
+    vel.z += cosf(yrad) * s;
 }
 
 void Camera::moveLeft(const float &speed)
@@ -68,8 +107,8 @@ void Camera::moveLeft(const float &speed)
 
     float s = speed * engine.getTick();
 
-    pos.x -= cosf(yrad) * s;
-    pos.z -= sinf(yrad) * s;
+    vel.x -= cosf(yrad) * s;
+    vel.z -= sinf(yrad) * s;
 }
 
 void Camera::moveRight(const float &speed)
@@ -78,8 +117,8 @@ void Camera::moveRight(const float &speed)
 
     float s = speed * engine.getTick();
 
-    pos.x += cosf(yrad) * s;
-    pos.z += sinf(yrad) * s;
+    vel.x += cosf(yrad) * s;
+    vel.z += sinf(yrad) * s;
 }
 
 int Camera::pointInFrustum(const glm::vec3 &point)

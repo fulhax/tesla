@@ -181,6 +181,37 @@ void Physics::setGravity(glm::vec3 gravity)
     dynamics_world->setGravity(btVector3(gravity.x, gravity.y, gravity.z));
 }
 
+btKinematicCharacterController *Physics::createCharacter(glm::vec3 position,
+        glm::vec2 size, float stepheight)
+{
+    btTransform trans;
+    trans.setIdentity();
+    trans.setOrigin(btVector3(position.x, position.y, position.z));
+
+    btConvexShape *capsule = new btCapsuleShape(size.x, size.y);
+
+    btPairCachingGhostObject *ghost = new btPairCachingGhostObject();
+    ghost->setWorldTransform(trans);
+    broadphase->getOverlappingPairCache()->setInternalGhostPairCallback(
+        new btGhostPairCallback()
+    );
+    ghost->setCollisionShape(capsule);
+    ghost->setCollisionFlags(btCollisionObject::CF_CHARACTER_OBJECT);
+
+    btKinematicCharacterController *character =
+        new btKinematicCharacterController(ghost, capsule, stepheight);
+
+    character->setGravity(-dynamics_world->getGravity().getY());
+
+    dynamics_world->addCollisionObject(
+        ghost,
+        btBroadphaseProxy::CharacterFilter,
+        btBroadphaseProxy::AllFilter
+    );
+
+    return character;
+}
+
 btRigidBody *Physics::createMesh(ModelResource *m,
                                  glm::vec3 position,
                                  glm::quat orientation,
@@ -193,12 +224,15 @@ btRigidBody *Physics::createMesh(ModelResource *m,
                 orientation.x,
                 orientation.y,
                 orientation.z,
-                orientation.w),
+                orientation.w
+            ),
             btVector3(
                 position.x,
                 position.y,
-                position.z)
-        ));
+                position.z
+            )
+        )
+    );
 
     btTriangleIndexVertexArray *mesh = new btTriangleIndexVertexArray(
         m->num_tris,
@@ -206,7 +240,8 @@ btRigidBody *Physics::createMesh(ModelResource *m,
         12,
         m->num_verts,
         &m->verts[0],
-        sizeof(btScalar) * 3);
+        sizeof(btScalar) * 3
+    );
 
     btVector3 localInertia(0, 0, 0);
     btCollisionShape *shape;
@@ -281,4 +316,9 @@ void Physics::update()
 {
     dynamics_world->stepSimulation(engine.getTick(), 0);
     //dynamics_world->debugDrawWorld();
+}
+
+void Physics::updateCharacter(btKinematicCharacterController* character) 
+{
+    character->updateAction(dynamics_world, engine.getTick());
 }

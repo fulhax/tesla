@@ -70,9 +70,9 @@ int Engine::spawnEntity(const std::string &name, const glm::vec3 &pos,
     return entities.size() - 1;
 }
 
-Entity* Engine::getEntityById(const int &id)
+Entity *Engine::getEntityById(const int &id)
 {
-    if(id == -1) {
+    if (id == -1) {
         return nullptr;
     }
 
@@ -118,8 +118,13 @@ int Engine::init()
 
     physics.update();
 
-    camera.pos = glm::vec3(0, 10, 25);
-    camera.pitch = 30;
+    camera.attachCharacter(
+        physics.createCharacter(
+            glm::vec3(0, 10, 25),
+            glm::vec2(1, 2),
+            1
+        )
+    );
 
     return 0;
 }
@@ -286,6 +291,8 @@ void Engine::update()
         }
 
         physics.update();
+        camera.update(video.ProjMat, video.ViewMat);
+        //test->updateAction(physics.dynamics_world, engine.getTick());
 
         // while (!events.lastevent()) {
         //     auto ev = events.poll();
@@ -299,6 +306,15 @@ void Engine::update()
 
     events.update();
     video.swap();
+
+    // btTransform trans;
+    // trans = test->getGhostObject()->getWorldTransform();
+    //
+    // camera.pos = glm::vec3(
+    //                  trans.getOrigin().x(),
+    //                  trans.getOrigin().y(),
+    //                  trans.getOrigin().z()
+    //              );
 
     ctime = SDL_GetPerformanceCounter();
     freq = SDL_GetPerformanceFrequency();

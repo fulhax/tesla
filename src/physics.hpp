@@ -4,6 +4,8 @@
 #include <glm/glm.hpp>
 
 #include <btBulletDynamicsCommon.h>
+#include <BulletDynamics/Character/btKinematicCharacterController.h>
+#include <BulletCollision/CollisionDispatch/btGhostObject.h>
 
 #include "resource.hpp"
 
@@ -66,6 +68,7 @@ public:
 
     void init(glm::vec3 gravity = glm::vec3(0, -9.81f, 0));
     void update();
+    void updateCharacter(btKinematicCharacterController* character);
 
     void setGravity(glm::vec3 gravity);
 
@@ -79,6 +82,9 @@ public:
                             glm::quat orientation,
                             glm::vec3 size,
                             int mass = 0);
+
+    btKinematicCharacterController *createCharacter(glm::vec3 position,
+            glm::vec2 size, float stepheight);
 };
 
 #endif // PHYSICS_HPP_
