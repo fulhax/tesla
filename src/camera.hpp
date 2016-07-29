@@ -11,7 +11,7 @@ enum {
     FRUSTUM_INSIDE
 };
 
-class Camera : public ASClass<Camera>
+class Camera
 {
     enum {
         FRUSTUM_TOP = 0,

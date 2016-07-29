@@ -14,11 +14,13 @@ struct EntityType {
     std::string script;
 
     EntityType() {}
-    EntityType(std::string name, std::string script)
-        : name(name), script(script) {}
+    EntityType(
+        std::string name,
+        std::string script
+    ) : name(name), script(script) {}
 };
 
-class Entity : public ASClass<Entity>
+class Entity
 {
     std::map<std::string, std::string> textures;
     char model[FILENAME_MAX];
@@ -51,6 +53,8 @@ public:
     void setMass(const float mass);
     void setTexture(const std::string &inname, const std::string &infile);
     void attachShader(const std::string &infile);
+
+    void applyForce(glm::vec3 &force);
 };
 
 #endif // ENTITY_HPP_

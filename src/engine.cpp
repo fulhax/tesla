@@ -70,6 +70,16 @@ int Engine::spawnEntity(const std::string &name, const glm::vec3 &pos,
     return entities.size() - 1;
 }
 
+Entity* Engine::getEntityById(const int &id)
+{
+    if(id == -1) {
+        return nullptr;
+    }
+
+    lprintf(LOG_INFO, "Trying to get entity %d", id);
+    return entities[id];
+}
+
 int Engine::init()
 {
     int ret = SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS);

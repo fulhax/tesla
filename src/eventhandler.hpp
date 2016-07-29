@@ -33,7 +33,7 @@ public:
     bool keep;
 };
 
-class EventHandler : public ASClass<EventHandler>
+class EventHandler
 {
     std::vector<Event> events;
     unsigned int current;

@@ -2,6 +2,8 @@
 #define SCRIPT_HPP_
 
 #include <angelscript.h>
+#include <stdio.h>
+
 #include <string>
 
 #define MAX_CONTEXTS 8
@@ -25,6 +27,7 @@ template<typename T> class ASClass
 public:
     ASClass()
     {
+        printf("Running asclass constructor\n");
         ref_count = 1;
     }
     virtual ~ASClass() {}
@@ -32,15 +35,18 @@ public:
     void addRef()
     {
         ref_count++;
+        printf("Adding ref %d\n", ref_count);
     }
     void releaseRef()
     {
+        printf("Releasing ref %d\n", ref_count);
         if (--ref_count == 0) {
             delete this;
         }
     }
     static T *factory()
     {
+        printf("Called factory\n");
         return new T();
     }
 };

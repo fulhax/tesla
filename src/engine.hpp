@@ -20,7 +20,7 @@
 #define NUM_MSFRAMES 100
 #define MAX_MOUSEBUTTONS 32
 
-class Engine : public ASClass<Engine>
+class Engine
 {
 public:
     Engine();
@@ -38,6 +38,7 @@ public:
 
     int spawnEntity(const std::string &name, const glm::vec3 &pos,
                     const glm::vec3 &rot);
+    Entity* getEntityById(const int &id);
 
     bool running;
 

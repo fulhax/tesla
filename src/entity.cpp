@@ -46,6 +46,12 @@ void Entity::setTexture(const std::string &inname, const std::string &infile)
     //snprintf(texture, FILENAME_MAX, "%s", in.c_str());
 }
 
+void Entity::applyForce(glm::vec3 &force)
+{
+    physics.body->activate(true);
+    physics.body->applyCentralForce(btVector3(force.x, force.y, force.z));
+}
+
 void Entity::spawn(glm::vec3 pos, glm::vec3 rot)
 {
     if (type == nullptr) {

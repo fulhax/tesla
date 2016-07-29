@@ -138,20 +138,8 @@ void Script::registerObjects()
             glm::vec2 &),
         asCALL_THISCALL);
 
-    core->RegisterObjectType("Ui", 0, asOBJ_REF);
+    core->RegisterObjectType("Ui", 0, asOBJ_REF | asOBJ_NOCOUNT);
     core->RegisterGlobalProperty("Ui ui", &engine.ui);
-    core->RegisterObjectBehaviour(
-        "Ui",
-        asBEHAVE_ADDREF,
-        "void f()",
-        asMETHOD(Ui, addRef),
-        asCALL_THISCALL);
-    core->RegisterObjectBehaviour(
-        "Ui",
-        asBEHAVE_RELEASE,
-        "void f()",
-        asMETHOD(Ui, releaseRef),
-        asCALL_THISCALL);
     core->RegisterObjectMethod(
         "Ui",
         "void print(int x, int y, const string &in)",
@@ -163,19 +151,7 @@ void Script::registerObjects()
         asMETHOD(Ui, print),
         asCALL_THISCALL);
 
-    core->RegisterObjectType("Camera", 0, asOBJ_REF);
-    core->RegisterObjectBehaviour(
-        "Camera",
-        asBEHAVE_ADDREF,
-        "void f()",
-        asMETHOD(Camera, addRef),
-        asCALL_THISCALL);
-    core->RegisterObjectBehaviour(
-        "Camera",
-        asBEHAVE_RELEASE,
-        "void f()",
-        asMETHOD(Camera, releaseRef),
-        asCALL_THISCALL);
+    core->RegisterObjectType("Camera", 0, asOBJ_REF | asOBJ_NOCOUNT);
     core->RegisterObjectProperty(
         "Camera",
         "float pitch",
@@ -205,20 +181,48 @@ void Script::registerObjects()
         asMETHOD(Camera, moveRight),
         asCALL_THISCALL);
 
-    core->RegisterObjectType("Engine", 0, asOBJ_REF);
+    core->RegisterObjectType("Entity", 0, asOBJ_REF | asOBJ_NOCOUNT);
+    core->RegisterObjectProperty(
+        "Entity",
+        "float scale",
+        asOFFSET(Entity, scale));
+    core->RegisterObjectMethod(
+        "Entity",
+        "void setModel(const string &in)",
+        asMETHOD(Entity, setModel),
+        asCALL_THISCALL);
+    core->RegisterObjectMethod(
+        "Entity",
+        "void setMass(const float mass)",
+        asMETHOD(Entity, setMass),
+        asCALL_THISCALL);
+    core->RegisterObjectMethod(
+        "Entity",
+        "void applyForce(const vec3 &in)",
+        asMETHOD(Entity, applyForce),
+        asCALL_THISCALL);
+    core->RegisterObjectMethod(
+        "Entity",
+        "void setTexture(const string &in, const string &in)",
+        asMETHOD(Entity, setTexture),
+        asCALL_THISCALL);
+    core->RegisterObjectMethod(
+        "Entity",
+        "void attachShader(const string &in)",
+        asMETHOD(Entity, attachShader),
+        asCALL_THISCALL);
+    core->RegisterObjectMethod(
+        "Entity",
+        "Entity &opAssign(const Entity &in)",
+        asMETHODPR(
+            Entity,
+            operator =,
+            (const Entity &),
+            Entity &),
+        asCALL_THISCALL);
+
+    core->RegisterObjectType("Engine", 0, asOBJ_REF | asOBJ_NOCOUNT);
     core->RegisterGlobalProperty("Engine engine", &engine);
-    core->RegisterObjectBehaviour(
-        "Engine",
-        asBEHAVE_ADDREF,
-        "void f()",
-        asMETHOD(Engine, addRef),
-        asCALL_THISCALL);
-    core->RegisterObjectBehaviour(
-        "Engine",
-        asBEHAVE_RELEASE,
-        "void f()",
-        asMETHOD(Engine, releaseRef),
-        asCALL_THISCALL);
     core->RegisterObjectMethod(
         "Engine",
         "float getTick()",
@@ -241,8 +245,13 @@ void Script::registerObjects()
         asCALL_THISCALL);
     core->RegisterObjectMethod(
         "Engine",
-        "void spawnEntity(string &in, vec3 &in, vec3 &in = vec3(0,0,0))",
+        "int spawnEntity(string &in, vec3 &in, vec3 &in = vec3(0,0,0))",
         asMETHOD(Engine, spawnEntity),
+        asCALL_THISCALL);
+    core->RegisterObjectMethod(
+        "Engine",
+        "Entity@ getEntityById(int &in)",
+        asMETHOD(Engine, getEntityById),
         asCALL_THISCALL);
     core->RegisterObjectProperty(
         "Engine",
@@ -283,20 +292,8 @@ void Script::registerObjects()
             Event &),
         asCALL_THISCALL);
 
-    core->RegisterObjectType("Events", 0, asOBJ_REF);
+    core->RegisterObjectType("Events", 0, asOBJ_REF | asOBJ_NOCOUNT);
     core->RegisterGlobalProperty("Events events", &engine.events);
-    core->RegisterObjectBehaviour(
-        "Events",
-        asBEHAVE_ADDREF,
-        "void f()",
-        asMETHOD(Engine, addRef),
-        asCALL_THISCALL);
-    core->RegisterObjectBehaviour(
-        "Events",
-        asBEHAVE_RELEASE,
-        "void f()",
-        asMETHOD(Engine, releaseRef),
-        asCALL_THISCALL);
     core->RegisterObjectMethod(
         "Events",
         "Event &poll()",
@@ -311,50 +308,6 @@ void Script::registerObjects()
         "Events",
         "bool lastevent()",
         asMETHOD(EventHandler, lastevent),
-        asCALL_THISCALL);
-
-    core->RegisterObjectType("Entity", 0, asOBJ_REF);
-    core->RegisterObjectBehaviour(
-        "Entity",
-        asBEHAVE_FACTORY,
-        "Entity@ f()",
-        asFUNCTION(Entity::factory),
-        asCALL_CDECL);
-    core->RegisterObjectBehaviour(
-        "Entity",
-        asBEHAVE_ADDREF,
-        "void f()",
-        asMETHOD(Entity, addRef),
-        asCALL_THISCALL);
-    core->RegisterObjectBehaviour(
-        "Entity",
-        asBEHAVE_RELEASE,
-        "void f()",
-        asMETHOD(Entity, releaseRef),
-        asCALL_THISCALL);
-    core->RegisterObjectProperty(
-        "Entity",
-        "float scale",
-        asOFFSET(Entity, scale));
-    core->RegisterObjectMethod(
-        "Entity",
-        "void setModel(const string &in)",
-        asMETHOD(Entity, setModel),
-        asCALL_THISCALL);
-    core->RegisterObjectMethod(
-        "Entity",
-        "void setMass(const float mass)",
-        asMETHOD(Entity, setMass),
-        asCALL_THISCALL);
-    core->RegisterObjectMethod(
-        "Entity",
-        "void setTexture(const string &in, const string &in)",
-        asMETHOD(Entity, setTexture),
-        asCALL_THISCALL);
-    core->RegisterObjectMethod(
-        "Entity",
-        "void attachShader(const string &in)",
-        asMETHOD(Entity, attachShader),
         asCALL_THISCALL);
 }
 
@@ -421,9 +374,10 @@ void Script::run(ScriptResource *script, const char *func, void *arg)
 
                 found = true;
                 break;
-            } else if (r == asEXECUTION_FINISHED ||
-                       r == asEXECUTION_UNINITIALIZED) {
-
+            } else if (
+                r == asEXECUTION_FINISHED ||
+                r == asEXECUTION_UNINITIALIZED
+            ) {
                 found = true;
                 break;
             }
