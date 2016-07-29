@@ -5,6 +5,7 @@
 #include <stdio.h>      // std::filebuf
 
 #include "../ui/uielement.hpp"
+#include "../ui/uicursor.hpp"
 #include "../ui/window.hpp"
 
 UI_Resource::UI_Resource() {
@@ -16,7 +17,9 @@ UI_Resource::UI_Resource() {
 UI_Resource::UI_Resource(const char *type) {
     if(strcmp("window", type) == 0){
         this->element = new UiWindow;
-    } else {
+    } else if(strcmp("uicursor", type) == 0) {
+        this->element = new UICursor;
+    }else{
         this->element = new UiElement;
     }
     this->element->resource = this;

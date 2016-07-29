@@ -32,14 +32,11 @@ void Ui::update()
     UiResource *resource = engine.resources.getUI("foobaz.ui");
     UiElement *el = resource->element;
 
-    const Event* ev = nullptr;
     if(el != nullptr){
-        el->handleEvent(ev);
+        while (!engine.events.lastevent()) {
+            el->handleEvent(engine.events.poll());
+        }
     }
-
-    //while((ev = engine.events.poll())) {
-    //}
-
 }
 
 void Ui::draw()

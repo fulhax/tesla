@@ -30,6 +30,9 @@ public:
     UiResource *resource;
     char filename[255];
 
+    bool movable;
+    bool resizable;
+
     std::vector<UiElement *> elements;
 private:
 protected:

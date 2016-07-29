@@ -76,78 +76,21 @@ void UiElement::detach()
     this->parent = nullptr;
 }
 
-// void UiElement::handleEvent(const Event &e)
-// {
-//     switch(e.type) {
-//         case EventType::MouseMotion: {
-//             EventMouseMotion *mm = (EventMouseMotion *) &e;
-// 
-//             if(this->inBounds(mm->x, mm->y)) {
-//                 this->ui->addEvent(OEvent(this->id, EventType::Hover));
-// 
-//                 if(mm->state == MouseButtonState::BUTTON_DOWN) {
-//                     switch(mm->button) {
-//                         case MouseButton::BUTTON_LEFT:
-//                             if(this->movable == false) {
-//                                 break;
-//                             }
-// 
-//                             this->move(this->x += mm->rx, this->y += mm->ry);
-//                             this->ui->addEvent(
-//                                 OEvent(this->id, EventType::Drag)
-//                             );
-//                             break;
-// 
-//                         case MouseButton::BUTTON_RIGHT:
-//                             if(this->resizable == false) {
-//                                 break;
-//                             }
-// 
-//                             this->resize(this->w += mm->rx, this->h += mm->ry);
-//                             this->ui->addEvent(
-//                                 OEvent(this->id, EventType::Resize)
-//                             );
-//                             break;
-// 
-// 
-//                         default:
-//                             break;
-//                     }
-//                 }
-//             }
-//         }
-//         break;
-// 
-//         default:
-//             break;
-//             /*
-//                 case EventType::MouseWheel: {
-//                 EventMouseWheel *mm = (EventMouseWheel *) &e;
-//                 printf("Mouse wheel, x:%f y:%f\n", mm->x, mm->y);
-//                 }
-//                 break;
-//                     case EventType::MouseButton: {
-//                     EventMouseButton *me = (EventMouseButton *) &e;
-//                     if(this->inBounds(me->x, me->y)) {
-//                     printf("Click\n");
-//                     this->ui->addEvent(OEvent(this->id, EventType::Click));
-//                     }
-//                     }
-//                     break;
-//                     case EventType::TextInput: {
-//                     EventTextInput *te = (EventTextInput *) &e;
-//                     printf("%s\n", te->key);
-//                     }
-//                     break;
-//             */
-//     }
-// }
-
-void UiElement::handleEvent(const Event* ev)
+void UiElement::handleEvent(const Event *ev)
 {
-    //UiElement::handleEvent(ev);
-    //this->resource = engine.resources.getUI(this->filename);
-    printf("%d", this->getElements().size());
+
+    if(this->inBounds(engine.mouse.x, engine.mouse.y)) {
+        if((EQUAL("camera.yaw", ev->event.c_str()) ||
+            EQUAL("camera.pitch", ev->event.c_str())) &&
+            SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT)
+        ) {
+            this->move(
+                this->getX() + engine.mouse.rx,
+                this->getY() + engine.mouse.ry
+            );
+        }
+    }
+
     for(auto element : this->getElements()) {
         element->handleEvent(ev);
     }
@@ -156,10 +99,8 @@ void UiElement::handleEvent(const Event* ev)
 
 bool UiElement::inBounds(float x, float y)
 {
-    return (
-       (x > this->getX() && x < this->getX() + (float)this->getW()) &&
-       (y > this->getY() && y < this->getY() + (float)this->getH())
-   );
+    return ((x > this->getX() && x < this->getX() + (float)this->getW()) &&
+            (y > this->getY() && y < this->getY() + (float)this->getH()));
 };
 
 void UiElement::resize(unsigned int w, unsigned int h)
@@ -176,7 +117,7 @@ void UiElement::move(float x, float y)
 
 void UiElement::draw()
 {
-    engine.ui.startClip((int) this->getX(), (int)this->getY(), this->getW(), this->getH());
+
     engine.ui.drawRect(
         (int) this->getX(),
         (int) this->getY(),

@@ -22,6 +22,7 @@ list(APPEND SOURCE_FILES
     "./physics.cpp"
     "./ui.cpp"
     "./ui/uielement.cpp"
+    "./ui/uicursor.cpp"
     "./ui/window.cpp"
     "./sha256.cpp"
     "./resources/tga.cpp"
