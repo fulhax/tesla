@@ -60,13 +60,14 @@ public:
         float ry;
         bool button[MAX_MOUSEBUTTONS];
     } mouse;
+
+    float time;
+    uint64_t oldtime;
 private:
     std::vector<Entity *> entities;
     std::map<std::string, EntityType> entityTypes;
     void handleEvents();
 
-    uint64_t oldtime;
-    float time;
     float msframe[NUM_MSFRAMES];
     int currframe;
     int countfps;

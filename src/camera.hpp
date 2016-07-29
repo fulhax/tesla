@@ -26,8 +26,9 @@ class Camera
     float pointDistance(int i, const glm::vec3 &point);
     glm::vec4 frustum[6];
     btKinematicCharacterController* character;
-    glm::vec3 vel;
+    bool jumping;
 public:
+    glm::vec3 vel;
     glm::vec3 pos;
 
     float yaw;
@@ -50,6 +51,8 @@ public:
     void moveBackwards(const float &speed);
     void moveLeft(const float &speed);
     void moveRight(const float &speed);
+
+    void jump();
 };
 
 #endif // CAMERA_HPP_

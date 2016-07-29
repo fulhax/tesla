@@ -122,7 +122,7 @@ int Engine::init()
         physics.createCharacter(
             glm::vec3(0, 10, 25),
             glm::vec2(1, 2),
-            1
+            0.25f
         )
     );
 
@@ -243,10 +243,20 @@ void Engine::update()
     uint64_t ctime = SDL_GetPerformanceCounter();
     uint64_t freq = SDL_GetPerformanceFrequency();
 
+
     time = static_cast<double>(ctime - oldtime) /
            static_cast<double>(freq);
 
     oldtime = ctime;
+    //
+    // -- -
+    // time = (
+    //            static_cast<double>(ctime) /
+    //            static_cast<double>(freq)
+    //        ) - static_cast<double>(oldtime);
+    //
+    // oldtime = ctime / freq;
+
     static float fpstimer = 0;
     static float mtime = time;
 
@@ -265,13 +275,16 @@ void Engine::update()
 
     mtime += time;
 
-
     for (auto e : entities) {
         e->draw(video.ProjMat, video.ViewMat);
     }
 
     script.run(s, "void draw()");
     ui.update();
+
+    static char foo[256] = {0};
+    static char bar[256] = {0};
+    static int ticks = 0;
 
     while (mtime >= EngineTick) {
         mtime -= EngineTick;
@@ -290,9 +303,20 @@ void Engine::update()
             e->update();
         }
 
-        physics.update();
+
+        snprintf(
+            foo,
+            sizeof(foo),
+            "vel: %f, %f, %f",
+            camera.vel.x,
+            camera.vel.y,
+            camera.vel.z
+        );
+
         camera.update(video.ProjMat, video.ViewMat);
         //test->updateAction(physics.dynamics_world, engine.getTick());
+
+        physics.update();
 
         // while (!events.lastevent()) {
         //     auto ev = events.poll();
@@ -302,7 +326,14 @@ void Engine::update()
         //         "Stray event ^r\"%s\"^0 found!",
         //         ev->event.c_str());
         // }
+        snprintf(bar, sizeof(bar), "time: %f, ticks: %d", time, ticks);
+        ticks = 0;
     }
+
+    ticks++;
+
+    ui.printDef(0, 250, foo);
+    ui.printDef(0, 300, bar);
 
     events.update();
     video.swap();

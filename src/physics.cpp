@@ -143,6 +143,8 @@ Physics::~Physics()
 
 void Physics::init(glm::vec3 gravity)
 {
+    this->gravity = gravity;
+
     broadphase = new btDbvtBroadphase();
     collision_conf = new btDefaultCollisionConfiguration();
     dispatcher = new btCollisionDispatcher(collision_conf);
@@ -201,21 +203,20 @@ btKinematicCharacterController *Physics::createCharacter(glm::vec3 position,
     btKinematicCharacterController *character =
         new btKinematicCharacterController(ghost, capsule, stepheight);
 
-    character->setGravity(-dynamics_world->getGravity().getY());
+    //character->setGravity(-dynamics_world->getGravity().getY());
 
     dynamics_world->addCollisionObject(
         ghost,
         btBroadphaseProxy::CharacterFilter,
         btBroadphaseProxy::AllFilter
     );
+    dynamics_world->addAction(character);
 
     return character;
 }
 
-btRigidBody *Physics::createMesh(ModelResource *m,
-                                 glm::vec3 position,
-                                 glm::quat orientation,
-                                 glm::vec3 size,
+btRigidBody *Physics::createMesh(ModelResource *m, glm::vec3 position,
+                                 glm::quat orientation, glm::vec3 size,
                                  int mass)
 {
     btDefaultMotionState *motionstate = new btDefaultMotionState(
@@ -246,7 +247,7 @@ btRigidBody *Physics::createMesh(ModelResource *m,
     btVector3 localInertia(0, 0, 0);
     btCollisionShape *shape;
 
-    if (mass > 0.f) {
+    if (mass > 0.1f) {
         btConvexShape *tmpshape = new btConvexTriangleMeshShape(mesh);
 
         btShapeHull *hull = new btShapeHull(tmpshape);
@@ -280,10 +281,8 @@ btRigidBody *Physics::createMesh(ModelResource *m,
     return body;
 }
 
-btRigidBody *Physics::createBox(glm::vec3 position,
-                                glm::quat orientation,
-                                glm::vec3 size,
-                                int mass)
+btRigidBody *Physics::createBox(glm::vec3 position, glm::quat orientation,
+                                glm::vec3 size, int mass)
 {
     btDefaultMotionState *motionstate = new btDefaultMotionState(
         btTransform(
@@ -314,11 +313,6 @@ btRigidBody *Physics::createBox(glm::vec3 position,
 
 void Physics::update()
 {
-    dynamics_world->stepSimulation(engine.getTick(), 0);
+    dynamics_world->stepSimulation(engine.getTick(), 1);
     //dynamics_world->debugDrawWorld();
-}
-
-void Physics::updateCharacter(btKinematicCharacterController* character) 
-{
-    character->updateAction(dynamics_world, engine.getTick());
 }

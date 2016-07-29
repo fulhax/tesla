@@ -68,7 +68,6 @@ public:
 
     void init(glm::vec3 gravity = glm::vec3(0, -9.81f, 0));
     void update();
-    void updateCharacter(btKinematicCharacterController* character);
 
     void setGravity(glm::vec3 gravity);
 
@@ -85,6 +84,8 @@ public:
 
     btKinematicCharacterController *createCharacter(glm::vec3 position,
             glm::vec2 size, float stepheight);
+
+    glm::vec3 gravity;
 };
 
 #endif // PHYSICS_HPP_

@@ -180,6 +180,11 @@ void Script::registerObjects()
         "void moveRight(const float &in)",
         asMETHOD(Camera, moveRight),
         asCALL_THISCALL);
+    core->RegisterObjectMethod(
+        "Camera",
+        "void jump()",
+        asMETHOD(Camera, jump),
+        asCALL_THISCALL);
 
     core->RegisterObjectType("Entity", 0, asOBJ_REF | asOBJ_NOCOUNT);
     core->RegisterObjectProperty(
