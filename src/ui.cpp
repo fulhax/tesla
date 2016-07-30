@@ -18,10 +18,10 @@ Ui::~Ui()
 
 void Ui::update()
 {
-    drawRect(10, 10, 100, 100, glm::vec3(1, 0, 0));
+    drawRect(10, 10, 200, 200, "test2.png");
 
-    startClip(10, 10, 100, 100);
-    drawRect(20, 20, 200, 200, glm::vec3(0, 1, 0));
+    startClip(10, 10, 200, 200);
+    drawRect(20, 20, 120, 120, "test.png");
     endClip();
 }
 
@@ -36,7 +36,7 @@ void Ui::endClip()
     glDisable(GL_SCISSOR_TEST);
 }
 
-void Ui::drawRect(int x, int y, int w, int h, glm::vec3 color)
+void Ui::drawRect(int x, int y, int w, int h, const char *texture)
 {
     Plane plane;
 
@@ -57,8 +57,18 @@ void Ui::drawRect(int x, int y, int w, int h, glm::vec3 color)
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     if (shader.use()) {
+        TextureResource *t = engine.resources.getTexture(texture);
+
+        if (t == nullptr) {
+            t = engine.debugger.useDebugTexture();
+        }
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, t->id);
+
+        shader.setUniform("Texture", 0);
+
         shader.setUniform("in_UiPos", glm::vec2(x, y));
-        shader.setUniform("in_Color", glm::vec4(color, 1));
         shader.setUniform("in_OrthoMatrix", engine.video.OrthoMat);
 
         shader.bindAttribLocation(0, "in_Position");
@@ -74,6 +84,7 @@ void Ui::drawRect(int x, int y, int w, int h, glm::vec3 color)
             nullptr);
 
         glEnableVertexAttribArray(0);
+        glEnableVertexAttribArray(1);
 
         glBindBuffer(GL_ARRAY_BUFFER, plane.uv_buffer);
         glVertexAttribPointer(

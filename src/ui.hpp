@@ -20,7 +20,7 @@ public:
     Ui();
     virtual ~Ui();
 
-    void drawRect(int x, int y, int w, int h, glm::vec3 color);
+    void drawRect(int x, int y, int w, int h, const char *texture);
     void startClip(int x, int y, int w, int h);
     void endClip();
 
