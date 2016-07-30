@@ -44,7 +44,7 @@ public:
     virtual ~Entity();
 
     void spawn(glm::vec3 pos, glm::vec3 rot);
-    void draw(const glm::mat4 &Projection, const glm::mat4 &View);
+    void draw();
     void update();
 
     Shader shader;

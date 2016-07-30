@@ -1,15 +1,16 @@
 #ifndef VIDEO_HPP_
 #define VIDEO_HPP_
+
 #include "opengl.hpp"
 
 #include <SDL2/SDL.h>
+#include <vector>
 
 #include "shader.hpp"
 #include "entity.hpp"
 #include "camera.hpp"
 
 #define RAD 0.017453292519943295769236907684886f
-
 
 class Video
 {
@@ -33,6 +34,8 @@ public:
 
     int screen_width;
     int screen_height;
+
+    std::vector<uint32_t> renderTargets;
 };
 
 #endif // VIDEO_HPP_

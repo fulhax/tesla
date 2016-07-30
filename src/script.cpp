@@ -218,6 +218,11 @@ void Script::registerObjects()
         asCALL_THISCALL);
     core->RegisterObjectMethod(
         "Entity",
+        "void draw()",
+        asMETHOD(Entity, draw),
+        asCALL_THISCALL);
+    core->RegisterObjectMethod(
+        "Entity",
         "Entity &opAssign(const Entity &in)",
         asMETHODPR(
             Entity,
@@ -252,6 +257,11 @@ void Script::registerObjects()
         "Engine",
         "int spawnEntity(string &in, vec3 &in, vec3 &in = vec3(0,0,0))",
         asMETHOD(Engine, spawnEntity),
+        asCALL_THISCALL);
+    core->RegisterObjectMethod(
+        "Engine",
+        "int getEntitiesCount()",
+        asMETHOD(Engine, getEntitiesCount),
         asCALL_THISCALL);
     core->RegisterObjectMethod(
         "Engine",

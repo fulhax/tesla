@@ -30,6 +30,7 @@ public:
     void update();
     void shutdown();
     float getTick();
+    void draw();
     int getFPS() const;
     float getMS() const;
 
@@ -38,7 +39,8 @@ public:
 
     int spawnEntity(const std::string &name, const glm::vec3 &pos,
                     const glm::vec3 &rot);
-    Entity* getEntityById(const int &id);
+    Entity *getEntityById(const int &id);
+    int getEntitiesCount();
 
     bool running;
 
@@ -68,6 +70,7 @@ private:
     std::map<std::string, EntityType> entityTypes;
     void handleEvents();
 
+    uint32_t framebuffer;
     float msframe[NUM_MSFRAMES];
     int currframe;
     int countfps;

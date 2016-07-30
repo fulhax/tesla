@@ -138,7 +138,7 @@ glm::mat4 Entity::getModelMatrix()
     return glm::scale(ModelMat, glm::vec3(scale, scale, scale));
 }
 
-void Entity::draw(const glm::mat4 &ProjMat, const glm::mat4 &ViewMat)
+void Entity::draw()
 {
     if (!strlen(model) || textures.empty()) {
         return;
@@ -206,8 +206,8 @@ void Entity::draw(const glm::mat4 &ProjMat, const glm::mat4 &ViewMat)
     }
 
     current->setUniform("in_ModelMatrix", ModelMat);
-    current->setUniform("in_ProjMatrix", ProjMat);
-    current->setUniform("in_ViewMatrix", ViewMat);
+    current->setUniform("in_ProjMatrix", engine.video.ProjMat);
+    current->setUniform("in_ViewMatrix", engine.video.ViewMat);
 
     glBindBuffer(GL_ARRAY_BUFFER, m->vertex_buffer);
     glVertexAttribPointer(

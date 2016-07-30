@@ -13,6 +13,7 @@ Engine::Engine()
     countfps = 0;
     memset(msframe, 0, NUM_MSFRAMES * sizeof(float));
     currframe = 0;
+    framebuffer = 0;
 
     for (int i = 0; i < MAX_MOUSEBUTTONS; i++) {
         mouse.button[i] = false;
@@ -72,11 +73,10 @@ int Engine::spawnEntity(const std::string &name, const glm::vec3 &pos,
 
 Entity *Engine::getEntityById(const int &id)
 {
-    if (id == -1) {
+    if (id < 0 || id > static_cast<int>(entities.size())) {
         return nullptr;
     }
 
-    lprintf(LOG_INFO, "Trying to get entity %d", id);
     return entities[id];
 }
 
@@ -236,6 +236,19 @@ void Engine::handleEvents()
     }
 }
 
+void Engine::draw()
+{
+    ScriptResource *s = engine.resources.getScript("main.as");
+
+    video.update(&camera);
+    script.run(s, "void draw()");
+}
+
+int Engine::getEntitiesCount()
+{
+    return entities.size();
+}
+
 void Engine::update()
 {
     ScriptResource *s = engine.resources.getScript("main.as");
@@ -248,14 +261,6 @@ void Engine::update()
            static_cast<double>(freq);
 
     oldtime = ctime;
-    //
-    // -- -
-    // time = (
-    //            static_cast<double>(ctime) /
-    //            static_cast<double>(freq)
-    //        ) - static_cast<double>(oldtime);
-    //
-    // oldtime = ctime / freq;
 
     static float fpstimer = 0;
     static float mtime = time;
@@ -269,17 +274,12 @@ void Engine::update()
         countfps += 1;
     }
 
-    video.update(&camera);
     resources.update();
     audio.update(&camera);
 
     mtime += time;
 
-    for (auto e : entities) {
-        e->draw(video.ProjMat, video.ViewMat);
-    }
-
-    script.run(s, "void draw()");
+    draw();
     ui.update();
 
     static char foo[256] = {0};
