@@ -12,8 +12,26 @@ void update()
     }
 }
 
+void drawEntities()
+{
+    int count = engine.getEntitiesCount();
+
+    for(int i=0; i < count; i++) {
+        Entity@ e = engine.getEntityById(i);
+        if(e !is null) {
+            e.draw();
+        }
+    }
+}
+
+void drawUi()
+{
+    ui.print("fonts/Hack-Regular.ttf:32", 10, 10, "FPS: " + engine.getFPS());
+    ui.print("fonts/Hack-Regular.ttf:32", 10, 52, "ms: " + engine.getMS());
+}
+
 void draw()
 {
-    ui.print(10, 10, "FPS: " + engine.getFPS());
-    ui.print("fonts/Hack-Regular.ttf:14", 20, 10, "FPS: " + engine.getFPS());
+    drawEntities();
+    drawUi();
 }
