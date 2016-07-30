@@ -21,7 +21,7 @@ void Ui::update()
     drawRect(10, 10, 200, 200, "test2.png");
 
     startClip(10, 10, 200, 200);
-    drawRect(20, 20, 120, 120, "test.png");
+    drawRect(20, 20, 120, 120, "dagger/Textures/Dagger_Albedo.png");
     endClip();
 }
 
